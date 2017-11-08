@@ -48,6 +48,12 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Mocks\BidControllerMock.cs" />
+    <Compile Include="Mocks\InvoiceControllerMock.cs" />
+    <Compile Include="Mocks\PaymentControllerMock.cs" />
+    <Compile Include="Mocks\ProductControllerMock.cs" />
+    <Compile Include="Mocks\UserControllerMock.cs" />
+    <Compile Include="Mocks\ZipControllerMock.cs" />
     <Compile Include="UnitTest1.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -58,6 +64,14 @@
     <ProjectReference Include="..\AuctionSystem.Controllers\AuctionSystem.Controllers.csproj">
       <Project>{7abb33cf-9dbb-4acf-9305-8c831dfe85af}</Project>
       <Name>AuctionSystem.Controllers</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\AuctionSystem.Data\AuctionSystem.Data.csproj">
+      <Project>{9cf5cdc3-0d7c-4ea3-8b18-bb612c40b0c8}</Project>
+      <Name>AuctionSystem.Data</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\AuctionSystem.Models\AuctionSystem.Models.csproj">
+      <Project>{3c0afcba-52ff-4a75-bff8-446f678a1c09}</Project>
+      <Name>AuctionSystem.Models</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
