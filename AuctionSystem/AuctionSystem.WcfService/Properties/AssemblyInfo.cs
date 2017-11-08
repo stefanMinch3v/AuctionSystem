@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("AuctionSystem.WfcService")]
+[assembly: AssemblyTitle("AuctionSystem.WcfService")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("HOME")]
-[assembly: AssemblyProduct("AuctionSystem.WfcService")]
+[assembly: AssemblyProduct("AuctionSystem.WcfService")]
 [assembly: AssemblyCopyright("Copyright © HOME 2017")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("ec8593ff-3890-4231-bc19-0e113909f6e1")]
+[assembly: Guid("4406f934-e3a3-4d04-93d3-afda64af7126")]
 
 // Version information for an assembly consists of the following four values:
 //

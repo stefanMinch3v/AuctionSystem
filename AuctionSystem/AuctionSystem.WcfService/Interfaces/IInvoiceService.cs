@@ -1,0 +1,22 @@
+﻿namespace AuctionSystem.WcfService.Interfaces
+{
+    using Models;
+    using System.Collections.Generic;
+    using System.ServiceModel;
+
+    [ServiceContract]
+    public interface IInvoiceService
+    {
+        [OperationContract]
+        void CreateInvoice(int userId, int productId);
+
+        [OperationContract]
+        Invoice GetInvoiceByUserId(int id);
+
+        [OperationContract]
+        Invoice GetInvoiceByProductId(int id);
+
+        [OperationContract]
+        IList<Invoice> GetAllInvoicesForUser(int userId);
+    }
+}

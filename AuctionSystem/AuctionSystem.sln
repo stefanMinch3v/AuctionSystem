@@ -7,13 +7,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AuctionSystem.Data", "Aucti
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AuctionSystem.Controllers", "AuctionSystem.Controllers\AuctionSystem.Controllers.csproj", "{7ABB33CF-9DBB-4ACF-9305-8C831DFE85AF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AuctionSystem.Client", "AuctionSystem.Client\AuctionSystem.Client.csproj", "{94C2C833-FE42-4993-9913-D6C2B43AF6A4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AuctionSystem.Client", "AuctionSystem.Client\AuctionSystem.Client.csproj", "{3BC79CF8-528C-4A54-A93B-2326BAC2ACE8}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AuctionSystem.Models", "AuctionSystem.Models\AuctionSystem.Models.csproj", "{3C0AFCBA-52FF-4A75-BFF8-446F678A1C09}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AuctionSystem.WfcService", "AuctionSystem.WfcService\AuctionSystem.WfcService.csproj", "{EC8593FF-3890-4231-BC19-0E113909F6E1}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AuctionSystem.Tests", "AuctionSystem.Tests\AuctionSystem.Tests.csproj", "{E90D91C6-6E2A-44E0-BD6A-815EA6274325}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AuctionSystem.WcfService", "AuctionSystem.WcfService\AuctionSystem.WcfService.csproj", "{4406F934-E3A3-4D04-93D3-AFDA64AF7126}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -29,22 +29,22 @@ Global
 		{7ABB33CF-9DBB-4ACF-9305-8C831DFE85AF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7ABB33CF-9DBB-4ACF-9305-8C831DFE85AF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7ABB33CF-9DBB-4ACF-9305-8C831DFE85AF}.Release|Any CPU.Build.0 = Release|Any CPU
-		{94C2C833-FE42-4993-9913-D6C2B43AF6A4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{94C2C833-FE42-4993-9913-D6C2B43AF6A4}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{94C2C833-FE42-4993-9913-D6C2B43AF6A4}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{94C2C833-FE42-4993-9913-D6C2B43AF6A4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3BC79CF8-528C-4A54-A93B-2326BAC2ACE8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3BC79CF8-528C-4A54-A93B-2326BAC2ACE8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3BC79CF8-528C-4A54-A93B-2326BAC2ACE8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3BC79CF8-528C-4A54-A93B-2326BAC2ACE8}.Release|Any CPU.Build.0 = Release|Any CPU
 		{3C0AFCBA-52FF-4A75-BFF8-446F678A1C09}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{3C0AFCBA-52FF-4A75-BFF8-446F678A1C09}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3C0AFCBA-52FF-4A75-BFF8-446F678A1C09}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3C0AFCBA-52FF-4A75-BFF8-446F678A1C09}.Release|Any CPU.Build.0 = Release|Any CPU
-		{EC8593FF-3890-4231-BC19-0E113909F6E1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{EC8593FF-3890-4231-BC19-0E113909F6E1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{EC8593FF-3890-4231-BC19-0E113909F6E1}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{EC8593FF-3890-4231-BC19-0E113909F6E1}.Release|Any CPU.Build.0 = Release|Any CPU
 		{E90D91C6-6E2A-44E0-BD6A-815EA6274325}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{E90D91C6-6E2A-44E0-BD6A-815EA6274325}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E90D91C6-6E2A-44E0-BD6A-815EA6274325}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E90D91C6-6E2A-44E0-BD6A-815EA6274325}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4406F934-E3A3-4D04-93D3-AFDA64AF7126}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4406F934-E3A3-4D04-93D3-AFDA64AF7126}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4406F934-E3A3-4D04-93D3-AFDA64AF7126}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4406F934-E3A3-4D04-93D3-AFDA64AF7126}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
