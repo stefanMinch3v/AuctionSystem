@@ -45,16 +45,16 @@ namespace AuctionSystem.Data
                             .HasRequired(i => i.Product);
         }
 
-        public DbSet<Bid> Bids { get; set; }
+        public virtual DbSet<Bid> Bids { get; set; }
 
-        public DbSet<User> Users { get; set; }
+        public virtual DbSet<User> Users { get; set; }
 
-        public DbSet<Product> Products { get; set; }
+        public virtual DbSet<Product> Products { get; set; }
 
-        public DbSet<Zip> Zips { get; set; }
+        public virtual DbSet<Zip> Zips { get; set; }
 
-        public DbSet<Invoice> Invoices { get; set; }
+        public virtual DbSet<Invoice> Invoices { get; set; }
 
-        public DbSet<Payment> Payments { get; set; }
+        public virtual DbSet<Payment> Payments { get; set; }
     }
 }

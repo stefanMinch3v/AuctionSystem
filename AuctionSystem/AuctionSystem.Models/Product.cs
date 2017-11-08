@@ -3,30 +3,41 @@
     using System;
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
+    using System.Runtime.Serialization;
 
+    [DataContract]
     public class Product
     {
+        [DataMember]
         public int Id { get; set; }
 
+        [DataMember]
         [Required]
         public string Name { get; set; }
 
+        [DataMember]
         public bool IsAvailable { get; set; }
 
+        [DataMember]
         [Required]
         public string Description { get; set; }
 
+        [DataMember]
         [MaxLength(1024)]
         public byte?[] Image { get; set; }
 
+        [DataMember]
         [Required]
         public DateTime StartDate { get; set; }
 
+        [DataMember]
         [Required]
         public DateTime EndDate { get; set; }
 
+        [DataMember]
         public decimal Price { get; set; }
 
-        public ICollection<Bid> Users { get; set; } = new List<Bid>();
+        [DataMember]
+        public virtual ICollection<Bid> Users { get; set; } = new List<Bid>();
     }
 }
