@@ -38,6 +38,6 @@
         public decimal Price { get; set; }
 
         [DataMember]
-        public virtual ICollection<Bid> Users { get; set; } = new List<Bid>();
+        public virtual ICollection<Bid> Bids { get; set; } = new List<Bid>();
     }
 }

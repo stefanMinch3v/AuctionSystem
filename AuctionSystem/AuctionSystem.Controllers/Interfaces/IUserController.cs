@@ -21,6 +21,8 @@
 
         int CountUserBidsForGivenProduct(int userId, int productId);
 
+        int GetAllUserSpentCoinsForGivenProduct(int userId, int productId);
+
         IList<Product> GetUserProducts(User user);
 
         IList<Bid> GetUserBids(int userId);
