@@ -17,7 +17,7 @@
             return 0;
         }
 
-        public void CreateUser(string username, string name, string address, string email, string phone, DateTime dateOfBirth, Gender gender, Zip zip, int coins, List<Payment> payments)
+        public void CreateUser(string username, string name, string address, string email, string phone, DateTime dateOfBirth, Gender gender, bool isAdmin, Zip zip, int coins, List<Payment> payments)
         {
             using (var db = new AuctionContext())
             {
@@ -32,7 +32,9 @@
                     Gender = gender,
                     Zip = zip,
                     Coins = coins,
-                    Payments = payments
+                    Payments = payments,
+                    IsAdmin = isAdmin,
+                    IsDeleted = false
                 };
 
                 db.Users.Add(user);

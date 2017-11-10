@@ -7,7 +7,7 @@
 
     public interface IUserController
     {
-        void CreateUser(string username, string name, string address, string email, string phone, DateTime dateOfBirth, Gender gender, Zip zip, int coins, List<Payment> payments);
+        void CreateUser(string username, string name, string address, string email, string phone, DateTime dateOfBirth, Gender gender, bool isAdmin, Zip zip, int coins, List<Payment> payments);
 
         bool UpdateUser(User user, string property, string value);
 
