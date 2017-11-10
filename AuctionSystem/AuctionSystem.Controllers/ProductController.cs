@@ -42,9 +42,9 @@
             using (var db = new AuctionContext())
             {
                 var product = GetProductById(id);
-                
+
                 if (product == null) return false;
-                
+
                 db.Products.Remove(product);
                 db.SaveChanges();
                 return true;
@@ -84,9 +84,42 @@
             }
         }
 
-        public bool UpdateProduct(Product product, string property, string value)
+        public bool UpdateProduct(int id, string property, string value)
         {
-            throw new NotImplementedException();
+            var product = GetProductById(id);
+            using (var db = new AuctionContext())
+            {
+                try
+                {
+                    switch (property)
+                    {
+                        case "name":
+                            product.Name = value;
+                            break;
+                        case "price":
+                            product.Price = Int32.Parse(value);
+                            break;
+                        case "description":
+                            product.Description = value;
+                            break;
+                        case "startDate":
+                            product.StartDate = Convert.ToDateTime(value);
+                            break;
+                        case "endDate":
+                            product.EndDate = Convert.ToDateTime(value);
+                            break;
+                        default:
+                            Console.WriteLine("no such property");
+                            break;
+                    }
+                    db.SaveChanges();
+                    return true;
+                }
+                catch (Exception)
+                {
+                    throw new Exception("Failed at ProductController -> UpdateProduct");
+                }
+            }
         }
     }
 }

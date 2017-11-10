@@ -21,7 +21,7 @@
             throw new NotImplementedException();
         }
 
-        public bool UpdateProduct(Product product, string property, string value)
+        public bool UpdateProduct(int id, string property, string value)
         {
             throw new NotImplementedException();
         }

@@ -8,7 +8,7 @@
     {
         void CreateProduct(string name, string description, decimal price, DateTime startDate, DateTime endDate);
 
-        bool UpdateProduct(Product product, string property, string value);
+        bool UpdateProduct(int id, string property, string value);
 
         bool DeleteProduct(int id);
 
