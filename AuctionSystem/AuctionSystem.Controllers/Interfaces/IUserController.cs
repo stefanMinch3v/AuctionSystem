@@ -13,7 +13,7 @@
 
         bool DeleteUser(User user);
 
-        User GetUserByUsername(User user);
+        User GetUserByUsername(string username);
 
         User GetUserById(int id);
 
@@ -23,8 +23,8 @@
 
         IList<Product> GetUserProducts(User user);
 
-        IList<Bid> GetUserBids(User user);
+        IList<Bid> GetUserBids(int userId);
 
-        IList<Invoice> GetUserInvoices(User user);
+        IList<Invoice> GetUserInvoices(int userId);
     }
 }
