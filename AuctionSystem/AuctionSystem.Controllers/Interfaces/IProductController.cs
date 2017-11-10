@@ -10,16 +10,16 @@
 
         bool UpdateProduct(Product product, string property, string value);
 
-        bool DeleteProduct(Product product);
+        bool DeleteProduct(int id);
 
-        Product GetProductByName(Product product);
+        Product GetProductByName(string name);
 
         Product GetProductById(int id);
 
         bool IsProductExisting(string productName);
 
-        int CountUserBidsForProduct(User user);
+        int CountUserBidsForProduct(int id);
 
-        IList<User> GetProductUsers(Product product);
+        IList<User> GetProductUsers(int id);
     }
 }
