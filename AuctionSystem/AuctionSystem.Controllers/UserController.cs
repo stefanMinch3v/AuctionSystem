@@ -54,10 +54,24 @@
             }
         }
 
-        public bool DeleteUser(User user)
+        public bool DeleteUser(int id)
         {
-            throw new NotImplementedException();
+            using (var db = new AuctionContext())
+            {
+                var user = GetUserById(id);
+
+                if (user == null)
+                {
+                    return false;
+                }
+
+                db.Users.Remove(user);
+                db.SaveChanges();
+
+                return true;
+            }
         }
+
 
         public IList<Bid> GetUserBids(int userId)
         {
@@ -112,9 +126,60 @@
             }
         }
 
-        public bool UpdateUser(User user, string property, string value)
+        public bool UpdateUser(int userId, string property, string value) // Need to add update option for the Zip
         {
-            throw new NotImplementedException();
+            using (var db = new AuctionContext())
+            {
+                var user = GetUserById(userId);
+
+                if (user != null)
+                {
+                    switch (property)
+                    {
+                        case "Phone":
+                            user.Phone = value;
+                            break;
+                        case "Email":
+                            user.Email = value;
+                            break;
+                        case "Address":
+                            user.Address = value;
+                            break;
+                        case "Coins":
+                            user.Coins = int.Parse(value);
+                            break;
+                        case "IsAdmin":
+                            if (user.IsAdmin == false)
+                            {
+                                user.IsAdmin = true;
+                            }
+                            else
+                            {
+                                user.IsAdmin = true;
+                            }
+                            break;
+                        case "IsDeleted":
+                            if (user.IsDeleted == false)
+                            {
+                                user.IsDeleted = true;
+                            }
+                            else
+                            {
+                                user.IsDeleted = true;
+                            }
+                            break; // WHAT DEFAULT TO PUT ?
+                    }
+                    db.SaveChanges();
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+
+            }
         }
     }
+
 }
+
