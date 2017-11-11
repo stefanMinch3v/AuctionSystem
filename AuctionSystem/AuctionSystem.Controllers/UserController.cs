@@ -1,5 +1,6 @@
 ﻿namespace AuctionSystem.Controllers
 {
+    using Data;
     using Interfaces;
     using Data;
     using Models;
@@ -13,74 +14,38 @@
         // TODO
         public int CountUserBidsForGivenProduct(int userId, int productId)
         {
-            using (var db = new AuctionContext())
-            {
-                return GetUserById(userId).Bids.Select(b => b.ProductId == productId).Count();
-            }
+            throw new NotImplementedException();
         }
 
         public int GetAllUserSpentCoinsForGivenProduct(int userId, int productId)
         {
-            using (var db = new AuctionContext())
-            {
-                return GetUserById(userId).Bids
-                                       .Where(b => b.ProductId == productId)
-                                       .Sum(b => b.Coins);
-            }
-        }
-
-        public void CreateUser(string username, string name, string address, string email, string phone, DateTime dateOfBirth, Gender gender, bool isAdmin, Zip zip, int coins, List<Payment> payments)
-        {
-            using (var db = new AuctionContext())
-            {
-                var user = new User
-                {
-                    Username = username,
-                    Name = name,
-                    Address = address,
-                    Email = email,
-                    Phone = phone,
-                    DateOfBirth = dateOfBirth,
-                    Gender = gender,
-                    Zip = zip,
-                    Coins = coins,
-                    Payments = payments,
-                    IsAdmin = isAdmin,
-                    IsDeleted = false
-                };
-
-                db.Users.Add(user);
-                db.SaveChanges();
-            }
+            throw new NotImplementedException();
         }
 
         public bool DeleteUser(User user)
         {
+            using (var db = new AuctionContext())
+            {
+                var user = GetUserById(id);
+
+                if(user == null)
+                {
+                    return false;
+                }
+
+        public IList<Bid> GetUserBids(User user)
+        {
             throw new NotImplementedException();
         }
 
-        public IList<Bid> GetUserBids(int userId)
+            public User GetUserById(int id)
         {
-            using (var db = new AuctionContext())
-            {
-                return GetUserById(userId).Bids.ToList();
-            }
+            throw new NotImplementedException();
         }
 
-        public User GetUserById(int id)
+        public User GetUserByUsername(User user)
         {
-            using (var db = new AuctionContext())
-            {
-                return db.Users.FirstOrDefault(u => u.Id == id);
-            }
-        }
-
-        public User GetUserByUsername(string username)
-        {
-            using (var db = new AuctionContext())
-            {
-                return db.Users.FirstOrDefault(u => u.Username == username);
-            }
+            throw new NotImplementedException();
         }
 
         public IList<Invoice> GetUserInvoices(int userId)
@@ -93,15 +58,7 @@
 
         public IList<Product> GetUserProducts(User user)
         {
-            using (var db = new AuctionContext())
-            {
-                var listProducts = user.Bids
-                                        .Where(b => b.UserId == user.Id)
-                                        .Select(b => b.Product)
-                                        .ToList();
-
-                return listProducts;
-            }
+            throw new NotImplementedException();
         }
 
         public bool IsUserExisting(string username)
@@ -112,9 +69,58 @@
             }
         }
 
-        public bool UpdateUser(User user, string property, string value)
+        public bool UpdateUser(int userId, string property, string value) // Need to add update option for the Zip
         {
-            throw new NotImplementedException();
+            using (var db = new AuctionContext())
+            {
+                var user = GetUserById(userId);
+                
+                if (user != null)
+                {
+                    switch (property)
+                    {
+                        case "Phone":
+                            user.Phone = value;
+                            break;
+                        case "Email":
+                            user.Email = value;
+                            break;
+                        case "Address":
+                            user.Address = value;
+                            break;
+                        case "Coins":
+                            user.Coins = int.Parse(value);
+                            break;
+                        case "IsAdmin":
+                            if (user.IsAdmin == false)
+                            {
+                                user.IsAdmin = true;
+                            }
+                            else
+                            {
+                                user.IsAdmin = true;
+                            }
+                            break;
+                        case "IsDeleted":
+                            if (user.IsDeleted == false)
+                            {
+                                user.IsDeleted = true;
+                            }
+                            else
+                            {
+                                user.IsDeleted = true;
+                            }
+                            break; // WHAT DEFAULT TO PUT ?
+                    }
+                    db.SaveChanges();
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+
+            }
         }
     }
 }
