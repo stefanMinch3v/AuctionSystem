@@ -167,7 +167,11 @@
                             {
                                 user.IsDeleted = true;
                             }
-                            break; // WHAT DEFAULT TO PUT ?
+                            break;
+                        default:
+                            
+                                throw new Exception("There is no such property!");
+                            
                     }
                     db.SaveChanges();
                     return true;
