@@ -31,7 +31,7 @@
             // mockContext.Verify(m => m.SaveChanges(), Times.Once()); // save changes only once
             // it can be used mockSet.Verify(m => m.Add(It.Is<User>(u => u.Age == 20))) // this will throw an exception if the current user's age that you're trying to add is != 20
 
-            // Simple example
+            // Simple example create user
             var data = new List<User>
             {
                 new User() { Username = "Pesho"}
