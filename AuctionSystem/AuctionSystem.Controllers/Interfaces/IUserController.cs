@@ -9,9 +9,9 @@
     {
         void CreateUser(string username, string name, string address, string email, string phone, DateTime dateOfBirth, Gender gender, Zip zip, int coins, List<Payment> payments);
 
-        bool UpdateUser(User user, string property, string value);
+        bool UpdateUser(int userId, string property, string value);
 
-        bool DeleteUser(User user);
+        bool DeleteUser(int userId);
 
         User GetUserByUsername(User user);
 

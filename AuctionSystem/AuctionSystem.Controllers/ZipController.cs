@@ -1,29 +1,79 @@
 ﻿namespace AuctionSystem.Controllers
 {
+    using Data;
     using Interfaces;
     using Models;
+    using System.Linq;
 
     public class ZipController : IZipController
     {
         // TODO
         public void AddZip(string zipCode, string country, string city)
         {
-            throw new System.NotImplementedException();
+            using (var db = new AuctionContext())
+            {
+                var zip = new Zip
+                {
+                    ZipCode = zipCode,
+                    Country = country,
+                    City = city
+                };
+                db.Zips.Add(zip);
+                db.SaveChanges();
+                
+            }
+           
         }
 
-        public Zip GetZipByName(string country)
+        public Zip GetZipById(int id)
         {
-            throw new System.NotImplementedException();
+            using (var db = new AuctionContext())
+            {
+                return db.Zips.SingleOrDefault(z => z.Id == id);
+            }
         }
 
-        public bool IsZipExisting(string country)
+        public bool IsZipExisting(int id)
         {
-            throw new System.NotImplementedException();
+            using (var db = new AuctionContext())
+            {
+                var zip = GetZipById(id);
+                    if(zip == null)
+                {
+                    return false;
+                }
+                else
+                {
+                    return true;
+                }
+
+            }
+
         }
 
-        public bool UpdateZip(Zip zip, string property, string value)
+        public bool UpdateZip(int id, string property, string value)
         {
-            throw new System.NotImplementedException();
+            using (var db = new AuctionContext())
+            {
+                var zip = GetZipById(id);
+                if(zip != null)
+                {
+                    switch (property)
+                    {
+
+                        case "ZipCode":
+                            zip.ZipCode = value;
+                            break;
+                        case "Country":
+                            zip.Country = value;
+                            break;
+                        case "City":
+                            zip.City = value;
+                            break;
+                    }
+                    
+                }
+            }
         }
     }
 }
