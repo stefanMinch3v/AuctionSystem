@@ -7,13 +7,13 @@
 
     public interface IUserController
     {
-        void CreateUser(string username, string name, string address, string email, string phone, DateTime dateOfBirth, Gender gender, Zip zip, int coins, List<Payment> payments);
+        void CreateUser(string username, string name, string address, string email, string phone, DateTime dateOfBirth, Gender gender, bool isAdmin, Zip zip, int coins, List<Payment> payments);
 
         bool UpdateUser(int userId, string property, string value);
 
         bool DeleteUser(int userId);
 
-        User GetUserByUsername(User user);
+        User GetUserByUsername(string username);
 
         User GetUserById(int id);
 
@@ -21,10 +21,12 @@
 
         int CountUserBidsForGivenProduct(int userId, int productId);
 
+        int GetAllUserSpentCoinsForGivenProduct(int userId, int productId);
+
         IList<Product> GetUserProducts(User user);
 
-        IList<Bid> GetUserBids(User user);
+        IList<Bid> GetUserBids(int userId);
 
-        IList<Invoice> GetUserInvoices(User user);
+        IList<Invoice> GetUserInvoices(int userId);
     }
 }

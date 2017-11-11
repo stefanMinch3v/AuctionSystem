@@ -53,7 +53,7 @@
         public bool IsDeleted { get; set; }
 
         [DataMember]
-        public virtual ICollection<Bid> Products { get; set; } = new List<Bid>();
+        public virtual ICollection<Bid> Bids { get; set; } = new List<Bid>();
 
         [DataMember]
         public virtual ICollection<Invoice> Invoices { get; set; } = new List<Invoice>();

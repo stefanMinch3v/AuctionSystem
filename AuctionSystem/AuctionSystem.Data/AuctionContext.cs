@@ -25,12 +25,12 @@ namespace AuctionSystem.Data
 
             builder.Entity<Bid>()
                             .HasRequired(b => b.User)
-                            .WithMany(a => a.Products)
+                            .WithMany(u => u.Bids)
                             .HasForeignKey(b => b.UserId);
 
             builder.Entity<Bid>()
                             .HasRequired(b => b.Product)
-                            .WithMany(p => p.Users)
+                            .WithMany(p => p.Bids)
                             .HasForeignKey(b => b.ProductId);
 
             builder.Entity<Invoice>()
