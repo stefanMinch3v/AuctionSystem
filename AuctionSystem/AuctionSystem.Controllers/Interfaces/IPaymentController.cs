@@ -10,7 +10,7 @@
 
         bool UpdatePayment(Payment payment, PaymentType type, string paymentTypeCode);
 
-        bool DeletePayment(Payment payment);
+        bool DeletePayment(int id);
 
         IList<Payment> GetPaymentsByUser(int userId);
     }
