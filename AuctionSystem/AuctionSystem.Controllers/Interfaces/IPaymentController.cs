@@ -8,7 +8,7 @@
     {
         void AddPayment(PaymentType type, string paymentTypeCode, int userId);
 
-        bool UpdatePayment(Payment payment, PaymentType type, string paymentTypeCode);
+     
 
         bool DeletePayment(int id);
 

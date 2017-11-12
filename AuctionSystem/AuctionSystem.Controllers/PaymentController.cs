@@ -6,10 +6,12 @@
     using Models.Enums;
     using System.Collections.Generic;
     using System.Linq;
+   
+
+    
 
     public class PaymentController : IPaymentController
     {
-        // TODO
         public void AddPayment(PaymentType type, string paymentTypeCode, int userId)
         {
             using (var db = new AuctionContext())
@@ -54,12 +56,21 @@
 
         public IList<Payment> GetPaymentsByUser(int userId)
         {
-            throw new System.NotImplementedException();
+            using (var db = new AuctionContext())
+            {
+                var payment = db.Payments.(p => p.UserId == userId);
+
+                return payment;
+                
+
+                    
+
+            }
         }
 
-        public bool UpdatePayment(Payment payment, PaymentType type, string paymentTypeCode)
-        {
-            throw new System.NotImplementedException();
+      
+
+
         }
     }
-}
+  
