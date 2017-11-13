@@ -23,11 +23,13 @@
         {
             using (var db = new AuctionContext())
             {
+                var status = DateTime.Now < endDate;
                 var product = new Product
                 {
                     Name = name,
                     Price = price,
                     Description = description,
+                    IsAvailable = status,
                     StartDate = startDate,
                     EndDate = endDate
                 };
@@ -97,7 +99,7 @@
                             product.Name = value;
                             break;
                         case "price":
-                            product.Price = Int32.Parse(value);
+                            product.Price = decimal.Parse(value);
                             break;
                         case "description":
                             product.Description = value;
@@ -107,6 +109,8 @@
                             break;
                         case "endDate":
                             product.EndDate = Convert.ToDateTime(value);
+                            var status = DateTime.Now < DateTime.Parse(property);
+                            product.IsAvailable = status;
                             break;
                         default:
                             Console.WriteLine("no such property");
