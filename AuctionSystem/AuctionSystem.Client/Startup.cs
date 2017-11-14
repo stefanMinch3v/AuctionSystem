@@ -1,6 +1,8 @@
 ﻿namespace AuctionSystem.Client
 {
+    using AuctionSystem.Data;
     using System;
+    using System.Linq;
     using System.Windows.Forms;
 
     public static class Startup
@@ -11,10 +13,14 @@
         [STAThread]
         public static void Main()
         {
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new MainPanel());
-            //TODO create the UI
+
+                    Application.EnableVisualStyles();
+                    Application.SetCompatibleTextRenderingDefault(false);
+                    Application.Run(new Login());
+                   
+            }
+        
         }
     }
-}
+
+

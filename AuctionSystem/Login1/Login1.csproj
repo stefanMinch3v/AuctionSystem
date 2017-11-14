@@ -4,10 +4,10 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{3BC79CF8-528C-4A54-A93B-2326BAC2ACE8}</ProjectGuid>
-    <OutputType>WinExe</OutputType>
-    <RootNamespace>AuctionSystem.Client</RootNamespace>
-    <AssemblyName>AuctionSystem.Client</AssemblyName>
+    <ProjectGuid>{94D5EC99-19B4-4A1A-B44E-A742FC8BDADC}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>Login1</RootNamespace>
+    <AssemblyName>Login1</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -55,32 +55,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Application.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Application.Designer.cs">
-      <DependentUpon>Application.cs</DependentUpon>
-    </Compile>
-    <Compile Include="AuctionClient.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="AuctionClient.Designer.cs">
-      <DependentUpon>AuctionClient.cs</DependentUpon>
-    </Compile>
     <Compile Include="Login.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Login.Designer.cs">
       <DependentUpon>Login.cs</DependentUpon>
     </Compile>
-    <Compile Include="Startup.cs" />
+    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="Application.resx">
-      <DependentUpon>Application.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="AuctionClient.resx">
-      <DependentUpon>AuctionClient.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Login.resx">
       <DependentUpon>Login.cs</DependentUpon>
     </EmbeddedResource>
@@ -109,6 +91,19 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\error %282%29.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\expand.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\login.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\AuctionSystem.Client\AuctionSystem.Client.csproj">
+      <Project>{3bc79cf8-528c-4a54-a93b-2326bac2ace8}</Project>
+      <Name>AuctionSystem.Client</Name>
+    </ProjectReference>
     <ProjectReference Include="..\AuctionSystem.Data\AuctionSystem.Data.csproj">
       <Project>{9cf5cdc3-0d7c-4ea3-8b18-bb612c40b0c8}</Project>
       <Name>AuctionSystem.Data</Name>
@@ -117,55 +112,6 @@
       <Project>{3c0afcba-52ff-4a75-bff8-446f678a1c09}</Project>
       <Name>AuctionSystem.Models</Name>
     </ProjectReference>
-    <ProjectReference Include="..\AuctionSystem.Service\AuctionSystem.Service.csproj">
-      <Project>{a07a90da-504a-4d5d-b232-6b605acb6bc0}</Project>
-      <Name>AuctionSystem.Service</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\news-icon-13648.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\news-icon-136481.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\auction-icon-16281.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\catalog-icon-7345.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\catalog.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\account-icon-25499.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\settings-icon-14953.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\error.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\error1.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\error %281%29.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\error %282%29.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\expand.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\subtraction.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <WCFMetadata Include="Connected Services\" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\login.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
