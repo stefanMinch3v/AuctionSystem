@@ -48,6 +48,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BidController.cs" />
+    <Compile Include="Common\CoreValidator.cs" />
     <Compile Include="Interfaces\IBidController.cs" />
     <Compile Include="Interfaces\IInvoiceController.cs" />
     <Compile Include="Interfaces\IPaymentController.cs" />

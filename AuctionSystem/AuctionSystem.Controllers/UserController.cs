@@ -1,7 +1,8 @@
 ﻿namespace AuctionSystem.Controllers
 {
-    using Interfaces;
+    using Common;
     using Data;
+    using Interfaces;
     using Models;
     using Models.Enums;
     using System;
@@ -13,14 +14,21 @@
         // TODO
         public int CountUserBidsForGivenProduct(int userId, int productId)
         {
+            CoreValidator.ThrowIfNegativeOrZero(userId, nameof(userId));
+            CoreValidator.ThrowIfNegativeOrZero(productId, nameof(productId));
+
             using (var db = new AuctionContext())
             {
-                return GetUserById(userId).Bids.Select(b => b.ProductId == productId).Count();
+                return GetUserById(userId).Bids
+                                            .Select(b => b.ProductId == productId).Count();
             }
         }
 
         public int GetAllUserSpentCoinsForGivenProduct(int userId, int productId)
         {
+            CoreValidator.ThrowIfNegativeOrZero(userId, nameof(userId));
+            CoreValidator.ThrowIfNegativeOrZero(productId, nameof(productId));
+
             using (var db = new AuctionContext())
             {
                 return GetUserById(userId).Bids
@@ -29,8 +37,16 @@
             }
         }
 
-        public void CreateUser(string username, string name, string address, string email, string phone, DateTime dateOfBirth, Gender gender, bool isAdmin, Zip zip, int coins, List<Payment> payments)
+        public void CreateUser(string username, string name, string address, string email, string phone, string dateOfBirth, Gender gender, bool isAdmin, Zip zip, int coins, List<Payment> payments)
         {
+            CoreValidator.ThrowIfNullOrEmpty(username, nameof(username));
+            CoreValidator.ThrowIfNullOrEmpty(name, nameof(name));
+            CoreValidator.ThrowIfNullOrEmpty(address, nameof(address));
+            CoreValidator.ThrowIfNullOrEmpty(email, nameof(email));
+            CoreValidator.ThrowIfNullOrEmpty(phone, nameof(phone));
+            CoreValidator.ThrowIfDateIsNotCorrect(dateOfBirth, nameof(dateOfBirth));
+            CoreValidator.ThrowIfNegativeOrZero(coins, nameof(coins));
+
             using (var db = new AuctionContext())
             {
                 var user = new User
@@ -40,7 +56,7 @@
                     Address = address,
                     Email = email,
                     Phone = phone,
-                    DateOfBirth = dateOfBirth,
+                    DateOfBirth = DateTime.Parse(dateOfBirth),
                     Gender = gender,
                     Zip = zip,
                     Coins = coins,
@@ -56,6 +72,8 @@
 
         public bool DeleteUser(int id)
         {
+            CoreValidator.ThrowIfNegativeOrZero(id, nameof(id));
+
             using (var db = new AuctionContext())
             {
                 var user = GetUserById(id);
@@ -75,6 +93,8 @@
 
         public IList<Bid> GetUserBids(int userId)
         {
+            CoreValidator.ThrowIfNegativeOrZero(userId, nameof(userId));
+
             using (var db = new AuctionContext())
             {
                 return GetUserById(userId).Bids.ToList();
@@ -83,22 +103,42 @@
 
         public User GetUserById(int id)
         {
+            CoreValidator.ThrowIfNegativeOrZero(id, nameof(id));
+
             using (var db = new AuctionContext())
             {
-                return db.Users.FirstOrDefault(u => u.Id == id);
+                var user = db.Users.FirstOrDefault(u => u.Id == id);
+
+                if (user == null)
+                {
+                    throw new ArgumentNullException($"No such user in the system.");
+                }
+
+                return user;
             }
         }
 
         public User GetUserByUsername(string username)
         {
+            CoreValidator.ThrowIfNullOrEmpty(username, nameof(username));
+
             using (var db = new AuctionContext())
             {
-                return db.Users.FirstOrDefault(u => u.Username == username);
+                var user = db.Users.FirstOrDefault(u => u.Username == username);
+
+                if (user == null)
+                {
+                    throw new ArgumentNullException($"{nameof(username)} does not exist in the system.");
+                }
+
+                return user;
             }
         }
 
         public IList<Invoice> GetUserInvoices(int userId)
         {
+            CoreValidator.ThrowIfNegativeOrZero(userId, nameof(userId));
+
             using (var db = new AuctionContext())
             {
                 return GetUserById(userId).Invoices.ToList();
@@ -107,76 +147,93 @@
 
         public IList<Product> GetUserProducts(User user)
         {
+            CoreValidator.ThrowIfNull(user, nameof(user));
+
             using (var db = new AuctionContext())
             {
-                var listProducts = user.Bids
-                                        .Where(b => b.UserId == user.Id)
-                                        .Select(b => b.Product)
-                                        .ToList();
-
-                return listProducts;
+                return user.Bids
+                                .Where(b => b.UserId == user.Id)
+                                .Select(b => b.Product)
+                                .ToList();
             }
         }
 
         public bool IsUserExisting(string username)
         {
+            CoreValidator.ThrowIfNullOrEmpty(username, nameof(username));
+
             using (var db = new AuctionContext())
             {
                 return db.Users.Any(u => u.Username == username);
             }
         }
 
-        public bool UpdateUser(int userId, string property, string value) // Need to add update option for the Zip
+        public bool UpdateUser(int userId, string property, string value)
         {
+            CoreValidator.ThrowIfNegativeOrZero(userId, nameof(userId));
+            CoreValidator.ThrowIfNullOrEmpty(property, nameof(property));
+            CoreValidator.ThrowIfNullOrEmpty(value, nameof(value));
+
             using (var db = new AuctionContext())
             {
                 var user = GetUserById(userId);
 
-                if (user != null)
+                CoreValidator.ThrowIfNull(user, nameof(user));
+
+                db.Users.Attach(user);
+
+                switch (property.ToLower())
                 {
-                    switch (property)
-                    {
-                        case "Phone":
-                            user.Phone = value;
-                            break;
-                        case "Email":
-                            user.Email = value;
-                            break;
-                        case "Address":
-                            user.Address = value;
-                            break;
-                        case "Coins":
-                            user.Coins = int.Parse(value);
-                            break;
-                        case "IsAdmin":
-                            if (user.IsAdmin == false)
-                            {
-                                user.IsAdmin = true;
-                            }
-                            else
-                            {
-                                user.IsAdmin = true;
-                            }
-                            break;
-                        case "IsDeleted":
-                            if (user.IsDeleted == false)
-                            {
-                                user.IsDeleted = true;
-                            }
-                            else
-                            {
-                                user.IsDeleted = true;
-                            }
-                            break; // WHAT DEFAULT TO PUT ?
-                    }
-                    db.SaveChanges();
-                    return true;
-                }
-                else
-                {
-                    return false;
+                    case "phone":
+                        user.Phone = value;
+                        break;
+                    case "email":
+                        user.Email = value;
+                        break;
+                    case "address":
+                        user.Address = value;
+                        break;
+                    case "coins":
+                        if (!Int32.TryParse(value, out int temp))
+                        {
+                            throw new ArgumentException();
+                        }
+
+                        var parsedValue = int.Parse(value);
+
+                        CoreValidator.ThrowIfNegativeOrZero(parsedValue, nameof(parsedValue));
+
+                        user.Coins = parsedValue;
+                        break;
+                    case "isadmin":
+                        if (user.IsAdmin)
+                        {
+                            user.IsAdmin = false;
+                        }
+                        else
+                        {
+                            user.IsAdmin = true;
+                        }
+                        break;
+                    case "isdeleted":
+                        if (user.IsDeleted)
+                        {
+                            user.IsDeleted = false;
+                        }
+                        else
+                        {
+                            user.IsDeleted = true;
+                        }
+                        break;
+                    default:
+                        throw new ArgumentException("No such property.");
                 }
 
+
+                db.Entry(user).State = System.Data.Entity.EntityState.Modified;
+                db.SaveChanges();
+
+                return true;
             }
         }
     }
