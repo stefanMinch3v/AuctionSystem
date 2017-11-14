@@ -17,8 +17,6 @@
             this.dbContext = dbContext;
         }
 
-        // TODO
-
         public int CountUserBidsForGivenProduct(int userId, int productId)
         {
             throw new NotImplementedException();
@@ -29,7 +27,7 @@
             throw new NotImplementedException();
         }
 
-        public bool DeleteUser(User user)
+        public bool DeleteUser(int userId)
         {
             throw new NotImplementedException();
         }
@@ -51,10 +49,7 @@
 
         public User GetUserByUsername(string username)
         {
-            using (dbContext)
-            {
-                return dbContext.Users.FirstOrDefault(u => u.Username == username);
-            }
+            throw new NotImplementedException();
         }
 
         public IList<Invoice> GetUserInvoices(int userId)
@@ -72,9 +67,13 @@
             throw new NotImplementedException();
         }
 
-        public bool UpdateUser(User user, string property, string value)
+        public bool UpdateUser(int userId, string property, string value)
         {
             throw new NotImplementedException();
         }
+
+        // TODO
+
+
     }
 }

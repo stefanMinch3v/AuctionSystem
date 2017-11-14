@@ -74,7 +74,7 @@
     <Compile Include="Mocks\ProductControllerMock.cs" />
     <Compile Include="Mocks\UserControllerMock.cs" />
     <Compile Include="Mocks\ZipControllerMock.cs" />
-    <Compile Include="UnitTest1.cs" />
+    <Compile Include="InvoiceTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

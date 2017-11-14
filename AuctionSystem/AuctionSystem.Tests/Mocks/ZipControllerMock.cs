@@ -14,25 +14,27 @@
             this.dbContext = dbContext;
         }
 
-        // TODO
         public void AddZip(string zipCode, string country, string city)
         {
             throw new NotImplementedException();
         }
 
-        public Zip GetZipByName(string country)
+        public Zip GetZipByZipCode(string zipCode)
         {
             throw new NotImplementedException();
         }
 
-        public bool IsZipExisting(string country)
+        public bool IsZipExisting(int id)
         {
             throw new NotImplementedException();
         }
 
-        public bool UpdateZip(Zip zip, string property, string value)
+        public bool UpdateZip(string zipCode, string property, string value)
         {
             throw new NotImplementedException();
         }
+
+        // TODO
+
     }
 }
