@@ -6,6 +6,7 @@
     using Models.Enums;
     using System;
     using System.Collections.Generic;
+    using System.Linq;
 
     public class PaymentControllerMock : IPaymentController
     {
@@ -22,7 +23,7 @@
             throw new NotImplementedException();
         }
 
-        public bool DeletePayment(Payment payment)
+        public bool DeletePayment(int id)
         {
             throw new NotImplementedException();
         }
@@ -30,6 +31,14 @@
         public IList<Payment> GetPaymentsByUser(int userId)
         {
             throw new NotImplementedException();
+        }
+        public Payment GetPaymentById(int paymentId)
+        {
+            using (var db = new AuctionContext())
+            {
+                return db.Payments.FirstOrDefault(p => p.Id == paymentId);
+            }
+
         }
 
         public bool UpdatePayment(Payment payment, PaymentType type, string paymentTypeCode)

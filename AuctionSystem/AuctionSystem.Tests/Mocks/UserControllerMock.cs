@@ -34,6 +34,11 @@
             throw new NotImplementedException();
         }
 
+        public bool DeleteUser(int userId)
+        {
+            throw new NotImplementedException();
+        }
+
         public int GetAllUserSpentCoinsForGivenProduct(int userId, int productId)
         {
             throw new NotImplementedException();
@@ -73,6 +78,11 @@
         }
 
         public bool UpdateUser(User user, string property, string value)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool UpdateUser(int userId, string property, string value)
         {
             throw new NotImplementedException();
         }

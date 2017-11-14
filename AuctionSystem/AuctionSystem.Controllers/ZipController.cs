@@ -33,6 +33,11 @@
             }
         }
 
+        public Zip GetZipByName(string country)
+        {
+            throw new System.NotImplementedException();
+        }
+
         public bool IsZipExisting(int id)
         {
             using (var db = new AuctionContext())
@@ -49,6 +54,11 @@
 
             }
 
+        }
+
+        public bool IsZipExisting(string country)
+        {
+            throw new System.NotImplementedException();
         }
 
         public bool UpdateZip(int id, string property, string value)
@@ -74,6 +84,12 @@
                     
                 }
             }
+            return true;
+        }
+
+        public bool UpdateZip(Zip zip, string property, string value)
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

@@ -58,7 +58,7 @@
         {
             using (var db = new AuctionContext())
             {
-                var payment = db.Payments.(p => p.UserId == userId);
+                var payment = db.Payments.Where(p => p.UserId == userId).ToList();
 
                 return payment;
                 
