@@ -196,7 +196,7 @@
                     case "coins":
                         if (!Int32.TryParse(value, out int temp))
                         {
-                            throw new ArgumentException();
+                            throw new ArgumentException("Invalid parameter for coins.");
                         }
 
                         var parsedValue = int.Parse(value);
