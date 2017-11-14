@@ -17,12 +17,10 @@
         private InvoiceControllerMock invoiceController;
         private Mock<DbSet<Invoice>> mockSet;
 
+        [TestInitialize]
 
-        [TestMethod]
-        public void CreateInvoiceShouldReturnTrue()
+        public void createData()
         {
-
-            // Arrange
             this.db = new Mock<AuctionContext>(); // creates the virtual database
 
             this.invoiceController = new InvoiceControllerMock(this.db.Object);
@@ -36,9 +34,15 @@
 
             var data = new List<Invoice> { invoice };
 
-            this.mockSet = new Mock<DbSet<Invoice>>().SetupData(data); // prepare the virtual user 
+            this.mockSet = new Mock<DbSet<Invoice>>().SetupData(data); // prepare the virtual invoice 
 
             this.db.Setup(i => i.Invoices).Returns(this.mockSet.Object);
+
+        }
+
+        [TestMethod]
+        public void CreateInvoiceShouldReturnTrue()
+        { 
 
             //Act
 
@@ -54,53 +58,42 @@
         [ExpectedException(typeof(InvalidOperationException))]
         public void CreateInvoiceWithNegativeProductIdShouldThrowException()
         {
-            // Arrange
-            this.db = new Mock<AuctionContext>(); // creates the virtual database
-
-            this.invoiceController = new InvoiceControllerMock(this.db.Object);
-
-
-            var invoice = new Invoice
-            {
-                ProductId = 1,
-                UserId = 2
-            };
-
-            var data = new List<Invoice> { invoice };
-
-            this.mockSet = new Mock<DbSet<Invoice>>().SetupData(data); // prepare the virtual user 
-
-            this.db.Setup(i => i.Invoices).Returns(this.mockSet.Object);
-
-            invoiceController.CreateInvoice(2,-1);
-
+            // NEEDS TO BE FINISHED
+            invoiceController.CreateInvoice(2, -2);
 
         }
 
+        [TestMethod]
+        [ExpectedException(typeof(InvalidOperationException))]
+        public void CreateInvoiceWithNegativeUserIdShouldThrowException()
+        {
+            // NEEDS TO BE FINISHED
+            invoiceController.CreateInvoice(-2, 2);
+
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(InvalidOperationException))]
+        public void CreateInvoiceWithZeroProductIdShouldThrowException()
+        {
+            // NEEDS TO BE FINISHED
+            invoiceController.CreateInvoice(2, 0);
+
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(InvalidOperationException))]
+        public void CreateInvoiceWithZerouserIdShouldThrowException()
+        {
+            // NEEDS TO BE FINISHED
+            invoiceController.CreateInvoice(0, 2);
+
+        }
+        
 
         [TestMethod]
         public void GetInvoiceByProductIdShouldReturnTrue()
         {
-          
-            // Arrange
-            this.db = new Mock<AuctionContext>(); // creates the virtual database
-
-            this.invoiceController = new InvoiceControllerMock(this.db.Object);
-
-
-            var invoice = new Invoice
-            {
-                ProductId = 1,
-                UserId = 2
-            };
-
-            var data = new List<Invoice> { invoice };
-
-            this.mockSet = new Mock<DbSet<Invoice>>().SetupData(data); // prepare the virtual user 
-
-            this.db.Setup(i => i.Invoices).Returns(this.mockSet.Object);
-            
-            
             //Act
 
             var currentInvoice = this.invoiceController.GetInvoiceByProductId(1);
@@ -112,25 +105,6 @@
         [TestMethod]
         public void GetInvoiceByUserIdShouldReturnTrue()
         {
-
-            // Arrange
-            this.db = new Mock<AuctionContext>(); // creates the virtual database
-
-            this.invoiceController = new InvoiceControllerMock(this.db.Object);
-
-
-            var invoice = new Invoice
-            {
-                ProductId = 1,
-                UserId = 2
-            };
-
-            var data = new List<Invoice> { invoice };
-
-            this.mockSet = new Mock<DbSet<Invoice>>().SetupData(data); // prepare the virtual user 
-
-            this.db.Setup(i => i.Invoices).Returns(this.mockSet.Object);
-
 
             //Act
 
@@ -144,25 +118,8 @@
 
         [TestMethod]
         [ExpectedException(typeof(InvalidOperationException))]
-        public void GetInvoiceByProductIdShouldThrowExceptionNegativeInt()
-        {
-            // Arrange
-            this.db = new Mock<AuctionContext>(); // creates the virtual database
-
-            this.invoiceController = new InvoiceControllerMock(this.db.Object);
-
-
-            var invoice = new Invoice
-            {
-                ProductId = 1,
-                UserId = 2
-            };
-
-            var data = new List<Invoice> { invoice };
-
-            this.mockSet = new Mock<DbSet<Invoice>>().SetupData(data); // prepare the virtual user 
-
-            this.db.Setup(i => i.Invoices).Returns(this.mockSet.Object);
+        public void GetInvoiceByProductIdWithNegativeIntShouldThrowException()
+        { 
 
             var currentInvoice = this.invoiceController.GetInvoiceByProductId(-1);
 
@@ -170,51 +127,18 @@
 
         [TestMethod]
         [ExpectedException(typeof(InvalidOperationException))]
-        public void GetInvoiceByProductIdShouldThrowExceptionZeroInt()
+        public void GetInvoiceByProductIdWithZeroIntShouldThrowException()
         {
-            // Arrange
-            this.db = new Mock<AuctionContext>(); // creates the virtual database
-
-            this.invoiceController = new InvoiceControllerMock(this.db.Object);
-
-
-            var invoice = new Invoice
-            {
-                ProductId = 1,
-                UserId = 2
-            };
-
-            var data = new List<Invoice> { invoice };
-
-            this.mockSet = new Mock<DbSet<Invoice>>().SetupData(data); // prepare the virtual user 
-
-            this.db.Setup(i => i.Invoices).Returns(this.mockSet.Object);
-
+           
             var currentInvoice = this.invoiceController.GetInvoiceByProductId(0);
 
         }
 
         [TestMethod]
         [ExpectedException(typeof(InvalidOperationException))]
-        public void GetInvoiceByUserIdShouldThrowExceptionZeroInt()
+        public void GetInvoiceByUserIdWithZeroIntShouldThrowException()
         {
-            // Arrange
-            this.db = new Mock<AuctionContext>(); // creates the virtual database
 
-            this.invoiceController = new InvoiceControllerMock(this.db.Object);
-
-
-            var invoice = new Invoice
-            {
-                ProductId = 1,
-                UserId = 2
-            };
-
-            var data = new List<Invoice> { invoice };
-
-            this.mockSet = new Mock<DbSet<Invoice>>().SetupData(data); // prepare the virtual user 
-
-            this.db.Setup(i => i.Invoices).Returns(this.mockSet.Object);
 
             var currentInvoice = this.invoiceController.GetInvoiceByUserId(0);
 
@@ -222,26 +146,9 @@
 
         [TestMethod]
         [ExpectedException(typeof(InvalidOperationException))]
-        public void GetInvoiceByUserIdShouldThrowExceptionNegativeInt()
+        public void GetInvoiceByUserIdWithNegativeIntShouldThrowException()
         {
-            // Arrange
-            this.db = new Mock<AuctionContext>(); // creates the virtual database
-
-            this.invoiceController = new InvoiceControllerMock(this.db.Object);
-
-
-            var invoice = new Invoice
-            {
-                ProductId = 1,
-                UserId = 2
-            };
-
-            var data = new List<Invoice> { invoice };
-
-            this.mockSet = new Mock<DbSet<Invoice>>().SetupData(data); // prepare the virtual user 
-
-            this.db.Setup(i => i.Invoices).Returns(this.mockSet.Object);
-
+         
             var currentInvoice = this.invoiceController.GetInvoiceByUserId(-1);
         }
 
