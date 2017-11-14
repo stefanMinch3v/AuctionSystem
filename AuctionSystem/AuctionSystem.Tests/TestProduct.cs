@@ -610,6 +610,9 @@
         }
 
 
+        // TODO
+        // Test List<User>GetProductUsers when user controller is ready!
+
         #region Test purpose methods
         private Product GetExistingProductFromDb()
         {
