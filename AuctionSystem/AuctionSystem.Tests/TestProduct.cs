@@ -134,7 +134,7 @@
         // Create product
 
         [TestMethod]
-        [ExpectedException(typeof(InvalidOperationException))]
+        [ExpectedException(typeof(ArgumentException))]
         public void CreateProductWithEmptyNameShouldThrowException()
         {
             // Act
