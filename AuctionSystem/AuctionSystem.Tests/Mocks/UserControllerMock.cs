@@ -16,13 +16,12 @@
             this.dbContext = dbContext;
         }
 
-        // TODO
         public int CountUserBidsForGivenProduct(int userId, int productId)
         {
             throw new NotImplementedException();
         }
 
-        public void CreateUser(string username, string name, string address, string email, string phone, DateTime dateOfBirth, Gender gender, Zip zip, int coins, List<Payment> payments)
+        public void CreateUser(string username, string name, string address, string email, string phone, DateTime dateOfBirth, Gender gender, bool isAdmin, Zip zip, int coins, List<Payment> payments)
         {
             throw new NotImplementedException();
         }
@@ -32,7 +31,7 @@
             throw new NotImplementedException();
         }
 
-        public IList<Bid> GetUserBids(User user)
+        public IList<Bid> GetUserBids(int userId)
         {
             throw new NotImplementedException();
         }
@@ -42,12 +41,12 @@
             throw new NotImplementedException();
         }
 
-        public User GetUserByUsername(User user)
+        public User GetUserByUsername(string username)
         {
             throw new NotImplementedException();
         }
 
-        public IList<Invoice> GetUserInvoices(User user)
+        public IList<Invoice> GetUserInvoices(int userId)
         {
             throw new NotImplementedException();
         }
@@ -66,5 +65,8 @@
         {
             throw new NotImplementedException();
         }
+
+        // TODO
+
     }
 }
