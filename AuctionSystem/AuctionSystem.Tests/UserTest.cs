@@ -11,7 +11,7 @@
     using System.Linq;
 
     [TestClass]
-   public class UserTest
+    public class UserTest
     {
         private Mock<AuctionContext> db;
         private UserControllerMock userController;
@@ -26,17 +26,17 @@
             this.userController = new UserControllerMock(this.db.Object);
 
             var user = CreateTestUserWorking();
-            
+
 
             this.data = new List<User>() { user };
-            
+
 
             this.mockSet = new Mock<DbSet<User>>().SetupData(this.data);
 
             this.db.Setup(m => m.Users).Returns(mockSet.Object);
 
-            
-            
+
+
         }
         [TestMethod]
         public void getUserByNameShouldPass()
@@ -50,8 +50,8 @@
         {
             return this.db.Object.Users.First(u => u.Username == "John");
         }
-       
-      
+
+
         public User CreateTestUserWorking()
         {
 
@@ -70,13 +70,12 @@
                 IsAdmin = true,
                 Password = "banana",
                 IsDeleted = false,
-                
+
 
             };
 
 
-         }   
-
         }
-    }
 
+    }
+}
