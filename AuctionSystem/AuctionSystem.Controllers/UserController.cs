@@ -11,7 +11,7 @@
 
     public class UserController : IUserController
     {
-        // TODO
+        
         public int CountUserBidsForGivenProduct(int userId, int productId)
         {
             CoreValidator.ThrowIfNegativeOrZero(userId, nameof(userId));

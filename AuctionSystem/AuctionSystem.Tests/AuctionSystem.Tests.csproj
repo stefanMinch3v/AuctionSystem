@@ -66,16 +66,8 @@
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="dmaj0916_197360DataSet.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>dmaj0916_197360DataSet.xsd</DependentUpon>
-    </Compile>
     <Compile Include="Mocks\BidControllerMock.cs" />
     <Compile Include="Mocks\InvoiceControllerMock.cs" />
     <Compile Include="Mocks\PaymentControllerMock.cs" />
@@ -84,32 +76,14 @@
     <Compile Include="Mocks\ZipControllerMock.cs" />
     <Compile Include="InvoiceTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Properties\Settings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DependentUpon>Settings.settings</DependentUpon>
-    </Compile>
-    <Compile Include="UserTest.cs" />
+    <Compile Include="TestProduct.cs" />
     <Compile Include="ZipTest.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
-    <None Include="dmaj0916_197360DataSet.xsc">
-      <DependentUpon>dmaj0916_197360DataSet.xsd</DependentUpon>
-    </None>
-    <None Include="dmaj0916_197360DataSet.xsd">
-      <Generator>MSDataSetGenerator</Generator>
-      <LastGenOutput>dmaj0916_197360DataSet.Designer.cs</LastGenOutput>
+    <None Include="App.config">
       <SubType>Designer</SubType>
     </None>
-    <None Include="dmaj0916_197360DataSet.xss">
-      <DependentUpon>dmaj0916_197360DataSet.xsd</DependentUpon>
-    </None>
     <None Include="packages.config" />
-    <None Include="Properties\Settings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\AuctionSystem.Controllers\AuctionSystem.Controllers.csproj">
