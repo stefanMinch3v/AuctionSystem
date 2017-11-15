@@ -53,6 +53,7 @@
                 var user = new User
                 {
                     Username = username,
+                    Password = password,
                     Name = name,
                     Address = address,
                     Email = email,
