@@ -8,7 +8,7 @@
 
     public class ZipController : IZipController
     {
-        // TODO
+        
         public void AddZip(string zipCode, string country, string city)
         {
             using (var db = new AuctionContext())
