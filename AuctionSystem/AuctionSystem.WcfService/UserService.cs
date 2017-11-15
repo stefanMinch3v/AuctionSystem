@@ -30,16 +30,6 @@
             throw new NotImplementedException();
         }
 
-        public User GetUserById(int id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public User GetUserByUsername(User user)
-        {
-            throw new NotImplementedException();
-        }
-
         public IList<Invoice> GetUserInvoices(User user)
         {
             throw new NotImplementedException();

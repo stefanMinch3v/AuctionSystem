@@ -3,7 +3,7 @@
     using System;
     using System.Runtime.Serialization;
 
-    // TODO timestamp
+    // TODO timestamp with fluent API
 
     [DataContract]
     public class Bid

@@ -22,8 +22,5 @@
 
         [OperationContract]
         IList<Bid> GetAllBidsByProductId(int id);
-
-        [OperationContract]
-        IList<Bid> GetAllEarnedBids();
     }
 }
