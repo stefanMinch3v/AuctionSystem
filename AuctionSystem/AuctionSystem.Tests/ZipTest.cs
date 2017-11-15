@@ -58,7 +58,7 @@ using System.Threading.Tasks;
 
 
     [TestMethod]
-    [ExpectedException(typeof(InvalidOperationException))]
+    [ExpectedException(typeof(ArgumentException))]
     public void CreateZipWithEmptyZipCodeParametersShouldThrowException()
     {
 
@@ -67,7 +67,7 @@ using System.Threading.Tasks;
     }
 
     [TestMethod]
-    [ExpectedException(typeof(InvalidOperationException))]
+    [ExpectedException(typeof(ArgumentException))]
     public void CreateZipWithEmptyCountryParametersShouldThrowException()
     {
 
@@ -76,7 +76,7 @@ using System.Threading.Tasks;
     }
 
     [TestMethod]
-    [ExpectedException(typeof(InvalidOperationException))]
+    [ExpectedException(typeof(ArgumentException))]
     public void CreateZipWithEmptyCityParametersShouldThrowException()
     {
 

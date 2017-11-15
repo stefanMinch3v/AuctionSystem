@@ -19,11 +19,11 @@
 
         [TestInitialize]
 
-        public void createData()
+        public void Initialize()
         {
             this.db = new Mock<AuctionContext>(); // creates the virtual database
 
-            this.invoiceController = new InvoiceControllerMock(this.db.Object);
+            this.invoiceController = new InvoiceControllerMock(this.db.Object); //creates controller to test
 
             var invoice = new Invoice
             {
@@ -31,12 +31,17 @@
                 UserId = 2
             };
 
+            var invoice2 = new Invoice
+            {
+                ProductId = 5,
+                UserId = 6
+            };
 
-            var data = new List<Invoice> { invoice };
+            var data = new List<Invoice> { invoice,invoice2 }; //insert in collection
 
-            this.mockSet = new Mock<DbSet<Invoice>>().SetupData(data); // prepare the virtual invoice 
+            this.mockSet = new Mock<DbSet<Invoice>>().SetupData(data); //creates fake table mockSet of Products and insert the data
 
-            this.db.Setup(i => i.Invoices).Returns(this.mockSet.Object);
+            this.db.Setup(i => i.Invoices).Returns(this.mockSet.Object); // attach the table into the database and returns it as an object ready to be used 
 
         }
 
@@ -55,16 +60,16 @@
         }
 
         [TestMethod]
-        [ExpectedException(typeof(InvalidOperationException))]
+        [ExpectedException(typeof(ArgumentException))]
         public void CreateInvoiceWithNegativeProductIdShouldThrowException()
         {
-            // NEEDS TO BE FINISHED
-            invoiceController.CreateInvoice(2, -2);
+            // Act
+            this.invoiceController.CreateInvoice(2, -2);
 
         }
 
         [TestMethod]
-        [ExpectedException(typeof(InvalidOperationException))]
+        [ExpectedException(typeof(ArgumentException))]
         public void CreateInvoiceWithNegativeUserIdShouldThrowException()
         {
             // NEEDS TO BE FINISHED
@@ -73,7 +78,7 @@
         }
 
         [TestMethod]
-        [ExpectedException(typeof(InvalidOperationException))]
+        [ExpectedException(typeof(ArgumentException))]
         public void CreateInvoiceWithZeroProductIdShouldThrowException()
         {
             // NEEDS TO BE FINISHED
@@ -82,10 +87,10 @@
         }
 
         [TestMethod]
-        [ExpectedException(typeof(InvalidOperationException))]
+        [ExpectedException(typeof(ArgumentException))]
         public void CreateInvoiceWithZerouserIdShouldThrowException()
         {
-            // NEEDS TO BE FINISHED
+            // Act
             invoiceController.CreateInvoice(0, 2);
 
         }
@@ -117,42 +122,48 @@
        
 
         [TestMethod]
-        [ExpectedException(typeof(InvalidOperationException))]
+        [ExpectedException(typeof(ArgumentException))]
         public void GetInvoiceByProductIdWithNegativeIntShouldThrowException()
         { 
+            // Act
 
             var currentInvoice = this.invoiceController.GetInvoiceByProductId(-1);
 
         }
 
         [TestMethod]
-        [ExpectedException(typeof(InvalidOperationException))]
+        [ExpectedException(typeof(ArgumentException))]
         public void GetInvoiceByProductIdWithZeroIntShouldThrowException()
         {
-           
+           // Act
+
             var currentInvoice = this.invoiceController.GetInvoiceByProductId(0);
 
         }
 
         [TestMethod]
-        [ExpectedException(typeof(InvalidOperationException))]
+        [ExpectedException(typeof(ArgumentException))]
         public void GetInvoiceByUserIdWithZeroIntShouldThrowException()
         {
 
+            // Act
 
             var currentInvoice = this.invoiceController.GetInvoiceByUserId(0);
 
         }
 
         [TestMethod]
-        [ExpectedException(typeof(InvalidOperationException))]
+        [ExpectedException(typeof(ArgumentException))]
         public void GetInvoiceByUserIdWithNegativeIntShouldThrowException()
         {
          
             var currentInvoice = this.invoiceController.GetInvoiceByUserId(-1);
         }
 
-        
+        public void GetAllInvoicesForUserShouldReturnTrue()
+        {
+            var invoices = this.invoiceController.GetAllInvoicesForUser(data);
+        }
 
     }
 }
