@@ -1,4 +1,6 @@
-﻿namespace AuctionSystem.Controllers
+﻿using AuctionSystem.Controllers.Common;
+
+namespace AuctionSystem.Controllers
 {
     using Interfaces;
     using Models;
@@ -10,26 +12,18 @@
     public class ProductController : IProductController
     {
         // TODO
-        public int CountUserBidsForProduct(int id)
-        {
-            using (var db = new AuctionContext())
-            {
-                var collection = GetProductUsers(id);
-                return collection != null ? this.GetProductUsers(id).Count : 0;
-            }
-        }
-
         public void CreateProduct(string name, string description, decimal price, DateTime startDate, DateTime endDate)
         {
+            CoreValidator.ThrowIfNullOrEmpty(name, nameof(name));
+            CoreValidator.ThrowIfNullOrEmpty(description, nameof(description));
+            CoreValidator.ThrowIfNegativeOrZero(price, nameof(price));
             using (var db = new AuctionContext())
             {
-                var status = DateTime.Now < endDate;
                 var product = new Product
                 {
                     Name = name,
                     Price = price,
                     Description = description,
-                    IsAvailable = status,
                     StartDate = startDate,
                     EndDate = endDate
                 };
@@ -39,8 +33,69 @@
             }
         }
 
+        public bool UpdateProduct(int id, string property, string value)
+        {
+            CoreValidator.ThrowIfNullOrEmpty(value, nameof(property));
+            using (var db = new AuctionContext())
+            {
+                var product = GetProductById(id);
+
+                switch (property.ToLower())
+                {
+                    case "name":
+                        CoreValidator.ThrowIfNullOrEmpty(value, nameof(property));
+                        product.Name = value;
+                        break;
+                    case "price":
+                        if (!Int32.TryParse(value, out int result))
+                        {
+                            throw new ArgumentException("The value cannot be parsed to integer");
+                        }
+                        CoreValidator.ThrowIfNegativeOrZero(Int32.Parse(value), nameof(property));
+                        product.Price = Int32.Parse(value);
+                        break;
+                    case "description":
+                        CoreValidator.ThrowIfNullOrEmpty(value, nameof(property));
+                        product.Description = value;
+                        break;
+                    case "startdate":
+                        CoreValidator.ThrowIfDateIsNotCorrect(value, nameof(property));
+                        DateTime date = DateTime.Parse(value);
+                        if (date > product.EndDate)
+                        {
+                            throw new ArgumentException("Start date cannot be bigger than the end date");
+                        }
+                        else if (date < DateTime.Now)
+                        {
+                            throw new ArgumentException("Start date cannot be lower than the current date");
+                        }
+                        product.StartDate = date;
+                        break;
+                    case "enddate":
+                        CoreValidator.ThrowIfDateIsNotCorrect(value, nameof(property));
+                        DateTime dateEnd = DateTime.Parse(value);
+                        if (dateEnd < product.StartDate)
+                        {
+                            throw new ArgumentException("End date cannot be lower than the start date");
+                        }
+                        else if (dateEnd < DateTime.Now)
+                        {
+                            throw new ArgumentException("End date cannot be lower than the current date");
+                        }
+                        product.EndDate = dateEnd;
+                        break;
+                    default:
+                        throw new ArgumentException("No such property");
+                        break;
+                }
+                db.SaveChanges();
+                return true;
+            }
+        }
+
         public bool DeleteProduct(int id)
         {
+            CoreValidator.ThrowIfNegativeOrZero(id, nameof(id));
             using (var db = new AuctionContext())
             {
                 var product = GetProductById(id);
@@ -53,19 +108,40 @@
             }
         }
 
-        public Product GetProductById(int id)
-        {
-            using (var db = new AuctionContext())
-            {
-                return db.Products.SingleOrDefault(p => p.Id == id);
-            }
-        }
-
         public Product GetProductByName(string name)
         {
+            CoreValidator.ThrowIfNullOrEmpty(name, nameof(name));
             using (var db = new AuctionContext())
             {
                 return db.Products.SingleOrDefault(p => p.Name == name);
+            }
+        }
+
+        public Product GetProductById(int id)
+        {
+            CoreValidator.ThrowIfNegativeOrZero(id, nameof(id));
+            using (var db = new AuctionContext())
+            {
+                var result = db.Products.SingleOrDefault(p => p.Id == id);
+                return result;
+            }
+        }
+
+        public bool IsProductExisting(string productName)
+        {
+            CoreValidator.ThrowIfNullOrEmpty(productName, nameof(productName));
+            using (var db = new AuctionContext())
+            {
+                return db.Products.SingleOrDefault(p => p.Name == productName) != null;
+            }
+        }
+
+        public int CountUserBidsForProduct(int id)
+        {
+            using (var db = new AuctionContext())
+            {
+                var collection = GetProductUsers(id);
+                return collection != null ? this.GetProductUsers(id).Count : 0;
             }
         }
 
@@ -73,56 +149,8 @@
         {
             using (var db = new AuctionContext())
             {
-                var collection = db.Products.SingleOrDefault(p => p.Id == id).Users.Select(u => u.UserId);
+                var collection = db.Products.SingleOrDefault(p => p.Id == id).Bids.Select(u => u.UserId);
                 return collection.Select(userId => db.Users.FirstOrDefault(u => u.Id == userId)).ToList();
-            }
-        }
-
-        public bool IsProductExisting(string productName)
-        {
-            using (var db = new AuctionContext())
-            {
-                return db.Products.Single(p => p.Name == productName) != null;
-            }
-        }
-
-        public bool UpdateProduct(int id, string property, string value)
-        {
-            var product = GetProductById(id);
-            using (var db = new AuctionContext())
-            {
-                try
-                {
-                    switch (property)
-                    {
-                        case "name":
-                            product.Name = value;
-                            break;
-                        case "price":
-                            product.Price = decimal.Parse(value);
-                            break;
-                        case "description":
-                            product.Description = value;
-                            break;
-                        case "startDate":
-                            product.StartDate = Convert.ToDateTime(value);
-                            break;
-                        case "endDate":
-                            product.EndDate = Convert.ToDateTime(value);
-                            var status = DateTime.Now < DateTime.Parse(property);
-                            product.IsAvailable = status;
-                            break;
-                        default:
-                            Console.WriteLine("no such property");
-                            break;
-                    }
-                    db.SaveChanges();
-                    return true;
-                }
-                catch (Exception)
-                {
-                    throw new Exception("Failed at ProductController -> UpdateProduct");
-                }
             }
         }
     }

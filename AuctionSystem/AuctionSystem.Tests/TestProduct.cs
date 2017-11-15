@@ -466,7 +466,7 @@
 
             var currentProductId = GetExistingProductFromDb().Id;
 
-            var successUpdating = this.productController.UpdateProduct(currentProductId, "StartDate", "12-12-2017");
+            var successUpdating = this.productController.UpdateProduct(currentProductId, "StartDate", DateTime.Now.AddDays(1).ToString());
 
             // Assert
 
@@ -480,12 +480,12 @@
             // Act
 
             var currentProductId = GetExistingProductFromDb().Id;
-
-            var successUpdating = this.productController.UpdateProduct(currentProductId, "StartDate", "12-12-2017");
+            string startDate = DateTime.Now.AddDays(1).ToString();
+            var successUpdating = this.productController.UpdateProduct(currentProductId, "StartDate", startDate);
 
             // Assert
 
-            Assert.AreEqual(DateTime.Parse("12-12-2017"), GetExistingProductFromDb().StartDate);
+            Assert.AreEqual(DateTime.Parse(startDate), GetExistingProductFromDb().StartDate);
         }
 
         [TestMethod]
@@ -542,7 +542,7 @@
 
             var currentProductId = GetExistingProductFromDb().Id;
 
-            var successUpdating = this.productController.UpdateProduct(currentProductId, "EndDate", "12-12-2017");
+            var successUpdating = this.productController.UpdateProduct(currentProductId, "EndDate", DateTime.Now.AddDays(5).ToString());
 
             // Assert
 
@@ -556,12 +556,13 @@
             // Act
 
             var currentProductId = GetExistingProductFromDb().Id;
+            string endDate = DateTime.Now.AddDays(10).ToString();
 
-            var successUpdating = this.productController.UpdateProduct(currentProductId, "EndDate", "12-12-2017");
+            var successUpdating = this.productController.UpdateProduct(currentProductId, "EndDate", endDate);
 
             // Assert
 
-            Assert.AreEqual(DateTime.Parse("12-12-2017"), GetExistingProductFromDb().EndDate);
+            Assert.AreEqual(DateTime.Parse(endDate), GetExistingProductFromDb().EndDate);
         }
 
         [TestMethod]
@@ -575,7 +576,7 @@
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentException))]
-        public void UpdatePriceShouldThrowExceptionIfEndDateIsEmpty()
+        public void UpdateProductShouldThrowExceptionIfEndDateIsEmpty()
         {
             var currentProductId = GetExistingProductFromDb().Id;
 
@@ -628,8 +629,8 @@
                 Description = "Unique fake product",
                 Price = 2000m,
                 IsAvailable = true,
-                StartDate = DateTime.Now.AddDays(-1),
-                EndDate = DateTime.Now.AddDays(1)
+                StartDate = DateTime.Now.AddDays(-2),
+                EndDate = DateTime.Now.AddDays(2)
             };
         }
 

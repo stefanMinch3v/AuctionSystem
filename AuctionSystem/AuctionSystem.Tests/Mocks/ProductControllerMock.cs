@@ -6,6 +6,7 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using Controllers.Common;
 
     public class ProductControllerMock : IProductController
     {
@@ -19,6 +20,9 @@
         // TODO
         public void CreateProduct(string name, string description, decimal price, DateTime startDate, DateTime endDate)
         {
+            CoreValidator.ThrowIfNullOrEmpty(name, nameof(name));
+            CoreValidator.ThrowIfNullOrEmpty(description, nameof(description));
+            CoreValidator.ThrowIfNegativeOrZero(price, nameof(price));
             using (dbContext)
             {
                 var product = new Product
@@ -37,45 +41,67 @@
 
         public bool UpdateProduct(int id, string property, string value)
         {
+            CoreValidator.ThrowIfNullOrEmpty(value, nameof(property));
             using (dbContext)
             {
                 var product = GetProductById(id);
 
-                try
+                switch (property.ToLower())
                 {
-                    switch (property.ToLower())
-                    {
-                        case "name":
-                            product.Name = value;
-                            break;
-                        case "price":
-                            product.Price = Int32.Parse(value);
-                            break;
-                        case "description":
-                            product.Description = value;
-                            break;
-                        case "startDate":
-                            product.StartDate = Convert.ToDateTime(value);
-                            break;
-                        case "endDate":
-                            product.EndDate = Convert.ToDateTime(value);
-                            break;
-                        default:
-                            Console.WriteLine("no such property");
-                            break;
-                    }
-                    dbContext.SaveChanges();
-                    return true;
+                    case "name":
+                        CoreValidator.ThrowIfNullOrEmpty(value, nameof(property));
+                        product.Name = value;
+                        break;
+                    case "price":
+                        if (!Int32.TryParse(value, out int result))
+                        {
+                            throw new ArgumentException("The value cannot be parsed to integer");
+                        }
+                        CoreValidator.ThrowIfNegativeOrZero(Int32.Parse(value), nameof(property));
+                        product.Price = Int32.Parse(value);
+                        break;
+                    case "description":
+                        CoreValidator.ThrowIfNullOrEmpty(value, nameof(property));
+                        product.Description = value;
+                        break;
+                    case "startdate":
+                        CoreValidator.ThrowIfDateIsNotCorrect(value, nameof(property));
+                        DateTime date = DateTime.Parse(value);
+                        if (date > product.EndDate)
+                        {
+                            throw new ArgumentException("Start date cannot be bigger than the end date");
+                        }
+                        else if (date < DateTime.Now)
+                        {
+                            throw new ArgumentException("Start date cannot be lower than the current date");
+                        }
+                        product.StartDate = date;
+                        break;
+                    case "enddate":
+                        CoreValidator.ThrowIfDateIsNotCorrect(value, nameof(property));
+                        DateTime dateEnd = DateTime.Parse(value);
+                        if (dateEnd < product.StartDate)
+                        {
+                            throw new ArgumentException("End date cannot be lower than the start date");
+                        }
+                        else if (dateEnd < DateTime.Now)
+                        {
+                            throw new ArgumentException("End date cannot be lower than the current date");
+                        }
+                        product.EndDate = dateEnd;
+                        break;
+                    default:
+                        throw new ArgumentException("No such property");
+                        break;
                 }
-                catch (Exception)
-                {
-                    throw new Exception("Failed at ProductController -> UpdateProduct");
-                }
+                dbContext.SaveChanges();
+                return true;
             }
         }
 
         public bool DeleteProduct(int id)
         {
+            CoreValidator.ThrowIfNegativeOrZero(id, nameof(id));
             using (dbContext)
             {
                 var product = GetProductById(id);
@@ -90,6 +116,7 @@
 
         public Product GetProductByName(string name)
         {
+            CoreValidator.ThrowIfNullOrEmpty(name, nameof(name));
             using (dbContext)
             {
                 return dbContext.Products.SingleOrDefault(p => p.Name == name);
@@ -98,6 +125,7 @@
 
         public Product GetProductById(int id)
         {
+            CoreValidator.ThrowIfNegativeOrZero(id, nameof(id));
             using (dbContext)
             {
                 var result = dbContext.Products.SingleOrDefault(p => p.Id == id);
@@ -107,9 +135,10 @@
 
         public bool IsProductExisting(string productName)
         {
+            CoreValidator.ThrowIfNullOrEmpty(productName, nameof(productName));
             using (dbContext)
             {
-                return dbContext.Products.Single(p => p.Name == productName) != null;
+                return dbContext.Products.SingleOrDefault(p => p.Name == productName) != null;
             }
         }
 
@@ -126,7 +155,7 @@
         {
             using (dbContext)
             {
-                var collection = dbContext.Products.SingleOrDefault(p => p.Id == id).Users.Select(u => u.UserId);
+                var collection = dbContext.Products.SingleOrDefault(p => p.Id == id).Bids.Select(u => u.UserId);
                 return collection.Select(userId => dbContext.Users.FirstOrDefault(u => u.Id == userId)).ToList();
             }
         }
