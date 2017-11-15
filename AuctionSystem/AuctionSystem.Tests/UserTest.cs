@@ -176,6 +176,41 @@
             this.userController.CreateUser("name", "pass", "name name", "adress", "email", "phone", null, Models.Enums.Gender.Female, true, createFakeZip(), 10, paymentData);
         }
 
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentException))]
+        public void CreateUserShouldThrowNegativeCoinArgumentException()
+        {
+
+            this.userController.CreateUser("name", "pass", "name name", "adress", "email", "phone", "11/15/2017", Models.Enums.Gender.Female, true, createFakeZip(), -1, paymentData);
+        }
+
+        [TestMethod]
+        public void CreateUserShouldNotThrowZeroCoinArgumentException()
+        {
+
+            this.userController.CreateUser("name", "pass", "name name", "adress", "email", "phone", "11/15/2017", Models.Enums.Gender.Female, true, createFakeZip(), 0, paymentData);
+        }
+
+        [TestMethod]
+        public void DeleteUserShouldPass()
+        {
+            var existingUser = getExistingUserByUserName().Id;
+
+            var deletedUser = this.userController.DeleteUser(existingUser);
+            Assert.IsTrue(deletedUser);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentException))]
+        public void DeleteUserShouldNotPass()
+        {
+         
+            var deletedUser = this.userController.DeleteUser(15);
+
+            Assert.IsFalse(deletedUser);
+        }
+
+
         public Zip createFakeZip()
         {
             var zip = new Zip
