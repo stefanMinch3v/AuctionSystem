@@ -2,14 +2,12 @@ namespace AuctionSystem.Data
 {
     using System.Data.Entity;
     using Models;
-    using AuctionSystem.Data.Migrations;
 
     public partial class AuctionContext : DbContext
     {
         public AuctionContext()
             : base("name=AuctionContext")
         {
-            Database.SetInitializer(new MigrateDatabaseToLatestVersion<AuctionContext, Configuration>());
         }
 
         protected override void OnModelCreating(DbModelBuilder builder)
