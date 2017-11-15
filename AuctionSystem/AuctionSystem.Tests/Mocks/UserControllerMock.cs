@@ -23,7 +23,7 @@
             CoreValidator.ThrowIfNegativeOrZero(userId, nameof(userId));
             CoreValidator.ThrowIfNegativeOrZero(productId, nameof(productId));
 
-            using (var db = new AuctionContext())
+            using (dbContext)
             {
                 return GetUserById(userId).Bids
                                             .Select(b => b.ProductId == productId).Count();
@@ -35,7 +35,7 @@
             CoreValidator.ThrowIfNegativeOrZero(userId, nameof(userId));
             CoreValidator.ThrowIfNegativeOrZero(productId, nameof(productId));
 
-            using (var db = new AuctionContext())
+            using (dbContext)
             {
                 return GetUserById(userId).Bids
                                        .Where(b => b.ProductId == productId)
@@ -54,7 +54,7 @@
             CoreValidator.ThrowIfDateIsNotCorrect(dateOfBirth, nameof(dateOfBirth));
             CoreValidator.ThrowIfNegativeOrZero(coins, nameof(coins));
 
-            using (var db = new AuctionContext())
+            using (dbContext)
             {
                 var user = new User
                 {
@@ -73,8 +73,8 @@
                     IsDeleted = false
                 };
 
-                db.Users.Add(user);
-                db.SaveChanges();
+                dbContext.Users.Add(user);
+                dbContext.SaveChanges();
             }
         }
 
@@ -82,7 +82,7 @@
         {
             CoreValidator.ThrowIfNegativeOrZero(id, nameof(id));
 
-            using (var db = new AuctionContext())
+            using (dbContext)
             {
                 var user = GetUserById(id);
 
@@ -91,8 +91,8 @@
                     return false;
                 }
 
-                db.Users.Remove(user);
-                db.SaveChanges();
+                dbContext.Users.Remove(user);
+                dbContext.SaveChanges();
 
                 return true;
             }
@@ -103,7 +103,7 @@
         {
             CoreValidator.ThrowIfNegativeOrZero(userId, nameof(userId));
 
-            using (var db = new AuctionContext())
+            using (dbContext)
             {
                 return GetUserById(userId).Bids.ToList();
             }
@@ -113,9 +113,9 @@
         {
             CoreValidator.ThrowIfNegativeOrZero(id, nameof(id));
 
-            using (var db = new AuctionContext())
+            using (dbContext)
             {
-                var user = db.Users.FirstOrDefault(u => u.Id == id);
+                var user = dbContext.Users.FirstOrDefault(u => u.Id == id);
 
                 if (user == null)
                 {
@@ -130,9 +130,9 @@
         {
             CoreValidator.ThrowIfNullOrEmpty(username, nameof(username));
 
-            using (var db = new AuctionContext())
+            using (dbContext)
             {
-                var user = db.Users.FirstOrDefault(u => u.Username == username);
+                var user = dbContext.Users.FirstOrDefault(u => u.Username == username);
 
                 if (user == null)
                 {
@@ -147,7 +147,7 @@
         {
             CoreValidator.ThrowIfNegativeOrZero(userId, nameof(userId));
 
-            using (var db = new AuctionContext())
+            using (dbContext)
             {
                 return GetUserById(userId).Invoices.ToList();
             }
@@ -157,7 +157,7 @@
         {
             CoreValidator.ThrowIfNull(user, nameof(user));
 
-            using (var db = new AuctionContext())
+            using (dbContext)
             {
                 return user.Bids
                                 .Where(b => b.UserId == user.Id)
@@ -170,9 +170,9 @@
         {
             CoreValidator.ThrowIfNullOrEmpty(username, nameof(username));
 
-            using (var db = new AuctionContext())
+            using (dbContext)
             {
-                return db.Users.Any(u => u.Username == username);
+                return dbContext.Users.Any(u => u.Username == username);
             }
         }
 
@@ -182,13 +182,13 @@
             CoreValidator.ThrowIfNullOrEmpty(property, nameof(property));
             CoreValidator.ThrowIfNullOrEmpty(value, nameof(value));
 
-            using (var db = new AuctionContext())
+            using (dbContext)
             {
                 var user = GetUserById(userId);
 
                 CoreValidator.ThrowIfNull(user, nameof(user));
 
-                db.Users.Attach(user);
+                dbContext.Users.Attach(user);
 
                 switch (property.ToLower())
                 {
@@ -238,8 +238,8 @@
                 }
 
 
-                db.Entry(user).State = System.Data.Entity.EntityState.Modified;
-                db.SaveChanges();
+                dbContext.Entry(user).State = System.Data.Entity.EntityState.Modified;
+                dbContext.SaveChanges();
 
                 return true;
             }
