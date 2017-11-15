@@ -52,5 +52,8 @@
     <Compile Include="User.cs" />
     <Compile Include="Zip.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Validations\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

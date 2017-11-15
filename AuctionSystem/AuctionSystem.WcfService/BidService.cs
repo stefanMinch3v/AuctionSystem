@@ -19,11 +19,6 @@
             throw new NotImplementedException();
         }
 
-        public IList<Bid> GetAllEarnedBids()
-        {
-            throw new NotImplementedException();
-        }
-
         public Bid GetBidById(int bidId)
         {
             throw new NotImplementedException();

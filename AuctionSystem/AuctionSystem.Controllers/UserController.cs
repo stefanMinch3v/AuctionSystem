@@ -37,9 +37,10 @@
             }
         }
 
-        public void CreateUser(string username, string name, string address, string email, string phone, string dateOfBirth, Gender gender, bool isAdmin, Zip zip, int coins, List<Payment> payments)
+        public void CreateUser(string username, string password, string name, string address, string email, string phone, string dateOfBirth, Gender gender, bool isAdmin, Zip zip, int coins, List<Payment> payments)
         {
             CoreValidator.ThrowIfNullOrEmpty(username, nameof(username));
+            CoreValidator.ThrowIfNullOrEmpty(password, nameof(password));
             CoreValidator.ThrowIfNullOrEmpty(name, nameof(name));
             CoreValidator.ThrowIfNullOrEmpty(address, nameof(address));
             CoreValidator.ThrowIfNullOrEmpty(email, nameof(email));

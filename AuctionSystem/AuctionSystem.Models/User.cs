@@ -1,6 +1,6 @@
 ﻿namespace AuctionSystem.Models
 {
-    using AuctionSystem.Models.Enums;
+    using Models.Enums;
     using System;
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
@@ -15,6 +15,10 @@
         [DataMember]
         [Required]
         public string Username { get; set; }
+
+        [DataMember]
+        [Required]
+        public string Password { get; set; }
 
         [DataMember]
         [Required]
