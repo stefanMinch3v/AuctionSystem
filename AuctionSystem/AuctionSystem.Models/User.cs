@@ -18,6 +18,10 @@
 
         [DataMember]
         [Required]
+        public string Password { get; set; }
+
+        [DataMember]
+        [Required]
         public string Name { get; set; }
 
         [DataMember]

@@ -22,7 +22,8 @@
             throw new NotImplementedException();
         }
 
-        public void CreateUser(string username, string name, string address, string email, string phone, DateTime dateOfBirth, Gender gender, bool isAdmin, Zip zip, int coins, List<Payment> payments)
+
+        public void CreateUser(string username, string password, string name, string address, string email, string phone, string dateOfBirth, Gender gender, bool isAdmin, Zip zip, int coins, List<Payment> payments)
         {
             throw new NotImplementedException();
         }
