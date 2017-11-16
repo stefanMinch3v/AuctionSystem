@@ -201,13 +201,12 @@
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ArgumentException))]
+        [ExpectedException(typeof(ArgumentNullException))]
         public void DeleteUserShouldNotPass()
         {
          
             var deletedUser = this.userController.DeleteUser(15);
 
-            Assert.IsFalse(deletedUser);
         }
 
 

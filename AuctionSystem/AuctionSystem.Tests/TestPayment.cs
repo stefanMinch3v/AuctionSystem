@@ -78,10 +78,40 @@
         }
 
         [TestMethod]
-        public bool deleteUserShouldRerturnTrue()
+        public void deletePaymentShouldRerturnTrue()
         {
-            return true;
+            var existingpayment = getExistingPaymentFromDb().Id;
+
+            var deletedPayment = this.paymetController.DeletePayment(existingpayment);
+            Assert.IsTrue(deletedPayment);
         }
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentNullException))]
+          public void deletePaymentShouldRerturnFalse()
+        {
+        
+            var deletedPayment = this.paymetController.DeletePayment(12);
+            
+        }
+        [TestMethod]
+        public void getPaymentsByUserIdShouldPass()
+        {
+            var expected = data;
+            var actual = this.paymetController.GetPaymentsByUser(1).ToList();
+            CollectionAssert.AreEqual(expected, actual);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void getPaymentsByUserIdShoudThrowException()
+        {
+            var expected = data;
+            var actual = this.paymetController.GetPaymentsByUser(2).ToList();
+            CollectionAssert.AreEqual(expected, actual);
+        }
+
+
 
 
 
