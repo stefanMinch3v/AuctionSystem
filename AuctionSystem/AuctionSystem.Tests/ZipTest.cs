@@ -18,7 +18,7 @@ using System.Threading.Tasks;
         private Mock<AuctionContext> db;
         private ZipControllerMock zipController;
         private Mock<DbSet<Zip>> mockSet;
-
+        
     [TestInitialize]
 
     public void createData()
@@ -42,6 +42,8 @@ using System.Threading.Tasks;
         this.db.Setup(z => z.Zips).Returns(this.mockSet.Object);
 
     }
+
+                            //CREATE ZIP
 
     [TestMethod]
         public void CreateZipShouldReturnTrue()
@@ -83,6 +85,120 @@ using System.Threading.Tasks;
         this.zipController.AddZip("9000", "Denmark", "");
 
     }
+
+    [TestMethod]
+    [ExpectedException(typeof(ArgumentException))]
+    public void CreateZipWithNullZipCodeParametersShouldThrowException()
+    {
+
+        this.zipController.AddZip(null, "Denmark", "Aalborg");
+
+    }
+
+    [TestMethod]
+    [ExpectedException(typeof(ArgumentException))]
+    public void CreateZipWithNullCountryParametersShouldThrowException()
+    {
+
+        this.zipController.AddZip("9000", null, "Aalborg");
+
+    }
+
+    [TestMethod]
+    [ExpectedException(typeof(ArgumentException))]
+    public void CreateZipWithNullCityParametersShouldThrowException()
+    {
+
+        this.zipController.AddZip("9000", "Denmark", null);
+
+    }
+
+
+                         //GET ZIP
+
+    [TestMethod]
+    public void GetZipByZipCodeShouldPass()
+    {
+        //Act
+        var actual = this.zipController.GetZipByZipCode("9");
+        var expected = this.db.Object.Zips.FirstOrDefault(z => z.ZipCode == "9");
+        //Assert
+        Assert.AreEqual(expected, actual);
+    }
+
+
+    [TestMethod]
+    
+    public void GetZipByZipCodeWithNonExistingZipCodeShouldReturnNull()
+    {
+
+       var zipCode = this.zipController.GetZipByZipCode("9999999999999");
+
+        Assert.IsNull(zipCode);
+    }
+
+
+    [TestMethod]
+    [ExpectedException(typeof(ArgumentException))]
+    public void GetZipWithEmptyZipCodeParametersShouldThrowException()
+    {
+
+        this.zipController.GetZipByZipCode("");
+
+    }
+
+    [TestMethod]
+    [ExpectedException(typeof(ArgumentException))]
+    public void GetZipWithNullZipCodeParametersShouldThrowException()
+    {
+
+        this.zipController.GetZipByZipCode(null);
+
+    }
+
+
+                        //IS ZIP EXISTING
+
+    [TestMethod]
+    public void IsZipExistingShouldPass()
+    {
+        //Act
+        var actual = this.zipController.IsZipExisting("9");
+      
+        //Assert
+        Assert.IsTrue(actual);
+    }
+
+    [TestMethod]
+    public void IsZipExistingShouldReturnFalse()
+    {
+        //Act
+        var actual = this.zipController.IsZipExisting("8");
+
+        //Assert
+        Assert.IsFalse(actual);
+    }
+
+    [TestMethod]
+    [ExpectedException(typeof(ArgumentException))]
+    public void IsZipExistingWithEmptyShouldThrowException()
+    {
+
+        this.zipController.GetZipByZipCode("");
+
+    }
+
+    [TestMethod]
+    [ExpectedException(typeof(ArgumentException))]
+    public void IsZipExistingWithNulShouldThrowException()
+    {
+
+        this.zipController.GetZipByZipCode(null);
+
+    }
+                            //TO DO
+                            //UPDATE ZIP
+
 
 
 }

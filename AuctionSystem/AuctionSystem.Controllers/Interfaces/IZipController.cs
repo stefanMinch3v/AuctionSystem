@@ -6,7 +6,7 @@
     {
         void AddZip(string zipCode, string country, string city);
 
-        bool IsZipExisting(int id);
+        bool IsZipExisting(string zipCode);
 
         bool UpdateZip(string zipCode, string property, string value);
 

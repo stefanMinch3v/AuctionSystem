@@ -49,6 +49,8 @@
             this.db.Setup(i => i.Invoices).Returns(this.mockSet.Object); // attach the table into the database and returns it as an object ready to be used 
 
         }
+
+                            //CREATE INVOICE
         
         [TestMethod]
         public void CreateInvoiceShouldReturnTrue()
@@ -123,7 +125,7 @@
 
        }
 
-        
+                            //GET INVOICE BY PRODUCT ID
 
        [TestMethod]
        public void GetInvoiceByProductIdShouldReturnTrue()
@@ -136,9 +138,29 @@
            Assert.AreEqual(1, currentInvoice.ProductId);
        }
 
-        
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentException))]
+        public void GetInvoiceByProductIdWithNegativeIntShouldThrowException()
+        {
+            // Act
 
-       [TestMethod]
+            var currentInvoice = this.invoiceController.GetInvoiceByProductId(-1);
+
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentException))]
+        public void GetInvoiceByProductIdWithZeroIntShouldThrowException()
+        {
+            // Act
+
+            var currentInvoice = this.invoiceController.GetInvoiceByProductId(0);
+
+        }
+
+                             //GET INVOICE BY USER ID
+
+        [TestMethod]
        public void GetInvoiceByUserIdShouldReturnTrue()
        {
 
@@ -150,28 +172,7 @@
            Assert.AreEqual(2, currentInvoice.UserId);
        }
 
-        
-
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentException))]
-        public void GetInvoiceByProductIdWithNegativeIntShouldThrowException()
-        { 
-            // Act
-
-            var currentInvoice = this.invoiceController.GetInvoiceByProductId(-1);
-
-        }
-        
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentException))]
-        public void GetInvoiceByProductIdWithZeroIntShouldThrowException()
-        {
-           // Act
-
-            var currentInvoice = this.invoiceController.GetInvoiceByProductId(0);
-
-        }
-        
+              
         [TestMethod]
         [ExpectedException(typeof(ArgumentException))]
         public void GetInvoiceByUserIdWithZeroIntShouldThrowException()
@@ -202,6 +203,7 @@
            Assert.IsNull(currentInvoice);
        }
 
+                        //GET ALL INVOICES FOR USER
         
        [TestMethod] 
        public void GetAllInvoicesForUserShouldReturnTrue()
