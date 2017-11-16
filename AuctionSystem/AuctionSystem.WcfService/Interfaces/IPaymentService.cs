@@ -18,6 +18,12 @@
         bool DeletePayment(Payment payment);
 
         [OperationContract]
+        bool DeletePaymentById(string paymentId);
+
+        [OperationContract]
         IList<Payment> GetPaymentsByUser(int userId);
+
+        [OperationContract]
+        Payment GetPaymentById(string paymentId);
     }
 }
