@@ -19,42 +19,73 @@
         private PaymentControllerMock paymetController;
         private Mock<DbSet<Payment>> mockSet;
         private List<Payment> data;
-        // TODO
-        // Tips for mocking tests
 
-        // Arrange, Act, Assert;
-
-        // var mockSet = new Mock<DbSet<User>>(); // prepare the virtual user table 
-
-        // var mockContext = new Mock<AuctionContext>(); // creates the virtual database
-        // mockContext.Setup(m => m.Users).Returns(mockSet.Object); // creates the table users
-
-        // var userController = new UserControllerMock(); // our mock implementation of the controller with fake data
-        // userController. some method
-
-        // mockSet.Verify(m => m.Add(It.IsAny<User>()), Times.Once()); // to check if the user it added only once
-        // mockContext.Verify(m => m.SaveChanges(), Times.Once()); // save changes only once
-        // it can be used mockSet.Verify(m => m.Add(It.Is<User>(u => u.Age == 20))) // this will throw an exception if the current user's age that you're trying to add is != 20
-
-        // Simple example create user
         [TestInitialize]
         public void Initialize()
         {
             this.db = new Mock<AuctionContext>();
             this.paymetController = new PaymentControllerMock(this.db.Object);
-     
-            var workingPayment = GetWorkingPayment();
+
+            var workingPayment = CreateWorkingPayment();
+
+            this.data = new List<Payment>() { workingPayment };
+
+            this.mockSet = new Mock<DbSet<Payment>>().SetupData(this.data);
+
+            this.db.Setup(m => m.Payments).Returns(mockSet.Object);
         }
+
         [TestMethod]
-        public void GetPaymentByIdShouldŃotPass()
+        public void CreateWorkingPaymentShouldPass()
+        {
+            this.paymetController.AddPayment(PaymentType.AmazonPayment, "1", 2);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentException))]
+        public void CreatePaymentShouldThrowNullPaymentTypeCodeException()
+        {
+            this.paymetController.AddPayment(PaymentType.AmazonPayment, null, 2);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentException))]
+        public void CreatePaymentShouldThrowEmptyPaymentTypeCodeException()
+        {
+            this.paymetController.AddPayment(PaymentType.AmazonPayment,"" , 2);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentException))]
+        public void CreatePaymentShouldThrowZeroUserIdException()
+        {
+            this.paymetController.AddPayment(PaymentType.AmazonPayment, "1", 0);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentException))]
+        public void CreatePaymentShouldThrowNegativeUserIdException()
+        {
+            this.paymetController.AddPayment(PaymentType.AmazonPayment, "1", -1);
+        }
+
+        [TestMethod]
+        public void GetPaymentByIdShouldPass()
         {
             var expected = getExistingPaymentFromDb().Id;
-            var actual = paymetController.GetPaymentById(1);
+            var actual = paymetController.GetPaymentById(1).Id;
             Assert.AreEqual(expected, actual);
         }
 
+        [TestMethod]
+        public bool deleteUserShouldRerturnTrue()
+        {
+            return true;
+        }
 
-        private Payment GetWorkingPayment()
+
+
+        private Payment CreateWorkingPayment()
         {
             return new Payment
             {
@@ -64,11 +95,12 @@
                 User = null,
                 UserId = 1
             };
-
-
-
         }
+
         private Payment getExistingPaymentFromDb()
+
+
+
         {
             return this.db.Object.Payments.First(p => p.Id == 1);
         }

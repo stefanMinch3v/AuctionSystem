@@ -20,30 +20,53 @@
         // TODO
         public void AddPayment(PaymentType type, string paymentTypeCode, int userId)
         {
-            throw new NotImplementedException();
+            using (dbContext)
+            {
+                var payment = new Payment
+                {
+                    Type = type,
+                    PaymentTypeCode = paymentTypeCode,
+                    UserId = userId
+                };
+                dbContext.Payments.Add(payment);
+                dbContext.SaveChanges();
+            }
         }
 
         public bool DeletePayment(int id)
         {
-            throw new NotImplementedException();
+
+            using (dbContext)
+            {
+                var payment = GetPaymentById(id);
+
+                if (payment == null)
+                {
+                    return false;
+                }
+                dbContext.Payments.Remove(payment);
+                dbContext.SaveChanges();
+                return true;
+            }
         }
 
         public IList<Payment> GetPaymentsByUser(int userId)
         {
-            throw new NotImplementedException();
+            using (dbContext)
+            {
+                var payment = dbContext.Payments.Where(p => p.UserId == userId).ToList();
+
+                return payment;
+            }
         }
         public Payment GetPaymentById(int paymentId)
         {
-            using (var db = new AuctionContext())
+            using (dbContext)
             {
-                return db.Payments.FirstOrDefault(p => p.Id == paymentId);
+                return dbContext.Payments.FirstOrDefault(p => p.Id == paymentId);
             }
 
         }
 
-        public bool UpdatePayment(Payment payment, PaymentType type, string paymentTypeCode)
-        {
-            throw new NotImplementedException();
-        }
     }
 }
