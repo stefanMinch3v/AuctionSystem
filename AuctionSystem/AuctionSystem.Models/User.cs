@@ -53,7 +53,7 @@
         public string Address { get; set; }
 
         [DataMember]
-        public int? ZipId { get; set; }
+        public int ZipId { get; set; }
 
         [DataMember]
         public virtual Zip Zip { get; set; }
