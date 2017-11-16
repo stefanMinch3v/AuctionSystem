@@ -3,12 +3,11 @@
     using Data;
     using Interfaces;
     using Models;
-    using System;
     using System.Linq;
 
     public class ZipController : IZipController
     {
-        
+        // TODO
         public void AddZip(string zipCode, string country, string city)
         {
             using (var db = new AuctionContext())
@@ -26,29 +25,47 @@
            
         }
 
-        public Zip GetZipByZipCode(string zipCode)
+        public Zip GetZipById(int id)
         {
             using (var db = new AuctionContext())
             {
-                return db.Zips.SingleOrDefault(z => z.ZipCode == zipCode);
+                return db.Zips.SingleOrDefault(z => z.Id == id);
             }
+        }
+
+        public Zip GetZipByName(string country)
+        {
+            throw new System.NotImplementedException();
         }
 
         public bool IsZipExisting(int id)
         {
             using (var db = new AuctionContext())
             {
-                return db.Users.Any(z => z.Id == id);
-                
+                var zip = GetZipById(id);
+                    if(zip == null)
+                {
+                    return false;
+                }
+                else
+                {
+                    return true;
+                }
+
             }
 
         }
 
-        public bool UpdateZip(string zipCode, string property, string value)
+        public bool IsZipExisting(string country)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public bool UpdateZip(int id, string property, string value)
         {
             using (var db = new AuctionContext())
             {
-                var zip = GetZipByZipCode(zipCode);
+                var zip = GetZipById(id);
                 if(zip != null)
                 {
                     switch (property)
@@ -63,17 +80,16 @@
                         case "City":
                             zip.City = value;
                             break;
-                        default:
-                            throw new Exception("There is no such property!");
                     }
-                    db.SaveChanges();
-                    return true;
-                }
-                else
-                {
-                    return false;
+                    
                 }
             }
+            return true;
+        }
+
+        public bool UpdateZip(Zip zip, string property, string value)
+        {
+            throw new System.NotImplementedException();
         }
     }
 }
