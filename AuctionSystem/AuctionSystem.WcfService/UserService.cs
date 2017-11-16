@@ -1,5 +1,6 @@
 ﻿namespace AuctionSystem.WcfService
 {
+    using AuctionSystem.Controllers;
     using Interfaces;
     using Models;
     using Models.Enums;
@@ -8,46 +9,73 @@
 
     public class UserService : IUserService
     {
-        // TODO in each method return the controller that supposed to handle its operation
-
         public int CountUserBidsForGivenProduct(int userId, int productId)
         {
-            throw new NotImplementedException();
+            return new UserController().CountUserBidsForGivenProduct(userId, productId);
         }
 
-        public void CreateUser(string username, string name, string address, string email, string phone, DateTime dateOfBirth, Gender gender, Zip zip, int coins, List<Payment> payments)
+        public void CreateUser(string username, string password, string name, string address, string email, string phone, string dateOfBirth, Gender gender, int zipId, int coins, List<Payment> payments)
         {
-            throw new NotImplementedException();
+            var controller = new UserController();
+            controller.CreateUser(username, password, name, address, email, phone, dateOfBirth, gender, zipId, coins, payments);
         }
 
-        public bool DeleteUser(User user)
+        public User GetUserById(int id)
         {
-            throw new NotImplementedException();
+            var dbUser = new UserController().GetUserById(id);
+            
+            return TransferDbObjectToRegularObject(dbUser);
         }
 
-        public IList<Bid> GetUserBids(User user)
+        private User TransferDbObjectToRegularObject(User dbUser)
         {
-            throw new NotImplementedException();
+            var newUser = new User
+            {
+                Id = dbUser.Id,
+                Gender = dbUser.Gender,
+                Address = dbUser.Address,
+                Coins = dbUser.Coins,
+                DateOfBirth = dbUser.DateOfBirth,
+                Email = dbUser.Email,
+                IsAdmin = dbUser.IsAdmin,
+                IsDeleted = dbUser.IsDeleted,
+                Name = dbUser.Name,
+                Password = dbUser.Password,
+                Phone = dbUser.Phone,
+                Username = dbUser.Username
+            };
+
+            return newUser;
         }
 
-        public IList<Invoice> GetUserInvoices(User user)
+        public bool DeleteUser(int userId)
         {
-            throw new NotImplementedException();
+            return new UserController().DeleteUser(userId);
         }
 
-        public IList<Product> GetUserProducts(User user)
+        public IList<Bid> GetUserBids(int userId)
         {
-            throw new NotImplementedException();
+            return new UserController().GetUserBids(userId);
+        }
+
+        public IList<Invoice> GetUserInvoices(int userId)
+        {
+            return new UserController().GetUserInvoices(userId);
+        }
+
+        public IList<Product> GetUserProducts(int userId)
+        {
+            return new UserController().GetUserProducts(userId);
         }
 
         public bool IsUserExisting(string username)
         {
-            throw new NotImplementedException();
+            return new UserController().IsUserExisting(username);
         }
 
-        public bool UpdateUser(User user, string property, string value)
+        public bool UpdateUser(int userId, string property, string value)
         {
-            throw new NotImplementedException();
+            return new UserController().UpdateUser(userId, property, value);
         }
     }
 }
