@@ -3,11 +3,12 @@
     using Data;
     using Interfaces;
     using Models;
+    using System;
     using System.Linq;
 
     public class ZipController : IZipController
     {
-        // TODO
+        
         public void AddZip(string zipCode, string country, string city)
         {
             using (var db = new AuctionContext())
@@ -25,11 +26,11 @@
            
         }
 
-        public Zip GetZipById(int id)
+        public Zip GetZipByZipCode(string zipCode)
         {
             using (var db = new AuctionContext())
             {
-                return db.Zips.SingleOrDefault(z => z.Id == id);
+                return db.Zips.SingleOrDefault(z => z.ZipCode == zipCode);
             }
         }
 
@@ -37,25 +38,17 @@
         {
             using (var db = new AuctionContext())
             {
-                var zip = GetZipById(id);
-                    if(zip == null)
-                {
-                    return false;
-                }
-                else
-                {
-                    return true;
-                }
-
+                return db.Users.Any(z => z.Id == id);
+                
             }
 
         }
 
-        public bool UpdateZip(int id, string property, string value)
+        public bool UpdateZip(string zipCode, string property, string value)
         {
             using (var db = new AuctionContext())
             {
-                var zip = GetZipById(id);
+                var zip = GetZipByZipCode(zipCode);
                 if(zip != null)
                 {
                     switch (property)
@@ -70,8 +63,15 @@
                         case "City":
                             zip.City = value;
                             break;
+                        default:
+                            throw new Exception("There is no such property!");
                     }
-                    
+                    db.SaveChanges();
+                    return true;
+                }
+                else
+                {
+                    return false;
                 }
             }
         }

@@ -19,11 +19,6 @@
             throw new NotImplementedException();
         }
 
-        public Invoice GetInvoiceByProductId(int id)
-        {
-            throw new NotImplementedException();
-        }
-
         public Invoice GetInvoiceByUserId(int id)
         {
             throw new NotImplementedException();

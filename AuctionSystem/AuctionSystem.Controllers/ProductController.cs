@@ -1,51 +1,157 @@
-﻿namespace AuctionSystem.Controllers
+﻿using AuctionSystem.Controllers.Common;
+
+namespace AuctionSystem.Controllers
 {
     using Interfaces;
     using Models;
     using System;
     using System.Collections.Generic;
+    using Data;
+    using System.Linq;
 
     public class ProductController : IProductController
     {
         // TODO
-        public int CountUserBidsForProduct(User user)
-        {
-            throw new NotImplementedException();
-        }
-
         public void CreateProduct(string name, string description, decimal price, DateTime startDate, DateTime endDate)
         {
-            throw new NotImplementedException();
+            CoreValidator.ThrowIfNullOrEmpty(name, nameof(name));
+            CoreValidator.ThrowIfNullOrEmpty(description, nameof(description));
+            CoreValidator.ThrowIfNegativeOrZero(price, nameof(price));
+            using (var db = new AuctionContext())
+            {
+                var product = new Product
+                {
+                    Name = name,
+                    Price = price,
+                    Description = description,
+                    StartDate = startDate,
+                    EndDate = endDate
+                };
+
+                db.Products.Add(product);
+                db.SaveChanges();
+            }
         }
 
-        public bool DeleteProduct(Product product)
+        public bool UpdateProduct(int id, string property, string value)
         {
-            throw new NotImplementedException();
+            CoreValidator.ThrowIfNullOrEmpty(value, nameof(property));
+            using (var db = new AuctionContext())
+            {
+                var product = GetProductById(id);
+
+                switch (property.ToLower())
+                {
+                    case "name":
+                        CoreValidator.ThrowIfNullOrEmpty(value, nameof(property));
+                        product.Name = value;
+                        break;
+                    case "price":
+                        if (!Int32.TryParse(value, out int result))
+                        {
+                            throw new ArgumentException("The value cannot be parsed to integer");
+                        }
+                        CoreValidator.ThrowIfNegativeOrZero(Int32.Parse(value), nameof(property));
+                        product.Price = Int32.Parse(value);
+                        break;
+                    case "description":
+                        CoreValidator.ThrowIfNullOrEmpty(value, nameof(property));
+                        product.Description = value;
+                        break;
+                    case "startdate":
+                        CoreValidator.ThrowIfDateIsNotCorrect(value, nameof(property));
+                        DateTime date = DateTime.Parse(value);
+                        if (date > product.EndDate)
+                        {
+                            throw new ArgumentException("Start date cannot be bigger than the end date");
+                        }
+                        else if (date < DateTime.Now)
+                        {
+                            throw new ArgumentException("Start date cannot be lower than the current date");
+                        }
+                        product.StartDate = date;
+                        break;
+                    case "enddate":
+                        CoreValidator.ThrowIfDateIsNotCorrect(value, nameof(property));
+                        DateTime dateEnd = DateTime.Parse(value);
+                        if (dateEnd < product.StartDate)
+                        {
+                            throw new ArgumentException("End date cannot be lower than the start date");
+                        }
+                        else if (dateEnd < DateTime.Now)
+                        {
+                            throw new ArgumentException("End date cannot be lower than the current date");
+                        }
+                        product.EndDate = dateEnd;
+                        break;
+                    default:
+                        throw new ArgumentException("No such property");
+                        break;
+                }
+                db.SaveChanges();
+                return true;
+            }
+        }
+
+        public bool DeleteProduct(int id)
+        {
+            CoreValidator.ThrowIfNegativeOrZero(id, nameof(id));
+            using (var db = new AuctionContext())
+            {
+                var product = GetProductById(id);
+
+                if (product == null) return false;
+
+                db.Products.Remove(product);
+                db.SaveChanges();
+                return true;
+            }
+        }
+
+        public Product GetProductByName(string name)
+        {
+            CoreValidator.ThrowIfNullOrEmpty(name, nameof(name));
+            using (var db = new AuctionContext())
+            {
+                return db.Products.SingleOrDefault(p => p.Name == name);
+            }
         }
 
         public Product GetProductById(int id)
         {
-            throw new NotImplementedException();
-        }
-
-        public Product GetProductByName(Product product)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IList<User> GetProductUsers(Product product)
-        {
-            throw new NotImplementedException();
+            CoreValidator.ThrowIfNegativeOrZero(id, nameof(id));
+            using (var db = new AuctionContext())
+            {
+                var result = db.Products.SingleOrDefault(p => p.Id == id);
+                return result;
+            }
         }
 
         public bool IsProductExisting(string productName)
         {
-            throw new NotImplementedException();
+            CoreValidator.ThrowIfNullOrEmpty(productName, nameof(productName));
+            using (var db = new AuctionContext())
+            {
+                return db.Products.SingleOrDefault(p => p.Name == productName) != null;
+            }
         }
 
-        public bool UpdateProduct(Product product, string property, string value)
+        public int CountUserBidsForProduct(int id)
         {
-            throw new NotImplementedException();
+            using (var db = new AuctionContext())
+            {
+                var collection = GetProductUsers(id);
+                return collection != null ? this.GetProductUsers(id).Count : 0;
+            }
+        }
+
+        public IList<User> GetProductUsers(int id)
+        {
+            using (var db = new AuctionContext())
+            {
+                var collection = db.Products.SingleOrDefault(p => p.Id == id).Bids.Select(u => u.UserId);
+                return collection.Select(userId => db.Users.FirstOrDefault(u => u.Id == userId)).ToList();
+            }
         }
     }
 }

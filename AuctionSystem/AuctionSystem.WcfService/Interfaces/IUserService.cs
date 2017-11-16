@@ -19,12 +19,6 @@
         bool DeleteUser(User user);
 
         [OperationContract]
-        User GetUserByUsername(User user);
-
-        [OperationContract]
-        User GetUserById(int id);
-
-        [OperationContract]
         bool IsUserExisting(string username);
 
         [OperationContract]

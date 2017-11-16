@@ -11,14 +11,20 @@
 
         [DataMember]
         [Required]
+        [MinLength(2)]
+        [MaxLength(40)]
         public string ZipCode { get; set; }
 
         [DataMember]
         [Required]
+        [MinLength(2)]
+        [MaxLength(40)]
         public string Country { get; set; }
 
         [DataMember]
         [Required]
+        [MinLength(2)]
+        [MaxLength(40)]
         public string City { get; set; }
     }
 }
