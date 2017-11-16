@@ -72,30 +72,78 @@
         [TestMethod]
         public void GetPaymentByIdShouldPass()
         {
-            var expected = getExistingPaymentFromDb().Id;
-            var actual = paymetController.GetPaymentById(1).Id;
+            var expected = GetExistingPaymentFromDb().PaymentTypeCode;
+            var actual = paymetController.GetPayment("1").PaymentTypeCode;
             Assert.AreEqual(expected, actual);
         }
 
         [TestMethod]
-        public void deletePaymentShouldRerturnTrue()
+        [ExpectedException(typeof(NullReferenceException))]
+        public void GetPaymentByIdShouldThrowNullReferenceException()
         {
-            var existingpayment = getExistingPaymentFromDb().Id;
+            
+            var actual = paymetController.GetPayment("5451").PaymentTypeCode;
+            
+            
+        }
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentException))]
+        public void GetPaymentByIdShouldThrowNullIdException()
+        {
+            
+            var actual = paymetController.GetPayment(null).PaymentTypeCode;
+            
+        }
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentException))]
+        public void GetPaymentByIdShouldThrowEmptyIdException()
+        {
+
+            var actual = paymetController.GetPayment("").PaymentTypeCode;
+
+        }
+
+
+
+        [TestMethod]
+        public void DeletePaymentShouldRerturnTrue()
+        {
+            var existingpayment = GetExistingPaymentFromDb().PaymentTypeCode;
 
             var deletedPayment = this.paymetController.DeletePayment(existingpayment);
             Assert.IsTrue(deletedPayment);
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ArgumentNullException))]
-          public void deletePaymentShouldRerturnFalse()
+        public void DeletePaymentShouldRerturnFalse()
         {
-        
-            var deletedPayment = this.paymetController.DeletePayment(12);
-            
+
+            var deletedPayment = this.paymetController.DeletePayment("12");
+            Assert.IsFalse(deletedPayment);
+
         }
+
+        
+                [TestMethod]
+                [ExpectedException(typeof(ArgumentException))]
+                public void DeletePaymentShouldThrowNullIdException()
+                {
+
+                    var deletedPayment = this.paymetController.DeletePayment(null);
+
+                }
+
+                [TestMethod]
+                [ExpectedException(typeof(ArgumentException))]
+                public void DeletePaymentShouldThrowEmptyIdException()
+                {
+
+                    var deletedPayment = this.paymetController.DeletePayment("");
+
+                }
+                
         [TestMethod]
-        public void getPaymentsByUserIdShouldPass()
+        public void GetPaymentsByUserIdShouldPass()
         {
             var expected = data;
             var actual = this.paymetController.GetPaymentsByUser(1).ToList();
@@ -103,12 +151,11 @@
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ArgumentNullException))]
-        public void getPaymentsByUserIdShoudThrowException()
+        public void GetPaymentsByUserIdShoudReturnEmptyList()
         {
-            var expected = data;
+           
             var actual = this.paymetController.GetPaymentsByUser(2).ToList();
-            CollectionAssert.AreEqual(expected, actual);
+            Assert.IsFalse(actual.Any());
         }
 
 
@@ -119,20 +166,20 @@
         {
             return new Payment
             {
-                Id = 1,
+                
                 Type = PaymentType.CreditCard,
-                PaymentTypeCode = "bank",
+                PaymentTypeCode = "1",
                 User = null,
                 UserId = 1
             };
         }
 
-        private Payment getExistingPaymentFromDb()
+        private Payment GetExistingPaymentFromDb()
 
 
 
         {
-            return this.db.Object.Payments.First(p => p.Id == 1);
+            return this.db.Object.Payments.First(p => p.PaymentTypeCode == "1");
         }
             
     }

@@ -1,5 +1,6 @@
 ﻿namespace AuctionSystem.Tests.Mocks
 {
+    using AuctionSystem.Controllers.Common;
     using Controllers.Interfaces;
     using Data;
     using Models;
@@ -20,6 +21,8 @@
         // TODO
         public void AddPayment(PaymentType type, string paymentTypeCode, int userId)
         {
+            CoreValidator.ThrowIfNullOrEmpty(paymentTypeCode, nameof(paymentTypeCode));
+            CoreValidator.ThrowIfNegativeOrZero(userId, nameof(userId));
             using (dbContext)
             {
                 var payment = new Payment
@@ -33,12 +36,12 @@
             }
         }
 
-        public bool DeletePayment(int id)
+        public bool DeletePayment(string id)
         {
-
+            CoreValidator.ThrowIfNullOrEmpty(id, nameof(id));
             using (dbContext)
             {
-                var payment = GetPaymentById(id);
+                var payment = GetPayment(id);
 
                 if (payment == null)
                 {
@@ -52,6 +55,7 @@
 
         public IList<Payment> GetPaymentsByUser(int userId)
         {
+            CoreValidator.ThrowIfNegativeOrZero(userId, nameof(userId));
             using (dbContext)
             {
                 var payment = dbContext.Payments.Where(p => p.UserId == userId).ToList();
@@ -59,11 +63,12 @@
                 return payment;
             }
         }
-        public Payment GetPaymentById(int paymentId)
+        public Payment GetPayment(string paymentId)
         {
+            CoreValidator.ThrowIfNullOrEmpty(paymentId, nameof(paymentId));
             using (dbContext)
             {
-                return dbContext.Payments.FirstOrDefault(p => p.Id == paymentId);
+                return dbContext.Payments.SingleOrDefault(p => p.PaymentTypeCode == paymentId);
             }
 
         }

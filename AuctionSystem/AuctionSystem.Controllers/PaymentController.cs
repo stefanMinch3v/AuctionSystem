@@ -27,27 +27,29 @@
             }
     }
 
-        public Payment GetPaymentById(int paymentId)
+        public Payment GetPayment(string paymentId)
         {
             using (var db = new AuctionContext())
             {
-                return db.Payments.FirstOrDefault(p => p.Id == paymentId);
+                return db.Payments.FirstOrDefault(p => p.PaymentTypeCode == paymentId);
             }
              
         }
 
 
         
-        public bool DeletePayment(int id)
+        public bool DeletePayment(string id)
         {
             using (var db = new AuctionContext())
             {
-                var payment = GetPaymentById(id);
+                var payment = GetPayment(id);
 
                     if(payment == null)
                     {
                     return false;
                     }
+
+                db.Payments.Attach(payment);
                 db.Payments.Remove(payment);
                 db.SaveChanges();
                 return true;
