@@ -48,6 +48,12 @@
             CoreValidator.ThrowIfDateIsNotCorrect(dateOfBirth, nameof(dateOfBirth));
             CoreValidator.ThrowIfNegativeOrZero(coins, nameof(coins));
 
+            var dateParsed = DateTime.Parse(dateOfBirth);
+            if (dateParsed > DateTime.Now.AddYears(-18))
+            {
+                throw new ArgumentException($"Date of birth is not valid, the customer must be adult.");
+            }
+
             using (var db = new AuctionContext())
             {
                 var user = new User
@@ -58,7 +64,7 @@
                     Address = address,
                     Email = email,
                     Phone = phone,
-                    DateOfBirth = DateTime.Parse(dateOfBirth),
+                    DateOfBirth = dateParsed,
                     Gender = gender,
                     Zip = zip,
                     Coins = coins,
