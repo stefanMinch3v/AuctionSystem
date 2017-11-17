@@ -1,6 +1,7 @@
 ﻿namespace AuctionSystem.Models
 {
-    using AuctionSystem.Models.Enums;
+    using Models.Validations;
+    using Models.Enums;
     using System;
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
@@ -14,10 +15,19 @@
 
         [DataMember]
         [Required]
+        [MinLength(3)]
+        [MaxLength(30)]
         public string Username { get; set; }
 
         [DataMember]
         [Required]
+        [Password(5, 30)]
+        public string Password { get; set; }
+
+        [DataMember]
+        [Required]
+        [MinLength(2)]
+        [MaxLength(30)]
         public string Name { get; set; }
 
         [DataMember]
@@ -27,18 +37,23 @@
         public Gender Gender { get; set; }
 
         [DataMember]
+        [MinLength(5)]
+        [MaxLength(40)]
         public string Phone { get; set; }
 
         [DataMember]
         [Required]
+        [Email]
         public string Email { get; set; }
 
         [DataMember]
         [Required]
+        [MinLength(3)]
+        [MaxLength(100)]
         public string Address { get; set; }
 
         [DataMember]
-        public int ZipId { get; set; }
+        public int? ZipId { get; set; }
 
         [DataMember]
         public virtual Zip Zip { get; set; }

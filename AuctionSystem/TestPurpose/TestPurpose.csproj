@@ -4,15 +4,16 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{7ABB33CF-9DBB-4ACF-9305-8C831DFE85AF}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>AuctionSystem.Controllers</RootNamespace>
-    <AssemblyName>AuctionSystem.Controllers</AssemblyName>
+    <ProjectGuid>{6BD043ED-7F09-4438-9D4B-F97758C0500F}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>TestPurpose</RootNamespace>
+    <AssemblyName>TestPurpose</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -22,6 +23,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -47,29 +49,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BidController.cs" />
-    <Compile Include="Common\CoreValidator.cs" />
-    <Compile Include="Interfaces\IBidController.cs" />
-    <Compile Include="Interfaces\IInvoiceController.cs" />
-    <Compile Include="Interfaces\IPaymentController.cs" />
-    <Compile Include="Interfaces\IProductController.cs" />
-    <Compile Include="Interfaces\IUserController.cs" />
-    <Compile Include="Interfaces\IZipController.cs" />
-    <Compile Include="InvoiceController.cs" />
-    <Compile Include="PaymentController.cs" />
-    <Compile Include="ProductController.cs" />
+    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="UserController.cs" />
-    <Compile Include="ZipController.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\AuctionSystem.Data\AuctionSystem.Data.csproj">
-      <Project>{9cf5cdc3-0d7c-4ea3-8b18-bb612c40b0c8}</Project>
-      <Name>AuctionSystem.Data</Name>
+    <ProjectReference Include="..\AuctionSystem.Controllers\AuctionSystem.Controllers.csproj">
+      <Project>{7abb33cf-9dbb-4acf-9305-8c831dfe85af}</Project>
+      <Name>AuctionSystem.Controllers</Name>
     </ProjectReference>
     <ProjectReference Include="..\AuctionSystem.Models\AuctionSystem.Models.csproj">
       <Project>{3c0afcba-52ff-4a75-bff8-446f678a1c09}</Project>

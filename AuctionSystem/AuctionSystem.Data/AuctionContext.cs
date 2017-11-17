@@ -13,7 +13,7 @@ namespace AuctionSystem.Data
         protected override void OnModelCreating(DbModelBuilder builder)
         {
             builder.Entity<User>()
-                                .HasRequired(c => c.Zip);
+                                .HasOptional(c => c.Zip);
 
             builder.Entity<User>()
                                 .HasMany(c => c.Payments)
