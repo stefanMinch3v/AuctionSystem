@@ -153,5 +153,13 @@ namespace AuctionSystem.Controllers
                 return collection.Select(userId => db.Users.FirstOrDefault(u => u.Id == userId)).ToList();
             }
         }
+
+        public bool IsProductExistingById(int productId)
+        {
+            using (var db = new AuctionContext())
+            {
+                return db.Products.Any(p => p.Id == productId);
+            }
+        }
     }
 }

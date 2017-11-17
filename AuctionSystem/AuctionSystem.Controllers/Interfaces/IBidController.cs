@@ -1,12 +1,11 @@
 ﻿namespace AuctionSystem.Controllers.Interfaces
 {
     using Models;
-    using System;
     using System.Collections.Generic;
 
     public interface IBidController
     {
-        void MakeBid(User user, Product product, int coins, DateTime dateOfCreated);
+        void MakeBid(int userId, int productId, int coins);
 
         bool IsBidWon(int bidId);
 

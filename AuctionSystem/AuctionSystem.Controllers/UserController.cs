@@ -36,6 +36,14 @@
             }
         }
 
+        public bool IsUserExistingById(int userId)
+        {
+            using (var db = new AuctionContext())
+            {
+                return db.Users.Any(u => u.Id == userId);
+            }
+        }
+
         public int GetAllUserSpentCoinsForGivenProduct(int userId, int productId)
         {
             CoreValidator.ThrowIfNegativeOrZero(userId, nameof(userId));
