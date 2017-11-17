@@ -46,11 +46,11 @@
 
         public bool IsZipExisting(int zipId)
         {
-            //CoreValidator.ThrowIfNullOrEmpty(zipCode, nameof(zipCode));
+            CoreValidator.ThrowIfNegativeOrZero(zipId, nameof(zipId));
             using (dbContext)
             {
-                CoreValidator.ThrowIfNegativeOrZero(zipId, nameof(zipId));
-                return dbContext.Zips.SingleOrDefault(z => z.ZipId == zipId) != null;
+                
+                return dbContext.Zips.Any(z => z.ZipId == zipId) ;
 
             }
         }
