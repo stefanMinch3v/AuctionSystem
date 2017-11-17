@@ -11,7 +11,7 @@
 
     public class UserController : IUserController
     {
-        
+
         public int CountUserBidsForGivenProduct(int userId, int productId)
         {
             CoreValidator.ThrowIfNegativeOrZero(userId, nameof(userId));
@@ -19,8 +19,20 @@
 
             using (var db = new AuctionContext())
             {
-                return GetUserById(userId).Bids
-                                            .Select(b => b.ProductId == productId).Count();
+                var currentUser = GetUserById(userId);
+
+                db.Users.Attach(currentUser);
+
+                CoreValidator.ThrowIfNull(currentUser, nameof(currentUser));
+
+                var bids = currentUser.Bids.ToList();
+
+                if (bids.Count == 0)
+                {
+                    return 0;
+                }
+
+                return bids.Select(b => b.ProductId == productId).Count();
             }
         }
 
@@ -31,13 +43,19 @@
 
             using (var db = new AuctionContext())
             {
-                return GetUserById(userId).Bids
+                var currentUser = GetUserById(userId);
+
+                db.Users.Attach(currentUser);
+
+                CoreValidator.ThrowIfNull(currentUser, nameof(currentUser));
+
+                return currentUser.Bids
                                        .Where(b => b.ProductId == productId)
                                        .Sum(b => b.Coins);
             }
         }
 
-        public void CreateUser(string username, string password, string name, string address, string email, string phone, string dateOfBirth, Gender gender, bool isAdmin, Zip zip, int coins, List<Payment> payments)
+        public void CreateUser(string username, string password, string name, string address, string email, string phone, string dateOfBirth, Gender gender, int zipId, int coins, List<Payment> payments)
         {
             CoreValidator.ThrowIfNullOrEmpty(username, nameof(username));
             CoreValidator.ThrowIfNullOrEmpty(password, nameof(password));
@@ -46,7 +64,19 @@
             CoreValidator.ThrowIfNullOrEmpty(email, nameof(email));
             CoreValidator.ThrowIfNullOrEmpty(phone, nameof(phone));
             CoreValidator.ThrowIfDateIsNotCorrect(dateOfBirth, nameof(dateOfBirth));
-            CoreValidator.ThrowIfNegativeOrZero(coins, nameof(coins));
+            CoreValidator.SpecialThrowForCoinsIfValueIsNegativeOnly(coins, nameof(coins));
+            CoreValidator.ThrowIfNegativeOrZero(zipId, nameof(zipId));
+
+            var dateParsed = DateTime.Parse(dateOfBirth);
+            if (dateParsed > DateTime.Now.AddYears(-18))
+            {
+                throw new ArgumentException($"Date of birth is not valid, the customer must be adult.");
+            }
+
+            if (!new ZipController().IsZipExisting(zipId))
+            {
+                throw new ArgumentException($"Zip id doesn't exist in the system.");
+            }
 
             using (var db = new AuctionContext())
             {
@@ -58,12 +88,12 @@
                     Address = address,
                     Email = email,
                     Phone = phone,
-                    DateOfBirth = DateTime.Parse(dateOfBirth),
+                    DateOfBirth = dateParsed,
                     Gender = gender,
-                    Zip = zip,
+                    ZipId = zipId,
                     Coins = coins,
                     Payments = payments,
-                    IsAdmin = isAdmin,
+                    IsAdmin = false,
                     IsDeleted = false
                 };
 
@@ -78,14 +108,13 @@
 
             using (var db = new AuctionContext())
             {
-                var user = GetUserById(id);
+                var currentUser = GetUserById(id);
 
-                if (user == null)
-                {
-                    return false;
-                }
+                db.Users.Attach(currentUser);
 
-                db.Users.Remove(user);
+                CoreValidator.ThrowIfNull(currentUser, nameof(currentUser));
+
+                db.Users.Remove(currentUser);
                 db.SaveChanges();
 
                 return true;
@@ -99,7 +128,13 @@
 
             using (var db = new AuctionContext())
             {
-                return GetUserById(userId).Bids.ToList();
+                var currentUser = GetUserById(userId);
+
+                db.Users.Attach(currentUser);
+
+                CoreValidator.ThrowIfNull(currentUser, nameof(currentUser));
+
+                return currentUser.Bids.ToList();
             }
         }
 
@@ -109,14 +144,11 @@
 
             using (var db = new AuctionContext())
             {
-                var user = db.Users.FirstOrDefault(u => u.Id == id);
+                var currentUser = db.Users.FirstOrDefault(u => u.Id == id);
 
-                if (user == null)
-                {
-                    throw new ArgumentNullException($"No such user in the system.");
-                }
+                CoreValidator.ThrowIfNull(currentUser, nameof(currentUser));
 
-                return user;
+                return currentUser;
             }
         }
 
@@ -126,14 +158,11 @@
 
             using (var db = new AuctionContext())
             {
-                var user = db.Users.FirstOrDefault(u => u.Username == username);
+                var currentUser = db.Users.FirstOrDefault(u => u.Username == username);
 
-                if (user == null)
-                {
-                    throw new ArgumentNullException($"{nameof(username)} does not exist in the system.");
-                }
+                CoreValidator.ThrowIfNull(currentUser, nameof(currentUser));
 
-                return user;
+                return currentUser;
             }
         }
 
@@ -143,20 +172,32 @@
 
             using (var db = new AuctionContext())
             {
-                return GetUserById(userId).Invoices.ToList();
+                var currentUser = GetUserById(userId);
+
+                db.Users.Attach(currentUser);
+
+                CoreValidator.ThrowIfNull(currentUser, nameof(currentUser));
+
+                return currentUser.Invoices.ToList();
             }
         }
 
-        public IList<Product> GetUserProducts(User user)
+        public IList<Product> GetUserProducts(int userId)
         {
-            CoreValidator.ThrowIfNull(user, nameof(user));
+            CoreValidator.ThrowIfNegativeOrZero(userId, nameof(userId));
 
             using (var db = new AuctionContext())
             {
-                return user.Bids
-                                .Where(b => b.UserId == user.Id)
-                                .Select(b => b.Product)
-                                .ToList();
+                var currentUser = GetUserById(userId);
+
+                db.Users.Attach(currentUser);
+
+                CoreValidator.ThrowIfNull(currentUser, nameof(currentUser));
+
+                return currentUser.Bids
+                                        .Where(b => b.UserId == userId)
+                                        .Select(b => b.Product)
+                                        .ToList();
             }
         }
 

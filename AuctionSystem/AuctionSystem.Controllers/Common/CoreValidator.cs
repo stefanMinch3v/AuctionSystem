@@ -9,7 +9,7 @@
         {
             if (obj == null)
             {
-                throw new ArgumentNullException(name);
+                throw new ArgumentNullException($"{name} doesn't exist in the system.");
             }
         }
 
@@ -44,9 +44,13 @@
                 throw new ArgumentException($"{name} is not in the valid format [dd-mm-yyyy, dd/mm/yyyy].");
             }
         }
-
-        // TODO checks when the Zip and Payment controllers are done!
-
         
+        public static void SpecialThrowForCoinsIfValueIsNegativeOnly(int number, string name)
+        {
+            if (number < 0)
+            {
+                throw new ArgumentException($"{name} cannot be negative.");
+            }
+        }
     }
 }
