@@ -18,20 +18,14 @@
 
         }
 
-        public bool DeletePayment(Payment payment)
-        {
-            var paymentController = new PaymentController();
-            paymentController.DeletePayment("1");
-            return true;
-        }
-        public bool DeletePaymentById(string paymentID)
+        public bool DeletePaymentById(int paymentID)
         {
             var paymentController = new PaymentController();
             paymentController.DeletePayment(paymentID);
             return true;
         }
 
-        public Payment GetPaymentById(string paymentId)
+        public Payment GetPaymentById(int paymentId)
 
         {
             var paymentController = new PaymentController();
@@ -46,6 +40,7 @@
             localtransferpayment.PaymentTypeCode = localpayment.PaymentTypeCode;
             localtransferpayment.Type = localpayment.Type;
             localtransferpayment.UserId = localpayment.UserId;
+            localtransferpayment.Id = localpayment.Id;
             return localtransferpayment;
                 
         }
@@ -57,9 +52,9 @@
             return list;
         }
 
-        public bool UpdatePayment(Payment payment, PaymentType type, string paymentTypeCode)
+        public bool UpdatePayment(int userId, string property, string value)
         {
-            throw new NotImplementedException();
+            return new PaymentController().UpdatePayment(userId, property, value);
         }
     }
 }

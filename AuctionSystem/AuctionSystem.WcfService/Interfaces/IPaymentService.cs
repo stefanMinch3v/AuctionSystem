@@ -12,18 +12,15 @@
         void AddPayment(PaymentType type, string paymentTypeCode, int userId);
 
         [OperationContract]
-        bool UpdatePayment(Payment payment, PaymentType type, string paymentTypeCode);
-
-        [OperationContract]
-        bool DeletePayment(Payment payment);
-
-        [OperationContract]
-        bool DeletePaymentById(string paymentId);
+        bool DeletePaymentById(int paymentId);
 
         [OperationContract]
         IList<Payment> GetPaymentsByUser(int userId);
 
         [OperationContract]
-        Payment GetPaymentById(string paymentId);
+        bool UpdatePayment(int userId,string property,string value);
+
+        [OperationContract]
+        Payment GetPaymentById(int paymentId);
     }
 }

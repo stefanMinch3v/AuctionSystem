@@ -36,9 +36,9 @@
             }
         }
 
-        public bool DeletePayment(string id)
+        public bool DeletePayment(int id)
         {
-            CoreValidator.ThrowIfNullOrEmpty(id, nameof(id));
+            CoreValidator.ThrowIfNegativeOrZero(id, nameof(id));
             using (dbContext)
             {
                 var payment = GetPayment(id);
@@ -63,15 +63,37 @@
                 return payment;
             }
         }
-        public Payment GetPayment(string paymentId)
+        public Payment GetPayment(int paymentId)
         {
-            CoreValidator.ThrowIfNullOrEmpty(paymentId, nameof(paymentId));
+            CoreValidator.ThrowIfNegativeOrZero(paymentId, nameof(paymentId));
             using (dbContext)
             {
-                return dbContext.Payments.SingleOrDefault(p => p.PaymentTypeCode == paymentId);
+                return dbContext.Payments.SingleOrDefault(p => p.Id == paymentId);
             }
 
         }
 
+        public bool UpdatePayment(int paymentId, string property, string value)
+        {
+            using (dbContext)
+            {
+                var payment = GetPayment(paymentId);
+                CoreValidator.ThrowIfNull(payment, nameof(payment));
+                dbContext.Payments.Attach(payment);
+
+                switch (property.ToLower())
+                {
+
+                    case "paymenttypecode":
+                        payment.PaymentTypeCode = value;
+                        break;
+
+                    default:
+                        throw new ArgumentException("No such property.");
+                }
+                return true;
+            }
+        }
     }
+
 }

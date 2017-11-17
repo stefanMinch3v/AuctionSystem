@@ -1,9 +1,11 @@
 ﻿namespace AuctionSystem.Controllers
 {
+    using AuctionSystem.Controllers.Common;
     using AuctionSystem.Data;
     using Interfaces;
     using Models;
     using Models.Enums;
+    using System;
     using System.Collections.Generic;
     using System.Linq;
    
@@ -27,22 +29,22 @@
             }
     }
 
-        public Payment GetPayment(string paymentId)
+        public Payment GetPayment(int paymentId)
         {
             using (var db = new AuctionContext())
             {
-                return db.Payments.FirstOrDefault(p => p.PaymentTypeCode == paymentId);
+                return db.Payments.FirstOrDefault(p => p.Id == paymentId);
             }
              
         }
 
 
         
-        public bool DeletePayment(string id)
+        public bool DeletePayment(int paymentId)
         {
             using (var db = new AuctionContext())
             {
-                var payment = GetPayment(id);
+                var payment = GetPayment(paymentId);
 
                     if(payment == null)
                     {
@@ -70,9 +72,36 @@
             }
         }
 
-      
+        public bool UpdatePayment(int paymentId, string property, string value)
+        {
+            CoreValidator.ThrowIfNegativeOrZero(paymentId, nameof(paymentId));
+            CoreValidator.ThrowIfNullOrEmpty(property, nameof(property));
+            CoreValidator.ThrowIfNullOrEmpty(value, nameof(value));
+
+            using (var db = new AuctionContext())
+            {
+                var payment = GetPayment(paymentId);
+                CoreValidator.ThrowIfNull(payment, nameof(payment));
+                db.Payments.Attach(payment);
+
+                switch (property.ToLower())
+                {
+                    
+                    case "paymenttypecode":
+                        payment.PaymentTypeCode = value;
+                        break;
+                    
+                    default:
+                        throw new ArgumentException("No such property.");
+                }
 
 
+                db.Entry(payment).State = System.Data.Entity.EntityState.Modified;
+                db.SaveChanges();
+
+                return true;
+            }
         }
+    }
     }
   

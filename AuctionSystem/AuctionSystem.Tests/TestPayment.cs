@@ -72,8 +72,8 @@
         [TestMethod]
         public void GetPaymentByIdShouldPass()
         {
-            var expected = GetExistingPaymentFromDb().PaymentTypeCode;
-            var actual = paymetController.GetPayment("1").PaymentTypeCode;
+            var expected = GetExistingPaymentFromDb().Id;
+            var actual = paymetController.GetPayment(1).Id;
             Assert.AreEqual(expected, actual);
         }
 
@@ -179,7 +179,7 @@
 
 
         {
-            return this.db.Object.Payments.First(p => p.PaymentTypeCode == "1");
+            return this.db.Object.Payments.First(p => p.Id == 1);
         }
             
     }
