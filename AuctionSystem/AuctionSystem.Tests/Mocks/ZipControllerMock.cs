@@ -44,12 +44,13 @@
             }
         }
 
-        public bool IsZipExisting(string zipCode)
+        public bool IsZipExisting(int zipId)
         {
-            CoreValidator.ThrowIfNullOrEmpty(zipCode, nameof(zipCode));
+            //CoreValidator.ThrowIfNullOrEmpty(zipCode, nameof(zipCode));
             using (dbContext)
             {
-                return dbContext.Zips.SingleOrDefault(z => z.ZipCode == zipCode) != null;
+                CoreValidator.ThrowIfNegativeOrZero(zipId, nameof(zipId));
+                return dbContext.Zips.SingleOrDefault(z => z.ZipId == zipId) != null;
 
             }
         }
@@ -57,6 +58,8 @@
         public bool UpdateZip(string zipCode, string property, string value)
         {
             CoreValidator.ThrowIfNullOrEmpty(zipCode, nameof(zipCode));
+            CoreValidator.ThrowIfNullOrEmpty(property, nameof(property));
+            CoreValidator.ThrowIfNullOrEmpty(value, nameof(value));
             using (dbContext)
             {
                 var zip = GetZipByZipCode(zipCode);

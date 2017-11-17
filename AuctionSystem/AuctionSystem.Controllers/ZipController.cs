@@ -15,6 +15,7 @@
             CoreValidator.ThrowIfNullOrEmpty(zipCode, nameof(zipCode));
             CoreValidator.ThrowIfNullOrEmpty(country, nameof(country));
             CoreValidator.ThrowIfNullOrEmpty(city, nameof(city));
+            
             using (var db = new AuctionContext())
             {
                 var zip = new Zip
@@ -39,20 +40,23 @@
             }
         }
 
-        public bool IsZipExisting(string zipCode)
+        public bool IsZipExisting(int zipId)
         {
-            CoreValidator.ThrowIfNullOrEmpty(zipCode, nameof(zipCode));
+            CoreValidator.ThrowIfNegativeOrZero(zipId, nameof(zipId));
             using (var db = new AuctionContext())
             {
-                return db.Zips.SingleOrDefault(z => z.ZipCode == zipCode) != null;
+                return db.Zips.SingleOrDefault(z => z.ZipId == zipId) != null;
 
             }
 
         }
 
+
         public bool UpdateZip(string zipCode, string property, string value)
         {
             CoreValidator.ThrowIfNullOrEmpty(zipCode, nameof(zipCode));
+            CoreValidator.ThrowIfNullOrEmpty(property, nameof(property));
+            CoreValidator.ThrowIfNullOrEmpty(value, nameof(value));
             using (var db = new AuctionContext())
             {
                 var zip = GetZipByZipCode(zipCode);
