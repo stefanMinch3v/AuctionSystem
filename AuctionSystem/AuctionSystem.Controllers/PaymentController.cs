@@ -16,6 +16,8 @@
     {
         public void AddPayment(PaymentType type, string paymentTypeCode, int userId)
         {
+            CoreValidator.ThrowIfNullOrEmpty(paymentTypeCode, nameof(paymentTypeCode));
+            CoreValidator.ThrowIfNegativeOrZero(userId, nameof(userId));
             using (var db = new AuctionContext())
             {
                 var payment = new Payment
@@ -31,6 +33,7 @@
 
         public Payment GetPayment(int paymentId)
         {
+            CoreValidator.ThrowIfNegativeOrZero(paymentId, nameof(paymentId));
             using (var db = new AuctionContext())
             {
                 return db.Payments.FirstOrDefault(p => p.Id == paymentId);
@@ -39,9 +42,39 @@
         }
 
 
-        
+         public bool UpdatePayment(int paymentId, string property, string value)
+        {
+            CoreValidator.ThrowIfNegativeOrZero(paymentId, nameof(paymentId));
+            CoreValidator.ThrowIfNullOrEmpty(property, nameof(property));
+            CoreValidator.ThrowIfNullOrEmpty(value, nameof(value));
+
+            using (var db = new AuctionContext())
+            {
+                var payment = GetPayment(paymentId);
+                CoreValidator.ThrowIfNull(payment, nameof(payment));
+                db.Payments.Attach(payment);
+
+                switch (property.ToLower())
+                {
+                    
+                    case "paymenttypecode":
+                        payment.PaymentTypeCode = value;
+                        break;
+                    
+                    default:
+                        throw new ArgumentException("No such property.");
+                }
+
+
+                db.Entry(payment).State = System.Data.Entity.EntityState.Modified;
+                db.SaveChanges();
+
+                return true;
+            }
+        }
         public bool DeletePayment(int paymentId)
         {
+            CoreValidator.ThrowIfNegativeOrZero(paymentId, nameof(paymentId));
             using (var db = new AuctionContext())
             {
                 var payment = GetPayment(paymentId);
@@ -72,36 +105,7 @@
             }
         }
 
-        public bool UpdatePayment(int paymentId, string property, string value)
-        {
-            CoreValidator.ThrowIfNegativeOrZero(paymentId, nameof(paymentId));
-            CoreValidator.ThrowIfNullOrEmpty(property, nameof(property));
-            CoreValidator.ThrowIfNullOrEmpty(value, nameof(value));
-
-            using (var db = new AuctionContext())
-            {
-                var payment = GetPayment(paymentId);
-                CoreValidator.ThrowIfNull(payment, nameof(payment));
-                db.Payments.Attach(payment);
-
-                switch (property.ToLower())
-                {
-                    
-                    case "paymenttypecode":
-                        payment.PaymentTypeCode = value;
-                        break;
-                    
-                    default:
-                        throw new ArgumentException("No such property.");
-                }
-
-
-                db.Entry(payment).State = System.Data.Entity.EntityState.Modified;
-                db.SaveChanges();
-
-                return true;
-            }
-        }
+       
     }
     }
   

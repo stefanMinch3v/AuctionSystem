@@ -35,7 +35,15 @@
                 dbContext.SaveChanges();
             }
         }
+         public Payment GetPayment(int paymentId)
+         {
+                CoreValidator.ThrowIfNegativeOrZero(paymentId, nameof(paymentId));
+                using (dbContext)
+                {
+                return dbContext.Payments.SingleOrDefault(p => p.Id == paymentId);
+                }
 
+         }
         public bool DeletePayment(int id)
         {
             CoreValidator.ThrowIfNegativeOrZero(id, nameof(id));
@@ -63,18 +71,13 @@
                 return payment;
             }
         }
-        public Payment GetPayment(int paymentId)
-        {
-            CoreValidator.ThrowIfNegativeOrZero(paymentId, nameof(paymentId));
-            using (dbContext)
-            {
-                return dbContext.Payments.SingleOrDefault(p => p.Id == paymentId);
-            }
-
-        }
+       
 
         public bool UpdatePayment(int paymentId, string property, string value)
         {
+            CoreValidator.ThrowIfNegativeOrZero(paymentId, nameof(paymentId));
+            CoreValidator.ThrowIfNullOrEmpty(property, nameof(property));
+            CoreValidator.ThrowIfNullOrEmpty(value, nameof(value));
             using (dbContext)
             {
                 var payment = GetPayment(paymentId);
