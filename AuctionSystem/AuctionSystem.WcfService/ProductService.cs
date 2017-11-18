@@ -4,49 +4,67 @@
     using System;
     using System.Collections.Generic;
     using AuctionSystem.Models;
+    using AuctionSystem.Controllers;
+    using AuctionSystem.Controllers.Interfaces;
 
     public class ProductService : IProductService
     {
-        // TODO in each method return the controller that supposed to handle its operation
+        private IProductController productService = new ProductController();
 
-        public int CountUserBidsForProduct(User user)
+        public int CountUserBidsForProduct(int id)
         {
-            throw new NotImplementedException();
+            return productService.CountUserBidsForProduct(id);
         }
-
         public void CreateProduct(string name, string description, decimal price, DateTime startDate, DateTime endDate)
         {
-            throw new NotImplementedException();
+            productService.CreateProduct(name, description, price, startDate, endDate);
         }
 
-        public bool DeleteProduct(Product product)
+        public bool DeleteProduct(int id)
         {
-            throw new NotImplementedException();
+            return productService.DeleteProduct(id);
         }
 
         public Product GetProductById(int id)
         {
-            throw new NotImplementedException();
+            return GetDTOProduct(productService.GetProductById(id));
+
         }
 
-        public Product GetProductByName(Product product)
+        public Product GetProductByName(string name)
         {
-            throw new NotImplementedException();
+            var product = productService.GetProductByName(name);
+            return GetDTOProduct(product);
         }
 
-        public IList<User> GetProductUsers(Product product)
+        public IList<User> GetProductUsers(int id)
         {
-            throw new NotImplementedException();
+            return productService.GetProductUsers(id);
         }
 
         public bool IsProductExisting(string productName)
         {
-            throw new NotImplementedException();
+            return productService.IsProductExisting(productName);
         }
 
-        public bool UpdateProduct(Product product, string property, string value)
+        public bool UpdateProduct(int id, string property, string value)
         {
-            throw new NotImplementedException();
+            return productService.UpdateProduct(id, property, value);
+        }
+        private Product GetDTOProduct(Product product)
+        {
+            return new Product
+            {
+                Id = product.Id,
+                Name = product.Name,
+                Description = product.Description,
+                StartDate = product.StartDate,
+                EndDate = product.EndDate,
+                IsAvailable = product.IsAvailable,
+                Price = product.Price,
+                Bids = product.Bids,
+                Image = product.Image
+            };
         }
     }
 }

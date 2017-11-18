@@ -8,17 +8,17 @@
     [ServiceContract]
     public interface IProductService
     {
-        [OperationContract]
+        [OperationContract(IsOneWay = true)]
         void CreateProduct(string name, string description, decimal price, DateTime startDate, DateTime endDate);
 
         [OperationContract]
-        bool UpdateProduct(Product product, string property, string value);
+        bool UpdateProduct(int id, string property, string value);
 
         [OperationContract]
-        bool DeleteProduct(Product product);
+        bool DeleteProduct(int id);
 
         [OperationContract]
-        Product GetProductByName(Product product);
+        Product GetProductByName(string name);
 
         [OperationContract]
         Product GetProductById(int id);
@@ -27,9 +27,9 @@
         bool IsProductExisting(string productName);
 
         [OperationContract]
-        int CountUserBidsForProduct(User user);
+        int CountUserBidsForProduct(int id);
 
         [OperationContract]
-        IList<User> GetProductUsers(Product product);
+        IList<User> GetProductUsers(int id);
     }
 }
