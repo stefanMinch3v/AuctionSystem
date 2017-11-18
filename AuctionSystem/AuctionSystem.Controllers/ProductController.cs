@@ -25,6 +25,7 @@ namespace AuctionSystem.Controllers
                     Price = price,
                     Description = description,
                     StartDate = startDate,
+                    IsAvailable = startDate <= DateTime.Now && endDate > DateTime.Now,
                     EndDate = endDate
                 };
 
@@ -39,7 +40,7 @@ namespace AuctionSystem.Controllers
             using (var db = new AuctionContext())
             {
                 var product = GetProductById(id);
-
+                db.Products.Attach(product);
                 switch (property.ToLower())
                 {
                     case "name":
@@ -86,8 +87,8 @@ namespace AuctionSystem.Controllers
                         break;
                     default:
                         throw new ArgumentException("No such property");
-                        break;
                 }
+                db.Entry(product).State = System.Data.Entity.EntityState.Modified;
                 db.SaveChanges();
                 return true;
             }
@@ -99,10 +100,11 @@ namespace AuctionSystem.Controllers
             using (var db = new AuctionContext())
             {
                 var product = GetProductById(id);
-
+                db.Products.Attach(product);
                 if (product == null) return false;
 
                 db.Products.Remove(product);
+                db.Entry(product).State = System.Data.Entity.EntityState.Deleted;
                 db.SaveChanges();
                 return true;
             }
@@ -113,7 +115,10 @@ namespace AuctionSystem.Controllers
             CoreValidator.ThrowIfNullOrEmpty(name, nameof(name));
             using (var db = new AuctionContext())
             {
-                return db.Products.SingleOrDefault(p => p.Name == name);
+                var product = db.Products.Include("Bids").FirstOrDefault(p => p.Name == name);
+                CoreValidator.ThrowIfNull(product, nameof(product));
+                return product;
+
             }
         }
 
@@ -122,8 +127,9 @@ namespace AuctionSystem.Controllers
             CoreValidator.ThrowIfNegativeOrZero(id, nameof(id));
             using (var db = new AuctionContext())
             {
-                var result = db.Products.SingleOrDefault(p => p.Id == id);
-                return result;
+                var product = db.Products.Include("Bids").SingleOrDefault(p => p.Id == id);
+                CoreValidator.ThrowIfNull(product, nameof(product));
+                return product;
             }
         }
 
@@ -132,7 +138,7 @@ namespace AuctionSystem.Controllers
             CoreValidator.ThrowIfNullOrEmpty(productName, nameof(productName));
             using (var db = new AuctionContext())
             {
-                return db.Products.SingleOrDefault(p => p.Name == productName) != null;
+                return db.Products.Any(p => p.Name == productName);
             }
         }
 
