@@ -38,7 +38,7 @@
         {
             using (var db = new AuctionContext())
             {
-                return db.Users.Any(z => z.Id == id);
+                return db.Zips.Any(z => z.Id == id);
                 
             }
 

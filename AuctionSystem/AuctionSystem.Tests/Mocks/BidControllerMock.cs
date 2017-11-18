@@ -92,9 +92,11 @@
 
                 var currentUser = userController.GetUserById(userId);
 
+                dbContext.Users.Attach(currentUser);
+
                 if (coins > currentUser.Coins)
                 {
-                    throw new ArgumentException($"Actual coins are {currentUser.Coins}, you've tried to spent {coins}.");
+                    throw new ArgumentException($"Your coins are {currentUser.Coins}, you've tried to spent {coins}.");
                 }
                 #endregion
 
@@ -114,6 +116,10 @@
                         throw new ArgumentException($"You cannot overbid with less than or equal to the last bidders coins: {lastBidEntry.Coins}");
                     }
 
+                    var newBid = GetNewBid(userId, productId, coins);
+
+                    currentUser.Coins -= coins;
+
                     var lastBidUserId = lastBidEntry.UserId;
 
                     var lastUser = userController.GetUserById(lastBidUserId);
@@ -124,8 +130,6 @@
 
                     dbContext.Entry(lastUser).State = System.Data.Entity.EntityState.Modified;
 
-                    var newBid = GetNewBid(userId, productId, coins);
-
                     dbContext.Bids.Add(newBid);
                     dbContext.SaveChanges();
 
@@ -135,8 +139,6 @@
 
                 #region LOGIC FOR CREATE BID FOR FIRST TIME
                 var bid = GetNewBid(userId, productId, coins);
-
-                dbContext.Users.Attach(currentUser);
 
                 currentUser.Coins -= coins;
 
