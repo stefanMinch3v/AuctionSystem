@@ -13,7 +13,7 @@
     [TestClass]
     public class UserTest
     {
-        
+
         private Mock<AuctionContext> db;
         private UserControllerMock userController;
         private Mock<DbSet<User>> mockSet;
@@ -40,6 +40,9 @@
 
 
         }
+
+        //GET USER BY USERNAME
+
         [TestMethod]
         public void getUserByUsernameNameShouldPass()
         {
@@ -47,11 +50,65 @@
             var actual = userController.GetUserByUsername("John").Username;
             Assert.AreEqual(expected, actual);
         }
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentException))]
+        public void getUserByUsernameNameWithNullShouldThrowException()
+        {
+            var actual = userController.GetUserByUsername(null).Username;
+
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentException))]
+        public void getUserByUsernameNameWithEmptyShouldThrowException()
+        {
+            var actual = userController.GetUserByUsername("").Username;
+
+        }
+
+        //GET USER BY ID
+
+        [TestMethod]
+        public void getUserByIdShouldPass()
+        {
+            var expected = getExistingUserById().Id;
+            var actual = userController.GetUserById(1).Id;
+            Assert.AreEqual(expected, actual);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentException))]
+        public void getUserByIdWithNegativeIdShouldThrowException()
+        {
+            var actual = userController.GetUserById(-1).Id;
+
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentException))]
+        public void getUserByIdWithZeroIdShouldThrowException()
+        {
+            var actual = userController.GetUserById(0).Id;
+
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void getUserByIdWithNonExistingIdShouldThrowException()
+        {
+            var actual = userController.GetUserById(15).Id;
+
+        }
+
+        //CREATE USER 
+
+
         [TestMethod]
         public void CreateUserShouldPass()
         {
 
-            this.userController.CreateUser("name", "pass", "name name", "adress", "email", "phone", DateTime.Now.AddYears(-20).ToString(), Models.Enums.Gender.Female,1, 10, paymentData);
+            this.userController.CreateUser("name", "pass", "name name", "adress", "email", "phone", DateTime.Now.AddYears(-20).ToString(), Models.Enums.Gender.Female, 1, 10, paymentData);
 
             var actual = this.db.Object.Users.First(p => p.Name == "name name");
 
@@ -70,7 +127,7 @@
         public void CreateUserShouldThrowNullUsernameArgumentException()
         {
 
-            this.userController.CreateUser(null, "pass", "name name", "adress", "email", "phone", DateTime.Now.AddYears(-20).ToString(), Models.Enums.Gender.Female,1, 10, paymentData);
+            this.userController.CreateUser(null, "pass", "name name", "adress", "email", "phone", DateTime.Now.AddYears(-20).ToString(), Models.Enums.Gender.Female, 1, 10, paymentData);
         }
 
         [TestMethod]
@@ -78,7 +135,7 @@
         public void CreateUserShouldThrowEmptyPasswordArgumentException()
         {
 
-            this.userController.CreateUser("name", "", "name name", "adress", "email", "phone", DateTime.Now.AddYears(-20).ToString(), Models.Enums.Gender.Female,1, 10, paymentData);
+            this.userController.CreateUser("name", "", "name name", "adress", "email", "phone", DateTime.Now.AddYears(-20).ToString(), Models.Enums.Gender.Female, 1, 10, paymentData);
         }
 
         [TestMethod]
@@ -94,7 +151,7 @@
         public void CreateUserShouldThrowEmptyNameArgumentException()
         {
 
-            this.userController.CreateUser("name", "pass", "", "adress", "email", "phone", DateTime.Now.AddYears(-20).ToString(), Models.Enums.Gender.Female,1, 10, paymentData);
+            this.userController.CreateUser("name", "pass", "", "adress", "email", "phone", DateTime.Now.AddYears(-20).ToString(), Models.Enums.Gender.Female, 1, 10, paymentData);
         }
 
         [TestMethod]
@@ -102,7 +159,7 @@
         public void CreateUserShouldThrowNullNameArgumentException()
         {
 
-            this.userController.CreateUser("name", "pass", null, "address", "email", "phone", DateTime.Now.AddYears(-20).ToString(), Models.Enums.Gender.Female,1, 10, paymentData);
+            this.userController.CreateUser("name", "pass", null, "address", "email", "phone", DateTime.Now.AddYears(-20).ToString(), Models.Enums.Gender.Female, 1, 10, paymentData);
         }
 
         [TestMethod]
@@ -110,7 +167,7 @@
         public void CreateUserShouldThrowEmptyAddressArgumentException()
         {
 
-            this.userController.CreateUser("name", "pass", "name name", "", "email", "phone", DateTime.Now.AddYears(-20).ToString(), Models.Enums.Gender.Female,1, 10, paymentData);
+            this.userController.CreateUser("name", "pass", "name name", "", "email", "phone", DateTime.Now.AddYears(-20).ToString(), Models.Enums.Gender.Female, 1, 10, paymentData);
         }
 
         [TestMethod]
@@ -118,7 +175,7 @@
         public void CreateUserShouldThrowNullAddressArgumentException()
         {
 
-            this.userController.CreateUser("name", "pass", "name name", null, "email", "phone", DateTime.Now.AddYears(-20).ToString(), Models.Enums.Gender.Female,1, 10, paymentData);
+            this.userController.CreateUser("name", "pass", "name name", null, "email", "phone", DateTime.Now.AddYears(-20).ToString(), Models.Enums.Gender.Female, 1, 10, paymentData);
         }
 
         [TestMethod]
@@ -157,7 +214,7 @@
         public void CreateUserShouldThrowDateTypeArgumentException()
         {
 
-            this.userController.CreateUser("name", "pass", "name name", "adress", "email", "phone", "57", Models.Enums.Gender.Female,1, 10, paymentData);
+            this.userController.CreateUser("name", "pass", "name name", "adress", "email", "phone", "57", Models.Enums.Gender.Female, 1, 10, paymentData);
         }
 
         [TestMethod]
@@ -191,6 +248,10 @@
             this.userController.CreateUser("name", "pass", "name name", "adress", "email", "phone", DateTime.Now.AddYears(-20).ToString(), Models.Enums.Gender.Female, 1, 0, paymentData);
         }
 
+
+        //DELETE USER
+
+
         [TestMethod]
         public void DeleteUserShouldPass()
         {
@@ -201,34 +262,81 @@
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ArgumentException))]
-        public void DeleteUserShouldNotPass()
-        {
-         
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void DeleteUserWithNonExistingIdShouldThrowException()
+        {  
             var deletedUser = this.userController.DeleteUser(15);
-
-            Assert.IsFalse(deletedUser);
         }
 
-
-        public Zip createFakeZip()
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentException))]
+        public void DeleteUserWithNegativeIdShoulThrowException()
         {
-            var zip = new Zip
-            {
-                ZipId = 1,
-                City = "aalborg",
-                ZipCode = "9000",
-                Country = "china"
-
-            };
-            return zip;
+            var deletedUser = this.userController.DeleteUser(-1);
         }
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentException))]
+        public void DeleteUserWithZeroIdShoulThrowException()
+        {
+            var deletedUser = this.userController.DeleteUser(0);
+        }
+
+        //IS USER EXISTING
+
+        [TestMethod]
+        public void IsUserExistingShouldPass()
+        {
+            var existingUser = this.userController.IsUserExisting("John");
+
+            Assert.IsTrue(existingUser);
+        }
+
+        [TestMethod]
+        public void IsUserExistingShouldNotPass()
+        {
+            var existingUser = this.userController.IsUserExisting("Peter");
+
+            Assert.IsFalse(existingUser);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentException))]
+        public void IsUserExistingWithNullUserNameShouldThrowException()
+        {
+            var existingUser = this.userController.IsUserExisting(null);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentException))]
+        public void IsUserExistingWithEmptyUserNameShouldThrowException()
+        {
+            var existingUser = this.userController.IsUserExisting("");
+        }
+
+        
+
+        //TO DO
+
+        //CountUserBidsForGivenProduct - Libor
+        //GetAllUserSpentCoinsForGivenProduct - Libor
+        //GetUserBids - Libor
+        //GetUserInvoices - Nasko
+        //GetUserProducts - Nasko
+        //UpdateUser - Nasko
+
         public User getExistingUserByUserName()
         {
             return this.db.Object.Users.First(u => u.Username == "John");
         }
 
+        public User getExistingUserById()
+        {
+            return this.db.Object.Users.First(u => u.Id == 1);
+        }
 
+
+        //Creating Simple Test Data
         public User CreateTestUserWorking()
         {
 
@@ -252,6 +360,31 @@
             };
 
 
+        }
+
+        public Product CreateTestProduct()
+        {
+            return new Product
+            {
+                Name = "Table",
+                Description = "New",
+                Price = 2000m,
+                StartDate = DateTime.Now.AddDays(-2),
+                EndDate = DateTime.Now.AddDays(2)
+            };
+        }
+
+        public Zip createFakeZip()
+        {
+            var zip = new Zip
+            {
+                ZipId = 1,
+                City = "aalborg",
+                ZipCode = "9000",
+                Country = "china"
+
+            };
+            return zip;
         }
 
     }

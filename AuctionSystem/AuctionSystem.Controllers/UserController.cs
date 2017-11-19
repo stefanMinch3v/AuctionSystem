@@ -138,6 +138,7 @@
             }
         }
 
+
         public User GetUserById(int id)
         {
             CoreValidator.ThrowIfNegativeOrZero(id, nameof(id));

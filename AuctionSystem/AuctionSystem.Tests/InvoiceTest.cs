@@ -50,7 +50,7 @@
 
         }
 
-                            //CREATE INVOICE
+        //CREATE INVOICE
         
         [TestMethod]
         public void CreateInvoiceShouldReturnTrue()
@@ -79,7 +79,7 @@
         [ExpectedException(typeof(ArgumentException))]
         public void CreateInvoiceWithNegativeUserIdShouldThrowException()
         {
-            // NEEDS TO BE FINISHED
+            
             invoiceController.CreateInvoice(-2, 2);
 
         }
@@ -88,7 +88,7 @@
         [ExpectedException(typeof(ArgumentException))]
         public void CreateInvoiceWithZeroProductIdShouldThrowException()
         {
-            // NEEDS TO BE FINISHED
+           
             invoiceController.CreateInvoice(2, 0);
 
         }
@@ -125,7 +125,7 @@
 
        }
 
-                            //GET INVOICE BY PRODUCT ID
+       //GET INVOICE BY PRODUCT ID
 
        [TestMethod]
        public void GetInvoiceByProductIdShouldReturnTrue()
@@ -158,7 +158,7 @@
 
         }
 
-                             //GET INVOICE BY USER ID
+       //GET INVOICE BY USER ID
 
         [TestMethod]
        public void GetInvoiceByUserIdShouldReturnTrue()
@@ -203,7 +203,7 @@
            Assert.IsNull(currentInvoice);
        }
 
-                        //GET ALL INVOICES FOR USER
+       //GET ALL INVOICES FOR USER
         
        [TestMethod] 
        public void GetAllInvoicesForUserShouldReturnTrue()
