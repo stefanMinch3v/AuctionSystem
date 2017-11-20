@@ -318,18 +318,33 @@
         }
 
 
+        //UPDATE USER - can only update phone, email ,address, coins ,isAdmin and isDeleted
 
+        [TestMethod]
+        public void UpdateUserPhoneShouldPass()
+        {
+            
+            var currentUserId = getExistingUserFromDb(1).Id;
+
+            var successUpdating = this.userController.UpdateUser(currentUserId, "phone", "111111");
+
+            var changedUser = this.db.Object.Users.FirstOrDefault(u => u.Id == currentUserId).Phone;
+
+            // Assert
+            
+
+            Assert.AreEqual("111111", changedUser);
+        }
+        
+        
         //TO DO
-
         //CountUserBidsForGivenProduct 
         //GetAllUserSpentCoinsForGivenProduct 
         //GET USER BIDS
         //GetUserInvoices - Nasko
         //GetUserProducts - Nasko
 
-        //UpdateUser - Nasko
 
-        
 
         public User getExistingUserByUserName()
         {
@@ -341,9 +356,197 @@
             return this.db.Object.Users.First(u => u.Id == 1);
         }
 
+        //LIBOR TESTS
+        
+        /*
+         
+         [TestMethod]
+            [ExpectedException(typeof(ArgumentException))]
+            public void UpdateUserWithNegativeIdShouldThrowException()
+
+            {
+                var successUpdate = this.userController.UpdateUser(-1, "Name", "John");
+            }
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentException))]
+        public void UpdateUserWithZeroIdShouldThrowException()
+        {
+            var successUpdate = this.userController.UpdateUser(0, "Name", "John");
+        }
+
+        [TestMethod]
+        public void UpdateUserIdShouldPass()
+        {
+            var currentUserId = getExistingUserById().Id;
+
+            var successUpdating = this.userController.UpdateUser(15, "Name", "John");
+
+            var changedUserId = this.db.Object.Users.FirstOrDefault(u => u.Id == currentUserId).Id;
+
+            // Assert
+
+            Assert.AreEqual(15, changedUserId);
+        }
+
+        [TestMethod]
+        public void UpdateUserNameShouldPassIfNameIsChanged()
+        {
+            // Act
+
+            var currentUserId = getExistingUserById().Id;
+
+            var successUpdating = this.userController.UpdateUser(currentUserId, "Name", "Conor");
+
+            var changedUserName = this.db.Object.Users.FirstOrDefault(u => u.Id == currentUserId).Name;
+
+            // Assert
+
+            Assert.AreEqual("Conor", changedUserName);
+        }
+
+        [TestMethod]
+        public void UpdateUserNameShouldReturnTrue()
+        {
+            // Act
+
+            var currentUserId = getExistingUserById().Id;
+
+            var successUpdating = this.userController.UpdateUser(currentUserId, "Name", "Conor");
+
+            // Assert
+
+            Assert.IsTrue(successUpdating);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentException))]
+        public void UpdateUserNameShouldThrowExceptionIfNameIsNull()
+        {
+            var currentUserId = getExistingUserById().Id;
+
+            var successUpdating = this.userController.UpdateUser(currentUserId, "Name", null);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentException))]
+        public void UpdateUserNameShouldThrowExceptionIfNameIsEmpty()
+        {
+            var currentUserId = getExistingUserById().Id;
+
+            var successUpdating = this.userController.UpdateUser(currentUserId, "Name", "");
+        }
+
+        [TestMethod]
+        public void UpdateUserPhoneShouldPassIfPhoneIsChanged()
+        {
+            // Act
+
+            var currentUserId = getExistingUserById().Id;
+
+            var successUpdating = this.userController.UpdateUser(currentUserId, "Phone", "545644888");
+
+            var changedUserPhone = this.db.Object.Users.FirstOrDefault(u => u.Id == currentUserId).Phone;
+
+            // Assert
+
+            Assert.AreEqual("545644888", changedUserPhone);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentException))]
+        public void UpdateUserPhoneShouldThrowExceptionIfPhoneIsNull()
+        {
+            var currentUserId = getExistingUserById().Id;
+
+            var successUpdating = this.userController.UpdateUser(currentUserId, "Phone", null);
+        }
+
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentException))]
+        public void UpdateUserPhoneShouldThrowExceptionIfPhoneIsEmpty()
+        {
+            var currentUserId = getExistingUserById().Id;
+
+            var successUpdating = this.userController.UpdateUser(currentUserId, "Phone", "");
+        }
+
+        [TestMethod]
+        public void UpdateUserEmailShouldPassIfEmailIsChanged()
+        {
+            // Act
+
+            var currentUserId = getExistingUserById().Id;
+
+            var successUpdating = this.userController.UpdateUser(currentUserId, "Email", "Conor.Mcgregor@gmail.com");
+
+            var changedUserEmail = this.db.Object.Users.FirstOrDefault(u => u.Id == currentUserId).Email;
+
+            // Assert
+
+            Assert.AreEqual("Conor.Mcgregor@gmail.com", changedUserEmail);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentException))]
+        public void UpdateUserEmailShouldThrowExceptionIfEmailIsEmpty()
+        {
+            var currentUserId = getExistingUserById().Id;
+
+            var successUpdating = this.userController.UpdateUser(currentUserId, "Email", "");
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentException))]
+        public void UpdateUserEmailShouldThrowExceptionIfEmailIsNull()
+        {
+            var currentUserId = getExistingUserById().Id;
+
+            var successUpdating = this.userController.UpdateUser(currentUserId, "Email", null);
+        }
+
+        [TestMethod]
+        public void UpdateUserAddressShouldPassIfAddressIsChanged()
+        {
+            // Act
+
+            var currentUserId = getExistingUserById().Id;
+
+            var successUpdating = this.userController.UpdateUser(currentUserId, "Address", "Nytorv");
+
+            var changedUserAddress = this.db.Object.Users.FirstOrDefault(u => u.Id == currentUserId).Address;
+
+            // Assert
+
+            Assert.AreEqual("Nytorv", changedUserAddress);
+        }
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentException))]
+        public void UpdateUserAddressShouldThrowExceptionIfAddressIsNull()
+        {
+            var currentUserId = getExistingUserById().Id;
+
+            var successUpdating = this.userController.UpdateUser(currentUserId, "Address", null);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentException))]
+        public void UpdateUserAddressShouldThrowExceptionIfAddressIsEmpty()
+        {
+            var currentUserId = getExistingUserById().Id;
+
+            var successUpdating = this.userController.UpdateUser(currentUserId, "Address", "");
+        }
+
+        public void UpdateUserAddressShouldThrowExceptionIfAddressIsEmpty1()
+        {
+            var currentUserId = getExistingUserById().Id;
+
+        }
+        */
 
         //Creating Simple Test Data
-        
+
         public User CreateTestUserWorking()
         {
            
@@ -360,14 +563,18 @@
                 Address = "Fake street ",
                 ZipId = 1,
                 Coins = 1,
-                IsAdmin = false,
+                //IsAdmin = false,
                 Password = "Banana1",
                 IsDeleted = false,
-                Bids = new List<Bid> { CreateTestBid() }
+                //Bids = new List<Bid> { CreateTestBid() }
 
         };
 
 
+        }
+        public User getExistingUserFromDb(int id)
+        {
+            return this.db.Object.Users.First(p => p.Id == id);
         }
 
         public Product CreateTestProduct()
