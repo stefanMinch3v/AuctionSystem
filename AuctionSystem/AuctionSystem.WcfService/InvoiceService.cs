@@ -1,5 +1,6 @@
 ﻿namespace AuctionSystem.WcfService
 {
+    using AuctionSystem.Controllers;
     using Interfaces;
     using Models;
     using System;
@@ -7,21 +8,32 @@
 
     public class InvoiceService : IInvoiceService
     {
-        // TODO in each method return the controller that supposed to handle its operation
+        
 
         public void CreateInvoice(int userId, int productId)
         {
-            throw new NotImplementedException();
+            var controller = new InvoiceController();
+            controller.CreateInvoice(userId,productId);
         }
 
         public IList<Invoice> GetAllInvoicesForUser(int userId)
         {
-            throw new NotImplementedException();
+            return new InvoiceController().GetAllInvoicesForUser(userId);
         }
 
         public Invoice GetInvoiceByUserId(int id)
         {
-            throw new NotImplementedException();
+            return new InvoiceController().GetInvoiceByUserId(id);
+        }
+
+        private Invoice TransferDbObjectToRegularObject(Invoice dbInvoice)
+        {
+            var newInvoice = new Invoice
+            {
+                UserId = dbInvoice.UserId,
+                ProductId = dbInvoice.ProductId
+            };
+            return newInvoice;
         }
     }
 }
