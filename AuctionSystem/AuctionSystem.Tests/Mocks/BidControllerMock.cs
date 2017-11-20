@@ -79,8 +79,8 @@
             using (dbContext)
             {
                 #region CHECK FOR EXISTING USER, PRODUCT AND FOR VALID COINS
-                var userController = new UserController();
-                var productController = new ProductController();
+                var userController = new UserControllerMock(dbContext);
+                var productController = new ProductControllerMock(dbContext);
 
                 var isUserExisting = userController.IsUserExistingById(userId);
                 var isProductExisting = productController.IsProductExistingById(productId);
@@ -128,7 +128,7 @@
 
                     lastUser.Coins += lastBidEntry.Coins;
 
-                    dbContext.Entry(lastUser).State = System.Data.Entity.EntityState.Modified;
+                    //dbContext.Entry(lastUser).State = System.Data.Entity.EntityState.Modified;
 
                     dbContext.Bids.Add(newBid);
                     dbContext.SaveChanges();
