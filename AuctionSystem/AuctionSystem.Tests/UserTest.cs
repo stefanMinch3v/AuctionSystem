@@ -17,7 +17,8 @@
         private Mock<AuctionContext> db;
         private UserControllerMock userController;
         private Mock<DbSet<User>> mockSet;
-        private List<User> data;
+        private List<User> userData;
+        private List<Bid> bidData;
         private List<Payment> paymentData;
 
         [TestInitialize]
@@ -28,12 +29,14 @@
             this.userController = new UserControllerMock(this.db.Object);
 
             var user = CreateTestUserWorking();
+            var bid = CreateTestBid();
 
-
-            this.data = new List<User>() { user };
+            this.userData = new List<User>() { user };
             paymentData = new List<Payment>();
 
-            this.mockSet = new Mock<DbSet<User>>().SetupData(this.data);
+            this.bidData = new List<Bid>() { bid};
+
+            this.mockSet = new Mock<DbSet<User>>().SetupData(this.userData);
 
             this.db.Setup(m => m.Users).Returns(mockSet.Object);
 
@@ -314,16 +317,19 @@
             var existingUser = this.userController.IsUserExisting("");
         }
 
-        
+
 
         //TO DO
 
-        //CountUserBidsForGivenProduct - Libor
-        //GetAllUserSpentCoinsForGivenProduct - Libor
-        //GetUserBids - Libor
+        //CountUserBidsForGivenProduct 
+        //GetAllUserSpentCoinsForGivenProduct 
+        //GET USER BIDS
         //GetUserInvoices - Nasko
         //GetUserProducts - Nasko
+
         //UpdateUser - Nasko
+
+        
 
         public User getExistingUserByUserName()
         {
@@ -337,11 +343,13 @@
 
 
         //Creating Simple Test Data
+        
         public User CreateTestUserWorking()
         {
-
+           
             return new User
             {
+                
                 Id = 1,
                 Username = "John",
                 Name = "Arafat Khadiri",
@@ -355,9 +363,9 @@
                 IsAdmin = false,
                 Password = "Banana1",
                 IsDeleted = false,
+                Bids = new List<Bid> { CreateTestBid() }
 
-
-            };
+        };
 
 
         }
@@ -372,6 +380,21 @@
                 StartDate = DateTime.Now.AddDays(-2),
                 EndDate = DateTime.Now.AddDays(2)
             };
+        }
+
+        public Bid CreateTestBid()
+        {
+            return new Bid {
+
+                UserId=  CreateTestUserWorking().Id,
+                ProductId = CreateTestProduct().Id,
+                Coins = 1,
+                DateOfCreated = DateTime.Now,
+                IsWon = false,
+                Id = 1,
+
+            };
+
         }
 
         public Zip createFakeZip()
