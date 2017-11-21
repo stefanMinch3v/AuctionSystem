@@ -10,9 +10,32 @@
 
     public class BidController : IBidController
     {
+        private static BidController instance;
+
+        private BidController()
+        {
+        }
+
+        public static BidController Instance()
+        {
+            if (instance == null)
+            {
+                instance = new BidController();
+            }
+
+            return instance;
+        }
+
         public IList<Bid> GetAllBidsByProductId(int productId)
         {
             CoreValidator.ThrowIfNegativeOrZero(productId, nameof(productId));
+
+            var isProductExists = new ProductController().IsProductExistingById(productId);
+
+            if (!isProductExists)
+            {
+                throw new ArgumentException("Product does not exist in the system.");
+            }
 
             using (var db = new AuctionContext())
             {
@@ -23,6 +46,13 @@
         public IList<Bid> GetAllBidsByUserId(int userId)
         {
             CoreValidator.ThrowIfNegativeOrZero(userId, nameof(userId));
+
+            var isUserExists = UserController.Instance().IsUserExistingById(userId);
+
+            if (!isUserExists)
+            {
+                throw new ArgumentException("User does not exist in the system.");
+            }
 
             using (var db = new AuctionContext())
             {
@@ -156,6 +186,23 @@
                 DateOfCreated = DateTime.Now,
                 IsWon = false
             };
+        }
+
+        public Bid GetBidByIdWithAllObjects(int bidId)
+        {
+            CoreValidator.ThrowIfNegativeOrZero(bidId, nameof(bidId));
+
+            using (var db = new AuctionContext())
+            {
+                var resultBid = db.Bids
+                                    .Include("User")
+                                    .Include("Product")
+                                    .FirstOrDefault(b => b.Id == bidId);
+
+                CoreValidator.ThrowIfNull(resultBid, nameof(resultBid));
+
+                return resultBid;
+            }
         }
     }
 }

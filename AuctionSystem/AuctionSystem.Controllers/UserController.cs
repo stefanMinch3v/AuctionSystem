@@ -24,6 +24,9 @@
                                         .ForMember(dest => dest.Payments, opt => opt.MapFrom(src => string.Join(Environment.NewLine, src.Payments.Select(p => p.Type + ", " + p.PaymentTypeCode))))
                                         .ForMember(dest => dest.Invoices, opt => opt.MapFrom(src => string.Join(Environment.NewLine, src.Invoices.Select(p => p.ProductId + ", " + p.Product.Name))))
                                         .ForMember(dest => dest.Bids, opt => opt.MapFrom(src => string.Join(Environment.NewLine, src.Bids.Select(b => b.Product.Name + ", " + b.Coins + ", " + b.IsWon + ", " + b.DateOfCreated))));
+                cfg.CreateMap<Bid, BidDto>()
+                                        .ForMember(dest => dest.Username, opt => opt.MapFrom(src => src.User.Username))
+                                        .ForMember(dest => dest.ProductName, opt => opt.MapFrom(src => src.Product.Name));
             });
         }
 

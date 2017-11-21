@@ -1,37 +1,51 @@
 ﻿namespace AuctionSystem.WcfService
 {
+    using AutoMapper;
+    using Controllers;
     using Interfaces;
-    using System;
+    using Models;
+    using Models.DTOs;
     using System.Collections.Generic;
-    using AuctionSystem.Models;
 
     public class BidService : IBidService
     {
-        // TODO in each method return the controller that supposed to handle its operation
+        // TODO: fix all the return list methods
 
-        public IList<Bid> GetAllBidsByProductId(int id)
+        public void MakeBid(int userId, int productId, int coins)
         {
-            throw new NotImplementedException();
-        }
-
-        public IList<Bid> GetAllBidsByUserId(int id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Bid GetBidById(int bidId)
-        {
-            throw new NotImplementedException();
+            BidController.Instance().MakeBid(userId, productId, coins);
         }
 
         public bool IsBidWon(int bidId)
         {
-            throw new NotImplementedException();
+            return BidController.Instance().IsBidWon(bidId);
         }
 
-        public void MakeBid(User user, Product product, int coins, DateTime dateOfCreated)
+        public IList<Bid> GetAllBidsByUserId(int id)
         {
-            throw new NotImplementedException();
+            return BidController.Instance().GetAllBidsByUserId(id);
+        }
+
+        public IList<Bid> GetAllBidsByProductId(int id)
+        {
+            return BidController.Instance().GetAllBidsByProductId(id);
+        }
+
+        public IList<Bid> GetAllEarnedBids()
+        {
+            return BidController.Instance().GetAllEarnedBids();
+        }
+
+        public BidDto GetBidById(int bidId)
+        {
+            var dbBid = BidController.Instance().GetBidByIdWithAllObjects(bidId);
+
+            return MapDbBidToBidDto(dbBid);
+        }
+
+        private BidDto MapDbBidToBidDto(Bid dbBid)
+        {
+            return Mapper.Map<BidDto>(dbBid);
         }
     }
 }
