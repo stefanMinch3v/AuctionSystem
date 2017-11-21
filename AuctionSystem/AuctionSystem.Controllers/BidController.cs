@@ -71,7 +71,7 @@
             using (var db = new AuctionContext())
             {
                 #region CHECK FOR EXISTING USER, PRODUCT AND FOR VALID COINS
-                var userController = new UserController();
+                var userController = UserController.Instance();
                 var productController = new ProductController();
 
                 var isUserExisting = userController.IsUserExistingById(userId);

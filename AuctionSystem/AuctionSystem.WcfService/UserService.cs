@@ -1,81 +1,66 @@
 ﻿namespace AuctionSystem.WcfService
 {
-    using AuctionSystem.Controllers;
+    using AutoMapper;
+    using Controllers;
     using Interfaces;
     using Models;
+    using Models.DTOs;
     using Models.Enums;
-    using System;
     using System.Collections.Generic;
 
     public class UserService : IUserService
     {
         public int CountUserBidsForGivenProduct(int userId, int productId)
         {
-            return new UserController().CountUserBidsForGivenProduct(userId, productId);
+            return UserController.Instance().CountUserBidsForGivenProduct(userId, productId);
         }
 
         public void CreateUser(string username, string password, string name, string address, string email, string phone, string dateOfBirth, Gender gender, int zipId, int coins, List<Payment> payments)
         {
-            var controller = new UserController();
+            var controller = UserController.Instance();
             controller.CreateUser(username, password, name, address, email, phone, dateOfBirth, gender, zipId, coins, payments);
         }
 
-        public User GetUserById(int id)
+        public UserDto GetUserById(int id)
         {
-            var dbUser = new UserController().GetUserById(id);
+            var dbUser = UserController.Instance().GetUserByIdWithAllCollections(id);
             
-            return TransferDbObjectToRegularObject(dbUser);
+            return MapDbUserToUserDto(dbUser);
         }
 
-        private User TransferDbObjectToRegularObject(User dbUser)
+        private UserDto MapDbUserToUserDto(User dbUser)
         {
-            var newUser = new User
-            {
-                Id = dbUser.Id,
-                Gender = dbUser.Gender,
-                Address = dbUser.Address,
-                Coins = dbUser.Coins,
-                DateOfBirth = dbUser.DateOfBirth,
-                Email = dbUser.Email,
-                IsAdmin = dbUser.IsAdmin,
-                IsDeleted = dbUser.IsDeleted,
-                Name = dbUser.Name,
-                Password = dbUser.Password,
-                Phone = dbUser.Phone,
-                Username = dbUser.Username
-            };
-
-            return newUser;
+            return Mapper.Map<UserDto>(dbUser);
         }
 
         public bool DeleteUser(int userId)
         {
-            return new UserController().DeleteUser(userId);
+            return UserController.Instance().DeleteUser(userId);
         }
 
         public IList<Bid> GetUserBids(int userId)
         {
-            return new UserController().GetUserBids(userId);
+            return UserController.Instance().GetUserBids(userId);
         }
 
         public IList<Invoice> GetUserInvoices(int userId)
         {
-            return new UserController().GetUserInvoices(userId);
+            return UserController.Instance().GetUserInvoices(userId);
         }
 
         public IList<Product> GetUserProducts(int userId)
         {
-            return new UserController().GetUserProducts(userId);
+            return UserController.Instance().GetUserProducts(userId);
         }
 
         public bool IsUserExisting(string username)
         {
-            return new UserController().IsUserExisting(username);
+            return UserController.Instance().IsUserExisting(username);
         }
 
         public bool UpdateUser(int userId, string property, string value)
         {
-            return new UserController().UpdateUser(userId, property, value);
+            return UserController.Instance().UpdateUser(userId, property, value);
         }
     }
 }

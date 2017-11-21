@@ -159,5 +159,13 @@
                 return collection.Select(userId => dbContext.Users.FirstOrDefault(u => u.Id == userId)).ToList();
             }
         }
+
+        public bool IsProductExistingById(int productId)
+        {
+            using (dbContext)
+            {
+                return dbContext.Products.Any(p => p.Id == productId);
+            }
+        }
     }
 }

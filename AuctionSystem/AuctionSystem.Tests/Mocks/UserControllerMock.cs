@@ -285,5 +285,13 @@
                 return true;
             }
         }
+
+        public bool IsUserExistingById(int userId)
+        {
+            using (dbContext)
+            {
+                return dbContext.Users.Any(u => u.Id == userId);
+            }
+        }
     }
 }
