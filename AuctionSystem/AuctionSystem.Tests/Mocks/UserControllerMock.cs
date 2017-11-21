@@ -18,6 +18,14 @@
             this.dbContext = dbContext;
         }
 
+        public bool IsUserExistingById(int userId)
+        {
+            using (dbContext)
+            {
+                return dbContext.Users.Any(u => u.Id == userId);
+            }
+        }
+
         public int CountUserBidsForGivenProduct(int userId, int productId)
         {
             CoreValidator.ThrowIfNegativeOrZero(userId, nameof(userId));
