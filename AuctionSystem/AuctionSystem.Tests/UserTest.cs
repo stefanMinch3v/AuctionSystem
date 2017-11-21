@@ -47,152 +47,149 @@
             var actual = userController.GetUserByUsername("John").Username;
             Assert.AreEqual(expected, actual);
         }
+        [TestMethod]
+        public void CreateUserShouldPass()
+        {
 
-        // TODO : fix the code below
+            this.userController.CreateUser("name", "pass", "name name", "adress", "email", "phone", "11/15/2017", Models.Enums.Gender.Female, true, createFakeZip() , 10, paymentData);
 
-        //[TestMethod]
-        //public void CreateUserShouldPass()
-        //{
+            var actual = this.db.Object.Users.First(p => p.Name == "name name");
 
-        //    this.userController.CreateUser("name", "pass", "name name", "adress", "email", "phone", "11/15/2017", Models.Enums.Gender.Female, true, createFakeZip() , 10, paymentData);
+            Assert.AreEqual("name name", actual.Name);
+        }
 
-        //    var actual = this.db.Object.Users.First(p => p.Name == "name name");
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentException))]
+        public void CreateUserShouldThrowEmptyUsernameNameArgumentException()
+        {
 
-        //    Assert.AreEqual("name name", actual.Name);
-        //}
+            this.userController.CreateUser("", "pass", "name name", "adress", "email", "phone", "11/15/2017", Models.Enums.Gender.Female, true, createFakeZip(), 10, paymentData);
+        }
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentException))]
+        public void CreateUserShouldThrowNullUsernameArgumentException()
+        {
 
-        //[TestMethod]
-        //[ExpectedException(typeof(ArgumentException))]
-        //public void CreateUserShouldThrowEmptyUsernameNameArgumentException()
-        //{
+            this.userController.CreateUser(null, "pass", "name name", "adress", "email", "phone", "11/15/2017", Models.Enums.Gender.Female, true, createFakeZip(), 10, paymentData);
+        }
 
-        //    this.userController.CreateUser("", "pass", "name name", "adress", "email", "phone", "11/15/2017", Models.Enums.Gender.Female, true, createFakeZip(), 10, paymentData);
-        //}
-        //[TestMethod]
-        //[ExpectedException(typeof(ArgumentException))]
-        //public void CreateUserShouldThrowNullUsernameArgumentException()
-        //{
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentException))]
+        public void CreateUserShouldThrowEmptyPasswordArgumentException()
+        {
 
-        //    this.userController.CreateUser(null, "pass", "name name", "adress", "email", "phone", "11/15/2017", Models.Enums.Gender.Female, true, createFakeZip(), 10, paymentData);
-        //}
+            this.userController.CreateUser("name", "", "name name", "adress", "email", "phone", "11/15/2017", Models.Enums.Gender.Female, true, createFakeZip(), 10, paymentData);
+        }
 
-        //[TestMethod]
-        //[ExpectedException(typeof(ArgumentException))]
-        //public void CreateUserShouldThrowEmptyPasswordArgumentException()
-        //{
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentException))]
+        public void CreateUserShouldThrowNullPasswordArgumentException()
+        {
 
-        //    this.userController.CreateUser("name", "", "name name", "adress", "email", "phone", "11/15/2017", Models.Enums.Gender.Female, true, createFakeZip(), 10, paymentData);
-        //}
+            this.userController.CreateUser("name", null, "name name", "adress", "email", "phone", "11/15/2017", Models.Enums.Gender.Female, true, createFakeZip(), 10, paymentData);
+        }
 
-        //[TestMethod]
-        //[ExpectedException(typeof(ArgumentException))]
-        //public void CreateUserShouldThrowNullPasswordArgumentException()
-        //{
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentException))]
+        public void CreateUserShouldThrowEmptyNameArgumentException()
+        {
 
-        //    this.userController.CreateUser("name", null, "name name", "adress", "email", "phone", "11/15/2017", Models.Enums.Gender.Female, true, createFakeZip(), 10, paymentData);
-        //}
+            this.userController.CreateUser("name", "pass", "", "adress", "email", "phone", "11/15/2017", Models.Enums.Gender.Female, true, createFakeZip(), 10, paymentData);
+        }
 
-        //[TestMethod]
-        //[ExpectedException(typeof(ArgumentException))]
-        //public void CreateUserShouldThrowEmptyNameArgumentException()
-        //{
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentException))]
+        public void CreateUserShouldThrowNullNameArgumentException()
+        {
 
-        //    this.userController.CreateUser("name", "pass", "", "adress", "email", "phone", "11/15/2017", Models.Enums.Gender.Female, true, createFakeZip(), 10, paymentData);
-        //}
+            this.userController.CreateUser("name", "pass", null, "address", "email", "phone", "11/15/2017", Models.Enums.Gender.Female, true, createFakeZip(), 10, paymentData);
+        }
 
-        //[TestMethod]
-        //[ExpectedException(typeof(ArgumentException))]
-        //public void CreateUserShouldThrowNullNameArgumentException()
-        //{
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentException))]
+        public void CreateUserShouldThrowEmptyAddressArgumentException()
+        {
 
-        //    this.userController.CreateUser("name", "pass", null, "address", "email", "phone", "11/15/2017", Models.Enums.Gender.Female, true, createFakeZip(), 10, paymentData);
-        //}
+            this.userController.CreateUser("name", "pass", "name name", "", "email", "phone", "11/15/2017", Models.Enums.Gender.Female, true, createFakeZip(), 10, paymentData);
+        }
 
-        //[TestMethod]
-        //[ExpectedException(typeof(ArgumentException))]
-        //public void CreateUserShouldThrowEmptyAddressArgumentException()
-        //{
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentException))]
+        public void CreateUserShouldThrowNullAddressArgumentException()
+        {
 
-        //    this.userController.CreateUser("name", "pass", "name name", "", "email", "phone", "11/15/2017", Models.Enums.Gender.Female, true, createFakeZip(), 10, paymentData);
-        //}
+            this.userController.CreateUser("name", "pass", "name name", null, "email", "phone", "11/15/2017", Models.Enums.Gender.Female, true, createFakeZip(), 10, paymentData);
+        }
 
-        //[TestMethod]
-        //[ExpectedException(typeof(ArgumentException))]
-        //public void CreateUserShouldThrowNullAddressArgumentException()
-        //{
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentException))]
+        public void CreateUserShouldThrowEmptyEmailArgumentException()
+        {
 
-        //    this.userController.CreateUser("name", "pass", "name name", null, "email", "phone", "11/15/2017", Models.Enums.Gender.Female, true, createFakeZip(), 10, paymentData);
-        //}
+            this.userController.CreateUser("name", "pass", "name name", "address", "", "phone", "11/15/2017", Models.Enums.Gender.Female, true, createFakeZip(), 10, paymentData);
+        }
 
-        //[TestMethod]
-        //[ExpectedException(typeof(ArgumentException))]
-        //public void CreateUserShouldThrowEmptyEmailArgumentException()
-        //{
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentException))]
+        public void CreateUserShouldThrowNullEmailArgumentException()
+        {
 
-        //    this.userController.CreateUser("name", "pass", "name name", "address", "", "phone", "11/15/2017", Models.Enums.Gender.Female, true, createFakeZip(), 10, paymentData);
-        //}
+            this.userController.CreateUser("name", "pass", "name name", "address", null, "phone", "11/15/2017", Models.Enums.Gender.Female, true, createFakeZip(), 10, paymentData);
+        }
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentException))]
+        public void CreateUserShouldThrowEmptyPhoneArgumentException()
+        {
 
-        //[TestMethod]
-        //[ExpectedException(typeof(ArgumentException))]
-        //public void CreateUserShouldThrowNullEmailArgumentException()
-        //{
+            this.userController.CreateUser("name", "pass", "name name", "address", "email", "", "11/15/2017", Models.Enums.Gender.Female, true, createFakeZip(), 10, paymentData);
+        }
 
-        //    this.userController.CreateUser("name", "pass", "name name", "address", null, "phone", "11/15/2017", Models.Enums.Gender.Female, true, createFakeZip(), 10, paymentData);
-        //}
-        //[TestMethod]
-        //[ExpectedException(typeof(ArgumentException))]
-        //public void CreateUserShouldThrowEmptyPhoneArgumentException()
-        //{
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentException))]
+        public void CreateUserShouldThrowNullPhoneArgumentException()
+        {
 
-        //    this.userController.CreateUser("name", "pass", "name name", "address", "email", "", "11/15/2017", Models.Enums.Gender.Female, true, createFakeZip(), 10, paymentData);
-        //}
+            this.userController.CreateUser("name", "pass", "name name", "address", "email", null, "11/15/2017", Models.Enums.Gender.Female, true, createFakeZip(), 10, paymentData);
+        }
 
-        //[TestMethod]
-        //[ExpectedException(typeof(ArgumentException))]
-        //public void CreateUserShouldThrowNullPhoneArgumentException()
-        //{
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentException))]
+        public void CreateUserShouldThrowDateTypeArgumentException()
+        {
 
-        //    this.userController.CreateUser("name", "pass", "name name", "address", "email", null, "11/15/2017", Models.Enums.Gender.Female, true, createFakeZip(), 10, paymentData);
-        //}
+            this.userController.CreateUser("name", "pass", "name name", "adress", "email", "phone", "57", Models.Enums.Gender.Female, true, createFakeZip(), 10, paymentData);
+        }
 
-        //[TestMethod]
-        //[ExpectedException(typeof(ArgumentException))]
-        //public void CreateUserShouldThrowDateTypeArgumentException()
-        //{
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentException))]
+        public void CreateUserShouldThrowDateEmptyArgumentException()
+        {
 
-        //    this.userController.CreateUser("name", "pass", "name name", "adress", "email", "phone", "57", Models.Enums.Gender.Female, true, createFakeZip(), 10, paymentData);
-        //}
+            this.userController.CreateUser("name", "pass", "name name", "adress", "email", "phone", "", Models.Enums.Gender.Female, true, createFakeZip(), 10, paymentData);
+        }
 
-        //[TestMethod]
-        //[ExpectedException(typeof(ArgumentException))]
-        //public void CreateUserShouldThrowDateEmptyArgumentException()
-        //{
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentException))]
+        public void CreateUserShouldThrowDateNullArgumentException()
+        {
 
-        //    this.userController.CreateUser("name", "pass", "name name", "adress", "email", "phone", "", Models.Enums.Gender.Female, true, createFakeZip(), 10, paymentData);
-        //}
+            this.userController.CreateUser("name", "pass", "name name", "adress", "email", "phone", null, Models.Enums.Gender.Female, true, createFakeZip(), 10, paymentData);
+        }
 
-        //[TestMethod]
-        //[ExpectedException(typeof(ArgumentException))]
-        //public void CreateUserShouldThrowDateNullArgumentException()
-        //{
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentException))]
+        public void CreateUserShouldThrowNegativeCoinArgumentException()
+        {
 
-        //    this.userController.CreateUser("name", "pass", "name name", "adress", "email", "phone", null, Models.Enums.Gender.Female, true, createFakeZip(), 10, paymentData);
-        //}
+            this.userController.CreateUser("name", "pass", "name name", "adress", "email", "phone", "11/15/2017", Models.Enums.Gender.Female, true, createFakeZip(), -1, paymentData);
+        }
 
-        //[TestMethod]
-        //[ExpectedException(typeof(ArgumentException))]
-        //public void CreateUserShouldThrowNegativeCoinArgumentException()
-        //{
+        [TestMethod]
+        public void CreateUserShouldNotThrowZeroCoinArgumentException()
+        {
 
-        //    this.userController.CreateUser("name", "pass", "name name", "adress", "email", "phone", "11/15/2017", Models.Enums.Gender.Female, true, createFakeZip(), -1, paymentData);
-        //}
-
-        //[TestMethod]
-        //public void CreateUserShouldNotThrowZeroCoinArgumentException()
-        //{
-
-        //    this.userController.CreateUser("name", "pass", "name name", "adress", "email", "phone", "11/15/2017", Models.Enums.Gender.Female, true, createFakeZip(), 0, paymentData);
-        //}
+            this.userController.CreateUser("name", "pass", "name name", "adress", "email", "phone", "11/15/2017", Models.Enums.Gender.Female, true, createFakeZip(), 0, paymentData);
+        }
 
         [TestMethod]
         public void DeleteUserShouldPass()
