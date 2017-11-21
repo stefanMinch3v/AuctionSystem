@@ -80,12 +80,6 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\AuctionSystem.Service\AuctionSystem.Service.csproj">
-      <Project>{a07a90da-504a-4d5d-b232-6b605acb6bc0}</Project>
-      <Name>AuctionSystem.Service</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Resources\news-icon-13648.png" />
   </ItemGroup>
   <ItemGroup>

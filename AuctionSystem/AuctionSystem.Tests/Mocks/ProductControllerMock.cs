@@ -92,7 +92,6 @@
                         break;
                     default:
                         throw new ArgumentException("No such property");
-                        break;
                 }
                 dbContext.SaveChanges();
                 return true;

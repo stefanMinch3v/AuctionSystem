@@ -80,7 +80,7 @@
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentException))]
-        public void getAllBidsByProductIdwithNegativeIdShouldFail()
+        public void GetAllBidsByProductIdwithNegativeIdShouldFail()
         {
             // Act
             bidController.GetAllBidsByProductId(-1);
@@ -88,20 +88,20 @@
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentException))]
-        public void getAllBidsByProductIdwithZeroIdShouldFail()
+        public void GetAllBidsByProductIdwithZeroIdShouldFail()
         {
             // Act
             bidController.GetAllBidsByProductId(0);
         }
 
         [TestMethod]
-        public void getAllBidsByProductIdShouldReturnNull()
+        public void GetAllBidsByProductIdShouldReturnNull()
         {
             // Act
             var bids = this.bidController.GetAllBidsByProductId(Int32.MaxValue);
 
             // Assert
-            Assert.IsNull(bids);
+            Assert.AreEqual(0, bids.Count); // list cannot be null if its already initialized so check only his length
         }
         #endregion
 
@@ -119,7 +119,7 @@
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentException))]
-        public void getAllBidsByUserIdwithZeroIdShouldFail()
+        public void GetAllBidsByUserIdwithZeroIdShouldFail()
         {
             // Act
             bidController.GetAllBidsByUserId(0);
@@ -127,24 +127,24 @@
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentException))]
-        public void getAllBidsByUserIdwithNegativeIdShouldFail()
+        public void GetAllBidsByUserIdwithNegativeIdShouldFail()
         {
             // Act
             bidController.GetAllBidsByUserId(-1);
         }
 
         [TestMethod]
-        public void getAllBidsByUserIdShouldReturnNull()
+        public void GetAllBidsByUserIdShouldReturnNull()
         {
             // Act
             var bids = this.bidController.GetAllBidsByUserId(Int32.MaxValue);
 
             // Assert
-            Assert.IsNull(bids);
+            Assert.AreEqual(0, bids.Count); // list cannot be null if its already initialized so check only his length
         }
         #endregion
 
-        #region getAllEarnedBids method tests
+        #region GetAllEarnedBids method tests
         [TestMethod]
         public void GetAllEarnedBidsShouldPass()
         {
@@ -186,13 +186,14 @@
         }
 
         [TestMethod]
+        [ExpectedException(typeof(ArgumentNullException))]
         public void GetBidByIdShouldReturnNull()
         {
             // Act
             var bids = this.bidController.GetBidById(Int32.MaxValue);
 
             // Assert
-            Assert.IsNull(bids);
+            // Assert.IsNull(bids); // value cannot be null there is corevalidator to check it and throw exception
         }
         #endregion
 
@@ -232,13 +233,14 @@
         }
 
         [TestMethod]
+        [ExpectedException(typeof(ArgumentNullException))]
         public void IsBidWonShouldReturnNull()
         {
             // Act
             var bids = this.bidController.IsBidWon(Int32.MaxValue);
 
             // Assert
-            Assert.IsNull(bids);
+            // Assert.IsNull(bids); // value cannot be null there is corevalidator to check it and throw exception
         }
         #endregion
 

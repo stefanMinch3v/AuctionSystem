@@ -20,6 +20,8 @@
 
         public IList<Bid> GetAllBidsByProductId(int productId)
         {
+            CoreValidator.ThrowIfNegativeOrZero(productId, nameof(productId));
+
             using (dbContext)
             {
                 return dbContext.Bids.Where(b => b.ProductId == productId).ToList();
@@ -28,6 +30,8 @@
 
         public IList<Bid> GetAllBidsByUserId(int userId)
         {
+            CoreValidator.ThrowIfNegativeOrZero(userId, nameof(userId));
+
             using (dbContext)
             {
                 return dbContext.Bids.Where(b => b.UserId == userId).ToList();

@@ -12,6 +12,8 @@
     {
         public IList<Bid> GetAllBidsByProductId(int productId)
         {
+            CoreValidator.ThrowIfNegativeOrZero(productId, nameof(productId));
+
             using (var db = new AuctionContext())
             {
                 return db.Bids.Where(b => b.ProductId == productId).ToList();
@@ -20,6 +22,8 @@
 
         public IList<Bid> GetAllBidsByUserId(int userId)
         {
+            CoreValidator.ThrowIfNegativeOrZero(userId, nameof(userId));
+
             using (var db = new AuctionContext())
             {
                 return db.Bids.Where(b => b.UserId == userId).ToList();
