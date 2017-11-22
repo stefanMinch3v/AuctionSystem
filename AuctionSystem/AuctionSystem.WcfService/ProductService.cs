@@ -1,15 +1,15 @@
 ﻿namespace AuctionSystem.WcfService
 {
-    using Interfaces;
+    using Controllers;
+    using Controllers.Contracts;
+    using Contracts;
+    using Models;
     using System;
     using System.Collections.Generic;
-    using AuctionSystem.Models;
-    using AuctionSystem.Controllers;
-    using AuctionSystem.Controllers.Interfaces;
 
     public class ProductService : IProductService
     {
-        private IProductController productService = new ProductController();
+        private IProductController productService = ProductController.Instance();
 
         public int CountUserBidsForProduct(int id)
         {

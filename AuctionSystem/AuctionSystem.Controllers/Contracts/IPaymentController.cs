@@ -1,4 +1,4 @@
-﻿namespace AuctionSystem.Controllers.Interfaces
+﻿namespace AuctionSystem.Controllers.Contracts
 {
     using Models;
     using Models.Enums;

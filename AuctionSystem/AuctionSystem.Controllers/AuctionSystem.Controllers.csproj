@@ -53,12 +53,12 @@
   <ItemGroup>
     <Compile Include="BidController.cs" />
     <Compile Include="Common\CoreValidator.cs" />
-    <Compile Include="Interfaces\IBidController.cs" />
-    <Compile Include="Interfaces\IInvoiceController.cs" />
-    <Compile Include="Interfaces\IPaymentController.cs" />
-    <Compile Include="Interfaces\IProductController.cs" />
-    <Compile Include="Interfaces\IUserController.cs" />
-    <Compile Include="Interfaces\IZipController.cs" />
+    <Compile Include="Contracts\IBidController.cs" />
+    <Compile Include="Contracts\IInvoiceController.cs" />
+    <Compile Include="Contracts\IPaymentController.cs" />
+    <Compile Include="Contracts\IProductController.cs" />
+    <Compile Include="Contracts\IUserController.cs" />
+    <Compile Include="Contracts\IZipController.cs" />
     <Compile Include="InvoiceController.cs" />
     <Compile Include="PaymentController.cs" />
     <Compile Include="ProductController.cs" />

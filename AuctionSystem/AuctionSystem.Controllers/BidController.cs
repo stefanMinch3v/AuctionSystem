@@ -1,8 +1,8 @@
 ﻿namespace AuctionSystem.Controllers
 {
-    using Controllers.Common;
+    using Common;
     using Data;
-    using Interfaces;
+    using Contracts;
     using Models;
     using System;
     using System.Collections.Generic;
@@ -30,7 +30,7 @@
         {
             CoreValidator.ThrowIfNegativeOrZero(productId, nameof(productId));
 
-            var isProductExists = new ProductController().IsProductExistingById(productId);
+            var isProductExists = ProductController.Instance().IsProductExistingById(productId);
 
             if (!isProductExists)
             {
@@ -106,7 +106,7 @@
             {
                 #region CHECK FOR EXISTING USER, PRODUCT AND FOR VALID COINS
                 var userController = UserController.Instance();
-                var productController = new ProductController();
+                var productController = ProductController.Instance();
 
                 var isUserExisting = userController.IsUserExistingById(userId);
                 var isProductExisting = productController.IsProductExistingById(productId);

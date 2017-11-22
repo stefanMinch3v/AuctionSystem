@@ -3,7 +3,7 @@
     using AutoMapper;
     using Common;
     using Data;
-    using Interfaces;
+    using Contracts;
     using Models;
     using Models.DTOs;
     using Models.Enums;
@@ -17,6 +17,7 @@
 
         private UserController()
         {
+            // TODO move this mapper init to login controller when is created.
             Mapper.Initialize(cfg =>
             {
                 cfg.CreateMap<User, UserDto>()
@@ -109,7 +110,7 @@
                 throw new ArgumentException($"Date of birth is not valid, the customer must be adult.");
             }
 
-            if (!new ZipController().IsZipExisting(zipId))
+            if (!ZipController.Instance().IsZipExisting(zipId))
             {
                 throw new ArgumentException($"Zip id doesn't exist in the system.");
             }

@@ -1,8 +1,7 @@
-﻿using AuctionSystem.Controllers.Common;
-
-namespace AuctionSystem.Controllers
+﻿namespace AuctionSystem.Controllers
 {
-    using Interfaces;
+    using Contracts;
+    using Common;
     using Models;
     using System;
     using System.Collections.Generic;
@@ -11,12 +10,28 @@ namespace AuctionSystem.Controllers
 
     public class ProductController : IProductController
     {
-        // TODO
+        private static ProductController instance;
+
+        private ProductController()
+        {
+        }
+
+        public static ProductController Instance()
+        {
+            if (instance == null)
+            {
+                instance = new ProductController();
+            }
+
+            return instance;
+        }
+        
         public void CreateProduct(string name, string description, decimal price, DateTime startDate, DateTime endDate)
         {
             CoreValidator.ThrowIfNullOrEmpty(name, nameof(name));
             CoreValidator.ThrowIfNullOrEmpty(description, nameof(description));
             CoreValidator.ThrowIfNegativeOrZero(price, nameof(price));
+
             using (var db = new AuctionContext())
             {
                 var product = new Product
@@ -37,10 +52,15 @@ namespace AuctionSystem.Controllers
         public bool UpdateProduct(int id, string property, string value)
         {
             CoreValidator.ThrowIfNullOrEmpty(value, nameof(property));
+
             using (var db = new AuctionContext())
             {
                 var product = GetProductById(id);
+
+                CoreValidator.ThrowIfNull(product, nameof(product));
+
                 db.Products.Attach(product);
+
                 switch (property.ToLower())
                 {
                     case "name":
@@ -52,16 +72,21 @@ namespace AuctionSystem.Controllers
                         {
                             throw new ArgumentException("The value cannot be parsed to integer");
                         }
+
                         CoreValidator.ThrowIfNegativeOrZero(Int32.Parse(value), nameof(property));
+
                         product.Price = Int32.Parse(value);
                         break;
                     case "description":
                         CoreValidator.ThrowIfNullOrEmpty(value, nameof(property));
+
                         product.Description = value;
                         break;
                     case "startdate":
                         CoreValidator.ThrowIfDateIsNotCorrect(value, nameof(property));
+
                         DateTime date = DateTime.Parse(value);
+
                         if (date > product.EndDate)
                         {
                             throw new ArgumentException("Start date cannot be bigger than the end date");
@@ -70,11 +95,14 @@ namespace AuctionSystem.Controllers
                         {
                             throw new ArgumentException("Start date cannot be lower than the current date");
                         }
+
                         product.StartDate = date;
                         break;
                     case "enddate":
                         CoreValidator.ThrowIfDateIsNotCorrect(value, nameof(property));
+
                         DateTime dateEnd = DateTime.Parse(value);
+
                         if (dateEnd < product.StartDate)
                         {
                             throw new ArgumentException("End date cannot be lower than the start date");
@@ -83,11 +111,13 @@ namespace AuctionSystem.Controllers
                         {
                             throw new ArgumentException("End date cannot be lower than the current date");
                         }
+
                         product.EndDate = dateEnd;
                         break;
                     default:
                         throw new ArgumentException("No such property");
                 }
+
                 db.Entry(product).State = System.Data.Entity.EntityState.Modified;
                 db.SaveChanges();
                 return true;
@@ -97,15 +127,19 @@ namespace AuctionSystem.Controllers
         public bool DeleteProduct(int id)
         {
             CoreValidator.ThrowIfNegativeOrZero(id, nameof(id));
+
             using (var db = new AuctionContext())
             {
                 var product = GetProductById(id);
+
+                CoreValidator.ThrowIfNull(product, nameof(product));
+
                 db.Products.Attach(product);
-                if (product == null) return false;
 
                 db.Products.Remove(product);
                 db.Entry(product).State = System.Data.Entity.EntityState.Deleted;
                 db.SaveChanges();
+
                 return true;
             }
         }
@@ -113,22 +147,27 @@ namespace AuctionSystem.Controllers
         public Product GetProductByName(string name)
         {
             CoreValidator.ThrowIfNullOrEmpty(name, nameof(name));
+
             using (var db = new AuctionContext())
             {
                 var product = db.Products.Include("Bids").FirstOrDefault(p => p.Name == name);
-                CoreValidator.ThrowIfNull(product, nameof(product));
-                return product;
 
+                CoreValidator.ThrowIfNull(product, nameof(product));
+
+                return product;
             }
         }
 
         public Product GetProductById(int id)
         {
             CoreValidator.ThrowIfNegativeOrZero(id, nameof(id));
+
             using (var db = new AuctionContext())
             {
                 var product = db.Products.Include("Bids").SingleOrDefault(p => p.Id == id);
+
                 CoreValidator.ThrowIfNull(product, nameof(product));
+
                 return product;
             }
         }
@@ -136,6 +175,7 @@ namespace AuctionSystem.Controllers
         public bool IsProductExisting(string productName)
         {
             CoreValidator.ThrowIfNullOrEmpty(productName, nameof(productName));
+
             using (var db = new AuctionContext())
             {
                 return db.Products.Any(p => p.Name == productName);

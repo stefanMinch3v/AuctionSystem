@@ -483,7 +483,7 @@
         };
         private Zip GetZip() => new Zip
         {
-            Id = 1,
+            ZipId = 1,
             City = "Aalborg",
             Country = "Denmark",
             ZipCode = "9000"

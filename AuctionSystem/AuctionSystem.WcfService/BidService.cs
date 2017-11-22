@@ -2,7 +2,7 @@
 {
     using AutoMapper;
     using Controllers;
-    using Interfaces;
+    using Contracts;
     using Models;
     using Models.DTOs;
     using System.Collections.Generic;

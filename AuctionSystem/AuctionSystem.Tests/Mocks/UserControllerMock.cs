@@ -1,7 +1,7 @@
 ﻿namespace AuctionSystem.Tests.Mocks
 {
     using Controllers.Common;
-    using Controllers.Interfaces;
+    using Controllers.Contracts;
     using Data;
     using Models;
     using Models.Enums;
@@ -92,7 +92,6 @@
                 throw new ArgumentException($"Zip id doesn't exist in the system.");
             }
 
-            var dateParsed = DateTime.Parse(dateOfBirth);
             if (dateParsed > DateTime.Now.AddYears(-18))
             {
                 throw new ArgumentException($"Date of birth is not valid, the customer must be adult.");
@@ -293,7 +292,7 @@
                 }
 
 
-                dbContext.Entry(user).State = System.Data.Entity.EntityState.Modified;
+                // dbContext.Entry(user).State = System.Data.Entity.EntityState.Modified;
                 dbContext.SaveChanges();
 
                 return true;

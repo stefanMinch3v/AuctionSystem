@@ -1,4 +1,4 @@
-﻿namespace AuctionSystem.Models.Validations
+﻿namespace AuctionSystem.Models.Utility
 {
     using System;
     using System.ComponentModel.DataAnnotations;

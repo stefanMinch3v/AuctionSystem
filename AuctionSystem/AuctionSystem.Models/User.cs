@@ -1,6 +1,6 @@
 ﻿namespace AuctionSystem.Models
 {
-    using Models.Validations;
+    using Models.Utility;
     using Models.Enums;
     using System;
     using System.Collections.Generic;

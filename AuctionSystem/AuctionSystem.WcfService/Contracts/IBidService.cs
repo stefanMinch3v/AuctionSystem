@@ -1,4 +1,4 @@
-﻿namespace AuctionSystem.WcfService.Interfaces
+﻿namespace AuctionSystem.WcfService.Contracts
 {
     using Models;
     using Models.DTOs;

@@ -1,7 +1,7 @@
 ﻿namespace AuctionSystem.Tests.Mocks
 {
-    using AuctionSystem.Controllers.Common;
-    using Controllers.Interfaces;
+    using Controllers.Common;
+    using Controllers.Contracts;
     using Data;
     using Models;
     using System;

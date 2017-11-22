@@ -17,7 +17,9 @@
         private Mock<AuctionContext> db;
         private UserControllerMock userController;
         private Mock<DbSet<User>> mockSet;
+        private Mock<DbSet<Zip>> mockSet2;
         private List<User> userData;
+        private List<Zip> zipData;
         private List<Bid> bidData;
         private List<Payment> paymentData;
 
@@ -30,15 +32,20 @@
 
             var user = CreateTestUserWorking();
             var bid = CreateTestBid();
+            var zip = CreateFakeZip();
 
             this.userData = new List<User>() { user };
+
             paymentData = new List<Payment>();
 
-            this.bidData = new List<Bid>() { bid};
+            this.bidData = new List<Bid>() { bid };
+            this.zipData = new List<Zip>() { zip };
 
             this.mockSet = new Mock<DbSet<User>>().SetupData(this.userData);
+            this.mockSet2 = new Mock<DbSet<Zip>>().SetupData(this.zipData);
 
             this.db.Setup(m => m.Users).Returns(mockSet.Object);
+            this.db.Setup(m => m.Zips).Returns(mockSet2.Object);
 
 
 
@@ -244,16 +251,7 @@
             this.userController.CreateUser("name", "pass", "name name", "adress", "email", "phone", DateTime.Now.AddYears(-20).ToString(), Models.Enums.Gender.Female, 1, -1, paymentData);
         }
 
-        [TestMethod]
-        public void CreateUserShouldNotThrowZeroCoinArgumentException()
-        {
-
-            this.userController.CreateUser("name", "pass", "name name", "adress", "email", "phone", DateTime.Now.AddYears(-20).ToString(), Models.Enums.Gender.Female, 1, 0, paymentData);
-        }
-
-
         //DELETE USER
-
 
         [TestMethod]
         public void DeleteUserShouldPass()
@@ -324,7 +322,7 @@
         public void UpdateUserPhoneShouldPass()
         {
             
-            var currentUserId = getExistingUserFromDb(1).Id;
+            var currentUserId = GetExistingUserFromDb(1).Id;
 
             var successUpdating = this.userController.UpdateUser(currentUserId, "phone", "111111");
 
@@ -572,7 +570,7 @@
 
 
         }
-        public User getExistingUserFromDb(int id)
+        public User GetExistingUserFromDb(int id)
         {
             return this.db.Object.Users.First(p => p.Id == id);
         }
@@ -604,7 +602,7 @@
 
         }
 
-        public Zip createFakeZip()
+        public Zip CreateFakeZip()
         {
             var zip = new Zip
             {

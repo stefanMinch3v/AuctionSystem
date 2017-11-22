@@ -1,39 +1,32 @@
-﻿namespace AuctionSystem.WcfService.Interfaces
+﻿namespace AuctionSystem.Controllers.Contracts
 {
     using Models;
-    using Models.DTOs;
     using Models.Enums;
+    using System;
     using System.Collections.Generic;
-    using System.ServiceModel;
 
-    [ServiceContract]
-    public interface IUserService
+    public interface IUserController
     {
-        [OperationContract]
         void CreateUser(string username, string password, string name, string address, string email, string phone, string dateOfBirth, Gender gender, int zipId, int coins, List<Payment> payments);
 
-        [OperationContract]
         bool UpdateUser(int userId, string property, string value);
 
-        [OperationContract]
-        UserDto GetUserById(int id);
-
-        [OperationContract]
         bool DeleteUser(int userId);
 
-        [OperationContract]
+        User GetUserByUsername(string username);
+
+        User GetUserById(int id);
+
         bool IsUserExisting(string username);
 
-        [OperationContract]
         int CountUserBidsForGivenProduct(int userId, int productId);
 
-        [OperationContract]
+        int GetAllUserSpentCoinsForGivenProduct(int userId, int productId);
+
         IList<Product> GetUserProducts(int userId);
 
-        [OperationContract]
         IList<Bid> GetUserBids(int userId);
 
-        [OperationContract]
         IList<Invoice> GetUserInvoices(int userId);
     }
 }

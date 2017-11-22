@@ -56,12 +56,12 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Interfaces\IBidService.cs" />
-    <Compile Include="Interfaces\IInvoiceService.cs" />
+    <Compile Include="Contracts\IBidService.cs" />
+    <Compile Include="Contracts\IInvoiceService.cs" />
     <Compile Include="InvoiceService.cs" />
-    <Compile Include="Interfaces\IPaymentService.cs" />
-    <Compile Include="Interfaces\IProductService.cs" />
-    <Compile Include="Interfaces\IUserService.cs" />
+    <Compile Include="Contracts\IPaymentService.cs" />
+    <Compile Include="Contracts\IProductService.cs" />
+    <Compile Include="Contracts\IUserService.cs" />
     <Compile Include="PaymentService.cs" />
     <Compile Include="ProductService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
