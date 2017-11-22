@@ -29,6 +29,15 @@
             }
         }
 
+        public static void ThrowIfNegative(int number, string name)
+        {
+            if (number < 0)
+            {
+                throw new ArgumentException($"{name} cannot be negative.");
+            }
+        }
+
+
         public static void ThrowIfNegativeOrZero(decimal number, string name)
         {
             if (number <= 0)

@@ -92,6 +92,12 @@
                 throw new ArgumentException($"Zip id doesn't exist in the system.");
             }
 
+            var dateParsed = DateTime.Parse(dateOfBirth);
+            if (dateParsed > DateTime.Now.AddYears(-18))
+            {
+                throw new ArgumentException($"Date of birth is not valid, the customer must be adult.");
+            }
+
             using (dbContext)
             {
                 var user = new User

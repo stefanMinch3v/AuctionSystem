@@ -8,10 +8,10 @@
     {
         void AddPayment(PaymentType type, string paymentTypeCode, int userId);
 
-        bool UpdatePayment(Payment payment, PaymentType type, string paymentTypeCode);
+        Payment GetPayment(int paymentId);
+        bool DeletePayment(int paymentId);
 
-        bool DeletePayment(Payment payment);
-
+        bool UpdatePayment(int paymentId, string property, string value);
         IList<Payment> GetPaymentsByUser(int userId);
     }
 }
