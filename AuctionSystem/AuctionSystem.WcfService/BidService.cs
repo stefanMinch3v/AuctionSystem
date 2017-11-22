@@ -9,7 +9,7 @@
 
     public class BidService : IBidService
     {
-        // TODO: fix all the return list methods
+        // TODO: fix all the return list methods (try to return list of bidDtos)
 
         public void MakeBid(int userId, int productId, int coins)
         {
