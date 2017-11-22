@@ -10,30 +10,30 @@
     public interface IUserService
     {
         [OperationContract]
-        void CreateUser(string username, string password, string name, string address, string email, string phone, string dateOfBirth, Gender gender, int zipId, int coins, List<Payment> payments);
+        void CreateUser(User user);
 
         [OperationContract]
-        bool UpdateUser(int userId, string property, string value);
+        bool UpdateUser(User user, string property, string value);
 
         [OperationContract]
-        UserDto GetUserById(int id);
+        User GetUserById(int id);
 
         [OperationContract]
-        bool DeleteUser(int userId);
+        bool DeleteUser(User user);
 
         [OperationContract]
-        bool IsUserExisting(string username);
+        bool IsUserExisting(User user);
 
         [OperationContract]
-        int CountUserBidsForGivenProduct(int userId, int productId);
+        int CountUserBidsForGivenProduct(User user, Product product);
 
         [OperationContract]
-        IList<Product> GetUserProducts(int userId);
+        IList<Product> GetUserProducts(User user);
 
         [OperationContract]
-        IList<Bid> GetUserBids(int userId);
+        IList<Bid> GetUserBids(User user);
 
         [OperationContract]
-        IList<Invoice> GetUserInvoices(int userId);
+        IList<Invoice> GetUserInvoices(User user);
     }
 }

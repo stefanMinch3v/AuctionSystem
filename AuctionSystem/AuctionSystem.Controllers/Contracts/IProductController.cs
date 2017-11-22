@@ -6,20 +6,20 @@
 
     public interface IProductController
     {
-        void CreateProduct(string name, string description, decimal price, DateTime startDate, DateTime endDate);
+        void CreateProduct(Product product);
 
-        bool UpdateProduct(int id, string property, string value);
+        bool UpdateProduct(Product product, string property, string value);
 
-        bool DeleteProduct(int id);
+        bool DeleteProduct(Product product);
 
         Product GetProductByName(string name);
 
         Product GetProductById(int id);
 
-        bool IsProductExisting(string productName);
+        bool IsProductExisting(Product product);
 
         int CountUserBidsForProduct(int id);
 
-        IList<User> GetProductUsers(int id);
+        IList<User> GetProductUsers(Product product);
     }
 }

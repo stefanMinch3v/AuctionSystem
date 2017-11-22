@@ -9,62 +9,44 @@
 
     public class ProductService : IProductService
     {
-        private IProductController productService = ProductController.Instance();
-
-        public int CountUserBidsForProduct(int id)
+        public void CreateProduct(Product product)
         {
-            return productService.CountUserBidsForProduct(id);
-        }
-        public void CreateProduct(string name, string description, decimal price, DateTime startDate, DateTime endDate)
-        {
-            productService.CreateProduct(name, description, price, startDate, endDate);
+            ProductController.Instance().CreateProduct(product);
         }
 
-        public bool DeleteProduct(int id)
+        public bool UpdateProduct(Product product, string property, string value)
         {
-            return productService.DeleteProduct(id);
+            return ProductController.Instance().UpdateProduct(product, property, value);
         }
 
-        public Product GetProductById(int id)
+        public bool DeleteProduct(Product product)
         {
-            return GetDTOProduct(productService.GetProductById(id));
-
+            return ProductController.Instance().DeleteProduct(product);
         }
 
         public Product GetProductByName(string name)
         {
-            var product = productService.GetProductByName(name);
-            return GetDTOProduct(product);
+            return ProductController.Instance().GetProductByName(name);
         }
 
-        public IList<User> GetProductUsers(int id)
+        public Product GetProductById(int id)
         {
-            return productService.GetProductUsers(id);
+            return ProductController.Instance().GetProductById(id);
         }
 
-        public bool IsProductExisting(string productName)
+        public bool IsProductExisting(Product product)
         {
-            return productService.IsProductExisting(productName);
+            return ProductController.Instance().IsProductExisting(product);
         }
 
-        public bool UpdateProduct(int id, string property, string value)
+        public int CountUserBidsForProduct(int id)
         {
-            return productService.UpdateProduct(id, property, value);
+            return ProductController.Instance().CountUserBidsForProduct(id);
         }
-        private Product GetDTOProduct(Product product)
+
+        public IList<User> GetProductUsers(Product product)
         {
-            return new Product
-            {
-                Id = product.Id,
-                Name = product.Name,
-                Description = product.Description,
-                StartDate = product.StartDate,
-                EndDate = product.EndDate,
-                IsAvailable = product.IsAvailable,
-                Price = product.Price,
-                Bids = product.Bids,
-                Image = product.Image
-            };
+            return ProductController.Instance().GetProductUsers(product);
         }
     }
 }

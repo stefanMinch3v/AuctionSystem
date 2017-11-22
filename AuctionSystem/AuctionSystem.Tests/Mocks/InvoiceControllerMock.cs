@@ -20,47 +20,55 @@
 
 
         // TODO
-        public void CreateInvoice(int userId, int productId)
+        public void CreateInvoice(User user, Product product)
         {
-            CoreValidator.ThrowIfNegativeOrZero(userId, nameof(userId));
-            CoreValidator.ThrowIfNegativeOrZero(productId, nameof(productId));
-            using (dbContext)
+            CoreValidator.ThrowIfNull(user, nameof(user));
+            CoreValidator.ThrowIfNull(product, nameof(product));
+            CoreValidator.ThrowIfNegativeOrZero(user.Id, nameof(user.Id));
+            CoreValidator.ThrowIfNegativeOrZero(product.Id, nameof(product.Id));
+
+            using (var db = dbContext)
             {
                 var invoice = new Invoice
                 {
-                    UserId = userId,
-                    ProductId = productId
+                    UserId = user.Id,
+                    ProductId = product.Id
                 };
 
-                dbContext.Invoices.Add(invoice);
-                dbContext.SaveChanges();
+                db.Invoices.Add(invoice);
+                db.SaveChanges();
+            }
+        }
+        public IList<Invoice> GetAllInvoicesForUser(User user)
+        {
+            CoreValidator.ThrowIfNull(user, nameof(user));
+            CoreValidator.ThrowIfNegativeOrZero(user.Id, nameof(user.Id));
+
+            using (var db = dbContext)
+            {
+                return db.Invoices.Where(u => u.UserId == user.Id).ToList();
             }
         }
 
-        public IList<Invoice> GetAllInvoicesForUser(int userId)
+        public Invoice GetInvoiceByProductId(Product product)
         {
-            CoreValidator.ThrowIfNegativeOrZero(userId, nameof(userId));
-            using (this.dbContext)
+            CoreValidator.ThrowIfNull(product, nameof(product));
+            CoreValidator.ThrowIfNegativeOrZero(product.Id, nameof(product.Id));
+
+            using (var db = dbContext)
             {
-                return dbContext.Invoices.Where(u => u.UserId == userId).ToList();
+                return db.Invoices.FirstOrDefault(p => p.ProductId == product.Id);
             }
         }
 
-        public Invoice GetInvoiceByProductId(int productId)
+        public Invoice GetInvoiceByUserId(User user)
         {
-            CoreValidator.ThrowIfNegativeOrZero(productId, nameof(productId));
-            using (this.dbContext)
-            {
-                return this.dbContext.Invoices.FirstOrDefault(p => p.ProductId == productId);
-            }
-        }
+            CoreValidator.ThrowIfNull(user, nameof(user));
+            CoreValidator.ThrowIfNegativeOrZero(user.Id, nameof(user.Id));
 
-        public Invoice GetInvoiceByUserId(int userId)
-        {
-            CoreValidator.ThrowIfNegativeOrZero(userId, nameof(userId));
-            using (this.dbContext)
+            using (var db = dbContext)
             {
-                return dbContext.Invoices.FirstOrDefault(u => u.UserId == userId);
+                return db.Invoices.FirstOrDefault(u => u.UserId == user.Id);
             }
         }
     }

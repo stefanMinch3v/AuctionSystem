@@ -18,56 +18,71 @@
         }
 
         // TODO
-        public void CreateProduct(string name, string description, decimal price, DateTime startDate, DateTime endDate)
+        public void CreateProduct(Product product)
         {
-            CoreValidator.ThrowIfNullOrEmpty(name, nameof(name));
-            CoreValidator.ThrowIfNullOrEmpty(description, nameof(description));
-            CoreValidator.ThrowIfNegativeOrZero(price, nameof(price));
-            using (dbContext)
+            CoreValidator.ThrowIfNull(product, nameof(product));
+            CoreValidator.ThrowIfNullOrEmpty(product.Name, nameof(product.Name));
+            CoreValidator.ThrowIfNullOrEmpty(product.Description, nameof(product.Description));
+            CoreValidator.ThrowIfNegativeOrZero(product.Price, nameof(product.Price));
+
+            using (var db = dbContext)
             {
-                var product = new Product
+                var productNew = new Product
                 {
-                    Name = name,
-                    Price = price,
-                    Description = description,
-                    StartDate = startDate,
-                    EndDate = endDate
+                    Name = product.Name,
+                    Price = product.Price,
+                    Description = product.Description,
+                    StartDate = product.StartDate,
+                    IsAvailable = product.StartDate <= DateTime.Now && product.EndDate > DateTime.Now,
+                    EndDate = product.EndDate
                 };
 
-                dbContext.Products.Add(product);
-                dbContext.SaveChanges();
+                db.Products.Add(productNew);
+                db.SaveChanges();
             }
         }
 
-        public bool UpdateProduct(int id, string property, string value)
+        public bool UpdateProduct(Product product, string property, string value)
         {
-            CoreValidator.ThrowIfNullOrEmpty(value, nameof(property));
-            using (dbContext)
+            CoreValidator.ThrowIfNull(product, nameof(product));
+            CoreValidator.ThrowIfNull(property, nameof(property));
+            CoreValidator.ThrowIfNullOrEmpty(value, nameof(value));
+
+            using (var db = dbContext)
             {
-                var product = GetProductById(id);
+                var productNew = GetProductById(product.Id);
+
+                CoreValidator.ThrowIfNull(productNew, nameof(productNew));
+
+                db.Products.Attach(productNew);
 
                 switch (property.ToLower())
                 {
                     case "name":
                         CoreValidator.ThrowIfNullOrEmpty(value, nameof(property));
-                        product.Name = value;
+                        productNew.Name = value;
                         break;
                     case "price":
                         if (!Int32.TryParse(value, out int result))
                         {
                             throw new ArgumentException("The value cannot be parsed to integer");
                         }
+
                         CoreValidator.ThrowIfNegativeOrZero(Int32.Parse(value), nameof(property));
-                        product.Price = Int32.Parse(value);
+
+                        productNew.Price = Int32.Parse(value);
                         break;
                     case "description":
                         CoreValidator.ThrowIfNullOrEmpty(value, nameof(property));
-                        product.Description = value;
+
+                        productNew.Description = value;
                         break;
                     case "startdate":
                         CoreValidator.ThrowIfDateIsNotCorrect(value, nameof(property));
+
                         DateTime date = DateTime.Parse(value);
-                        if (date > product.EndDate)
+
+                        if (date > productNew.EndDate)
                         {
                             throw new ArgumentException("Start date cannot be bigger than the end date");
                         }
@@ -75,12 +90,15 @@
                         {
                             throw new ArgumentException("Start date cannot be lower than the current date");
                         }
-                        product.StartDate = date;
+
+                        productNew.StartDate = date;
                         break;
                     case "enddate":
                         CoreValidator.ThrowIfDateIsNotCorrect(value, nameof(property));
+
                         DateTime dateEnd = DateTime.Parse(value);
-                        if (dateEnd < product.StartDate)
+
+                        if (dateEnd < productNew.StartDate)
                         {
                             throw new ArgumentException("End date cannot be lower than the start date");
                         }
@@ -88,27 +106,35 @@
                         {
                             throw new ArgumentException("End date cannot be lower than the current date");
                         }
-                        product.EndDate = dateEnd;
+
+                        productNew.EndDate = dateEnd;
                         break;
                     default:
                         throw new ArgumentException("No such property");
                 }
-                dbContext.SaveChanges();
+
+                db.Entry(productNew).State = System.Data.Entity.EntityState.Modified;
+                db.SaveChanges();
                 return true;
             }
         }
 
-        public bool DeleteProduct(int id)
+        public bool DeleteProduct(Product product)
         {
-            CoreValidator.ThrowIfNegativeOrZero(id, nameof(id));
-            using (dbContext)
+            CoreValidator.ThrowIfNegativeOrZero(product.Id, nameof(product.Id));
+
+            using (var db = dbContext)
             {
-                var product = GetProductById(id);
+                var productNew = GetProductById(product.Id);
 
-                if (product == null) return false;
+                CoreValidator.ThrowIfNull(productNew, nameof(productNew));
 
-                dbContext.Products.Remove(product);
-                dbContext.SaveChanges();
+                db.Products.Attach(productNew);
+
+                db.Products.Remove(productNew);
+                db.Entry(productNew).State = System.Data.Entity.EntityState.Deleted;
+                db.SaveChanges();
+
                 return true;
             }
         }
@@ -116,54 +142,69 @@
         public Product GetProductByName(string name)
         {
             CoreValidator.ThrowIfNullOrEmpty(name, nameof(name));
-            using (dbContext)
+
+            using (var db = dbContext)
             {
-                return dbContext.Products.SingleOrDefault(p => p.Name == name);
+                var product = db.Products.Include("Bids").FirstOrDefault(p => p.Name == name);
+
+                CoreValidator.ThrowIfNull(product, nameof(product));
+
+                return product;
             }
         }
 
         public Product GetProductById(int id)
         {
             CoreValidator.ThrowIfNegativeOrZero(id, nameof(id));
-            using (dbContext)
+
+            using (var db = dbContext)
             {
-                var result = dbContext.Products.SingleOrDefault(p => p.Id == id);
-                return result;
+                var product = db.Products.Include("Bids").SingleOrDefault(p => p.Id == id);
+
+                CoreValidator.ThrowIfNull(product, nameof(product));
+
+                return product;
             }
         }
 
-        public bool IsProductExisting(string productName)
+        public bool IsProductExisting(Product product)
         {
-            CoreValidator.ThrowIfNullOrEmpty(productName, nameof(productName));
-            using (dbContext)
+            CoreValidator.ThrowIfNull(product, nameof(product));
+            CoreValidator.ThrowIfNullOrEmpty(product.Name, nameof(product.Name));
+
+            using (var db = dbContext)
             {
-                return dbContext.Products.SingleOrDefault(p => p.Name == productName) != null;
+                return db.Products.Any(p => p.Name == product.Name);
             }
         }
 
         public int CountUserBidsForProduct(int id)
         {
-            using (dbContext)
+            using (var db = dbContext)
             {
-                var collection = GetProductUsers(id);
-                return collection != null ? this.GetProductUsers(id).Count : 0;
+                var collection = GetProductUsers(GetProductById(id));
+                return collection != null ? collection.Count : 0;
             }
         }
 
-        public IList<User> GetProductUsers(int id)
+        public IList<User> GetProductUsers(Product product)
         {
-            using (dbContext)
+            CoreValidator.ThrowIfNull(product, nameof(product));
+            CoreValidator.ThrowIfNegativeOrZero(product.Id, nameof(product.Id));
+            
+            using (var db = dbContext)
             {
-                var collection = dbContext.Products.SingleOrDefault(p => p.Id == id).Bids.Select(u => u.UserId);
-                return collection.Select(userId => dbContext.Users.FirstOrDefault(u => u.Id == userId)).ToList();
+                var collection = db.Products.SingleOrDefault(p => p.Id == product.Id).Bids.Select(u => u.UserId);
+                CoreValidator.ThrowIfNull(collection, nameof(collection));
+                return collection.Select(userId => db.Users.FirstOrDefault(u => u.Id == userId)).ToList();
             }
         }
 
         public bool IsProductExistingById(int productId)
         {
-            using (dbContext)
+            using (var db = dbContext)
             {
-                return dbContext.Products.Any(p => p.Id == productId);
+                return db.Products.Any(p => p.Id == productId);
             }
         }
     }

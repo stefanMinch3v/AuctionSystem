@@ -6,12 +6,14 @@
 
     public interface IPaymentController
     {
-        void AddPayment(PaymentType type, string paymentTypeCode, int userId);
+        void AddPayment(Payment payment, User user);
 
         Payment GetPayment(int paymentId);
-        bool DeletePayment(int paymentId);
+        
+        bool DeletePayment(Payment payment);
 
-        bool UpdatePayment(int paymentId, string property, string value);
-        IList<Payment> GetPaymentsByUser(int userId);
+        bool UpdatePayment(Payment payment, string property, string value);
+        
+        IList<Payment> GetPaymentsByUser(User user);
     }
 }

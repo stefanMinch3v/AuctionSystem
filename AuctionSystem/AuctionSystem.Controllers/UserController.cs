@@ -41,14 +41,16 @@
             return instance;
         }
 
-        public int CountUserBidsForGivenProduct(int userId, int productId)
+        public int CountUserBidsForGivenProduct(User user, Product product)
         {
-            CoreValidator.ThrowIfNegativeOrZero(userId, nameof(userId));
-            CoreValidator.ThrowIfNegativeOrZero(productId, nameof(productId));
+            CoreValidator.ThrowIfNull(user, nameof(user));
+            CoreValidator.ThrowIfNull(product, nameof(product));
+            CoreValidator.ThrowIfNegativeOrZero(user.Id, nameof(user.Id));
+            CoreValidator.ThrowIfNegativeOrZero(product.Id, nameof(product.Id));
 
             using (var db = new AuctionContext())
             {
-                var currentUser = GetUserById(userId);
+                var currentUser = GetUserById(user.Id);
 
                 db.Users.Attach(currentUser);
 
@@ -61,7 +63,7 @@
                     return 0;
                 }
 
-                return bids.Select(b => b.ProductId == productId).Count();
+                return bids.Select(b => b.ProductId == product.Id).Count();
             }
         }
 
@@ -73,79 +75,82 @@
             }
         }
 
-        public int GetAllUserSpentCoinsForGivenProduct(int userId, int productId)
+        public int GetAllUserSpentCoinsForGivenProduct(User user, Product product)
         {
-            CoreValidator.ThrowIfNegativeOrZero(userId, nameof(userId));
-            CoreValidator.ThrowIfNegativeOrZero(productId, nameof(productId));
+            CoreValidator.ThrowIfNull(user, nameof(user));
+            CoreValidator.ThrowIfNull(product, nameof(product));
+            CoreValidator.ThrowIfNegativeOrZero(user.Id, nameof(user.Id));
+            CoreValidator.ThrowIfNegativeOrZero(product.Id, nameof(product.Id));
 
             using (var db = new AuctionContext())
             {
-                var currentUser = GetUserById(userId);
+                var currentUser = GetUserById(user.Id);
 
                 db.Users.Attach(currentUser);
 
                 CoreValidator.ThrowIfNull(currentUser, nameof(currentUser));
 
                 return currentUser.Bids
-                                       .Where(b => b.ProductId == productId)
+                                       .Where(b => b.ProductId == product.Id)
                                        .Sum(b => b.Coins);
             }
         }
 
-        public void CreateUser(string username, string password, string name, string address, string email, string phone, string dateOfBirth, Gender gender, int zipId, int coins, List<Payment> payments)
+        public void CreateUser(User user)
         {
-            CoreValidator.ThrowIfNullOrEmpty(username, nameof(username));
-            CoreValidator.ThrowIfNullOrEmpty(password, nameof(password));
-            CoreValidator.ThrowIfNullOrEmpty(name, nameof(name));
-            CoreValidator.ThrowIfNullOrEmpty(address, nameof(address));
-            CoreValidator.ThrowIfNullOrEmpty(email, nameof(email));
-            CoreValidator.ThrowIfNullOrEmpty(phone, nameof(phone));
-            CoreValidator.ThrowIfDateIsNotCorrect(dateOfBirth, nameof(dateOfBirth));
-            CoreValidator.SpecialThrowForCoinsIfValueIsNegativeOnly(coins, nameof(coins));
-            CoreValidator.ThrowIfNegativeOrZero(zipId, nameof(zipId));
+            CoreValidator.ThrowIfNull(user, nameof(user));
+            CoreValidator.ThrowIfNullOrEmpty(user.Username, nameof(user.Username));
+            CoreValidator.ThrowIfNullOrEmpty(user.Password, nameof(user.Password));
+            CoreValidator.ThrowIfNullOrEmpty(user.Name, nameof(user.Name));
+            CoreValidator.ThrowIfNullOrEmpty(user.Address, nameof(user.Address));
+            CoreValidator.ThrowIfNullOrEmpty(user.Email, nameof(user.Email));
+            CoreValidator.ThrowIfNullOrEmpty(user.Phone, nameof(user.Phone));
+            CoreValidator.ThrowIfDateIsNotCorrect(user.DateOfBirth.ToString(), nameof(user.DateOfBirth));
+            CoreValidator.SpecialThrowForCoinsIfValueIsNegativeOnly(user.Coins, nameof(user.Coins));
+            CoreValidator.ThrowIfNull(user.Zip, nameof(user.Zip));
 
-            var dateParsed = DateTime.Parse(dateOfBirth);
+            var dateParsed = user.DateOfBirth;
             if (dateParsed > DateTime.Now.AddYears(-18))
             {
                 throw new ArgumentException($"Date of birth is not valid, the customer must be adult.");
             }
 
-            if (!ZipController.Instance().IsZipExisting(zipId))
+            if (!ZipController.Instance().IsZipExisting(user.Zip))
             {
                 throw new ArgumentException($"Zip id doesn't exist in the system.");
             }
 
             using (var db = new AuctionContext())
             {
-                var user = new User
+                var userNew = new User
                 {
-                    Username = username,
-                    Password = password,
-                    Name = name,
-                    Address = address,
-                    Email = email,
-                    Phone = phone,
+                    Username = user.Username,
+                    Password = user.Password,
+                    Name = user.Name,
+                    Address = user.Address,
+                    Email = user.Email,
+                    Phone = user.Phone,
                     DateOfBirth = dateParsed,
-                    Gender = gender,
-                    ZipId = zipId,
-                    Coins = coins,
-                    Payments = payments,
+                    Gender = user.Gender,
+                    ZipId = user.Zip.ZipId,
+                    Coins = user.Coins,
+                    Payments = user.Payments,
                     IsAdmin = false,
                     IsDeleted = false
                 };
 
-                db.Users.Add(user);
+                db.Users.Add(userNew);
                 db.SaveChanges();
             }
         }
 
-        public bool DeleteUser(int id)
+        public bool DeleteUser(User user)
         {
-            CoreValidator.ThrowIfNegativeOrZero(id, nameof(id));
+            CoreValidator.ThrowIfNegativeOrZero(user.Id, nameof(user.Id));
 
             using (var db = new AuctionContext())
             {
-                var currentUser = GetUserById(id);
+                var currentUser = GetUserById(user.Id);
 
                 db.Users.Attach(currentUser);
 
@@ -159,13 +164,14 @@
         }
 
 
-        public IList<Bid> GetUserBids(int userId)
+        public IList<Bid> GetUserBids(User user)
         {
-            CoreValidator.ThrowIfNegativeOrZero(userId, nameof(userId));
+            CoreValidator.ThrowIfNull(user, nameof(user));
+            CoreValidator.ThrowIfNegativeOrZero(user.Id, nameof(user.Id));
 
             using (var db = new AuctionContext())
             {
-                var currentUser = GetUserById(userId);
+                var currentUser = GetUserById(user.Id);
 
                 db.Users.Attach(currentUser);
 
@@ -224,13 +230,14 @@
             }
         }
 
-        public IList<Invoice> GetUserInvoices(int userId)
+        public IList<Invoice> GetUserInvoices(User user)
         {
-            CoreValidator.ThrowIfNegativeOrZero(userId, nameof(userId));
+            CoreValidator.ThrowIfNull(user, nameof(user));
+            CoreValidator.ThrowIfNegativeOrZero(user.Id, nameof(user.Id));
 
             using (var db = new AuctionContext())
             {
-                var currentUser = GetUserById(userId);
+                var currentUser = GetUserById(user.Id);
 
                 db.Users.Attach(currentUser);
 
@@ -240,59 +247,62 @@
             }
         }
 
-        public IList<Product> GetUserProducts(int userId)
+        public IList<Product> GetUserProducts(User user)
         {
-            CoreValidator.ThrowIfNegativeOrZero(userId, nameof(userId));
+            CoreValidator.ThrowIfNull(user, nameof(user));
+            CoreValidator.ThrowIfNegativeOrZero(user.Id, nameof(user.Id));
 
             using (var db = new AuctionContext())
             {
-                var currentUser = GetUserById(userId);
+                var currentUser = GetUserById(user.Id);
 
                 db.Users.Attach(currentUser);
 
                 CoreValidator.ThrowIfNull(currentUser, nameof(currentUser));
 
                 return currentUser.Bids
-                                        .Where(b => b.UserId == userId)
+                                        .Where(b => b.UserId == user.Id)
                                         .Select(b => b.Product)
                                         .ToList();
             }
         }
 
-        public bool IsUserExisting(string username)
+        public bool IsUserExisting(User user)
         {
-            CoreValidator.ThrowIfNullOrEmpty(username, nameof(username));
+            CoreValidator.ThrowIfNull(user, nameof(user));
+            CoreValidator.ThrowIfNullOrEmpty(user.Username, nameof(user.Username));
 
             using (var db = new AuctionContext())
             {
-                return db.Users.Any(u => u.Username == username);
+                return db.Users.Any(u => u.Username == user.Username);
             }
         }
 
-        public bool UpdateUser(int userId, string property, string value)
+        public bool UpdateUser(User user, string property, string value)
         {
-            CoreValidator.ThrowIfNegativeOrZero(userId, nameof(userId));
+            CoreValidator.ThrowIfNull(user, nameof(user));
+            CoreValidator.ThrowIfNegativeOrZero(user.Id, nameof(user.Id));
             CoreValidator.ThrowIfNullOrEmpty(property, nameof(property));
             CoreValidator.ThrowIfNullOrEmpty(value, nameof(value));
 
             using (var db = new AuctionContext())
             {
-                var user = GetUserById(userId);
+                var userNew = GetUserById(user.Id);
 
-                CoreValidator.ThrowIfNull(user, nameof(user));
+                CoreValidator.ThrowIfNull(userNew, nameof(userNew));
 
-                db.Users.Attach(user);
+                db.Users.Attach(userNew);
 
                 switch (property.ToLower())
                 {
                     case "phone":
-                        user.Phone = value;
+                        userNew.Phone = value;
                         break;
                     case "email":
-                        user.Email = value;
+                        userNew.Email = value;
                         break;
                     case "address":
-                        user.Address = value;
+                        userNew.Address = value;
                         break;
                     case "coins":
                         if (!Int32.TryParse(value, out int temp))
@@ -304,26 +314,26 @@
 
                         CoreValidator.ThrowIfNegativeOrZero(parsedValue, nameof(parsedValue));
 
-                        user.Coins = parsedValue;
+                        userNew.Coins = parsedValue;
                         break;
                     case "isadmin":
-                        if (user.IsAdmin)
+                        if (userNew.IsAdmin)
                         {
-                            user.IsAdmin = false;
+                            userNew.IsAdmin = false;
                         }
                         else
                         {
-                            user.IsAdmin = true;
+                            userNew.IsAdmin = true;
                         }
                         break;
                     case "isdeleted":
-                        if (user.IsDeleted)
+                        if (userNew.IsDeleted)
                         {
-                            user.IsDeleted = false;
+                            userNew.IsDeleted = false;
                         }
                         else
                         {
-                            user.IsDeleted = true;
+                            userNew.IsDeleted = true;
                         }
                         break;
                     default:
@@ -331,7 +341,7 @@
                 }
 
 
-                db.Entry(user).State = System.Data.Entity.EntityState.Modified;
+                db.Entry(userNew).State = System.Data.Entity.EntityState.Modified;
                 db.SaveChanges();
 
                 return true;

@@ -16,83 +16,85 @@
             this.dbContext = dbContext;
         }
 
-        public void AddZip(string zipCode, string country, string city)
+        public void AddZip(Zip zip)
         {
-            CoreValidator.ThrowIfNullOrEmpty(zipCode, nameof(zipCode));
-            CoreValidator.ThrowIfNullOrEmpty(country, nameof(country));
-            CoreValidator.ThrowIfNullOrEmpty(city, nameof(city));
-            using (dbContext)
-            {
-                var zip = new Zip
-                {
-                    ZipCode = zipCode,
-                    Country = country,
-                    City = city
-                };
-                dbContext.Zips.Add(zip);
-                dbContext.SaveChanges();
+            CoreValidator.ThrowIfNull(zip, nameof(zip));
+            CoreValidator.ThrowIfNullOrEmpty(zip.ZipCode, nameof(zip.ZipCode));
+            CoreValidator.ThrowIfNullOrEmpty(zip.Country, nameof(zip.Country));
+            CoreValidator.ThrowIfNullOrEmpty(zip.City, nameof(zip.City));
 
+            using (var db = dbContext)
+            {
+                var zipNew = new Zip
+                {
+                    ZipCode = zip.ZipCode,
+                    Country = zip.Country,
+                    City = zip.City
+                };
+
+                db.Zips.Add(zipNew);
+                db.SaveChanges();
             }
+
         }
 
         public Zip GetZipByZipCode(string zipCode)
         {
             CoreValidator.ThrowIfNullOrEmpty(zipCode, nameof(zipCode));
-            using (dbContext)
+
+            using (var db = dbContext)
             {
-                return dbContext.Zips.SingleOrDefault(z => z.ZipCode == zipCode);
+                return db.Zips.SingleOrDefault(z => z.ZipCode == zipCode);
             }
         }
 
-        public bool IsZipExisting(int zipId)
+        public bool IsZipExisting(Zip zip)
         {
-            CoreValidator.ThrowIfNegativeOrZero(zipId, nameof(zipId));
-            using (dbContext)
-            {
-                
-                return dbContext.Zips.Any(z => z.ZipId == zipId) ;
+            CoreValidator.ThrowIfNull(zip, nameof(zip));
+            CoreValidator.ThrowIfNegativeOrZero(zip.ZipId, nameof(zip.ZipId));
 
+            using (var db = dbContext)
+            {
+                return db.Zips.Any(z => z.ZipId == zip.ZipId);
             }
         }
 
-        public bool UpdateZip(string zipCode, string property, string value)
+
+        public bool UpdateZip(Zip zip, string property, string value)
         {
-            CoreValidator.ThrowIfNullOrEmpty(zipCode, nameof(zipCode));
+            CoreValidator.ThrowIfNull(zip, nameof(zip));
+            CoreValidator.ThrowIfNullOrEmpty(zip.ZipCode, nameof(zip.ZipCode));
             CoreValidator.ThrowIfNullOrEmpty(property, nameof(property));
             CoreValidator.ThrowIfNullOrEmpty(value, nameof(value));
-            using (dbContext)
+
+            using (var db = dbContext)
             {
-                var zip = GetZipByZipCode(zipCode);
-                if (zip != null)
-                {
-                    switch (property)
-                    {
+                var zipNew = GetZipByZipCode(zip.ZipCode);
 
-                        case "ZipCode":
-                            zip.ZipCode = value;
-                            break;
-                        case "Country":
-                            zip.Country = value;
-                            break;
-                        case "City":
-                            zip.City = value;
-                            break;
-                        default:
-                            throw new Exception("There is no such property!");
-                    }
-                    dbContext.SaveChanges();
-                    return true;
-                }
-                else
+                CoreValidator.ThrowIfNull(zipNew, nameof(zipNew));
+
+                db.Zips.Attach(zipNew);
+                
+                switch (property)
                 {
-                    return false;
+                    case "ZipCode":
+                        zipNew.ZipCode = value;
+                        break;
+                    case "Country":
+                        zipNew.Country = value;
+                        break;
+                    case "City":
+                        zipNew.City = value;
+                        break;
+                    default:
+                        throw new Exception("There is no such property!");
                 }
+
+               // db.Entry(zipNew).State = EntityState.Modified;
+                db.SaveChanges();
+
+                return true;
             }
-        }
-
-        public static implicit operator ZipControllerMock(InvoiceControllerMock v)
-        {
-            throw new NotImplementedException();
         }
 
         // TODO

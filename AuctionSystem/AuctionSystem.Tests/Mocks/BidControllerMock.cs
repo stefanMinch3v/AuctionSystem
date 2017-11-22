@@ -17,23 +17,39 @@
             this.dbContext = dbContext;
         }
 
-        public IList<Bid> GetAllBidsByProductId(int productId)
+        public IList<Bid> GetAllBidsByProductId(Product product)
         {
-            CoreValidator.ThrowIfNegativeOrZero(productId, nameof(productId));
+            CoreValidator.ThrowIfNull(product, nameof(product));
+            CoreValidator.ThrowIfNegativeOrZero(product.Id, nameof(product.Id));
+
+            var isProductExists = new ProductControllerMock(dbContext).IsProductExistingById(product.Id);
+
+            if (!isProductExists)
+            {
+                throw new ArgumentException("Product does not exist in the system.");
+            }
 
             using (dbContext)
             {
-                return dbContext.Bids.Where(b => b.ProductId == productId).ToList();
+                return dbContext.Bids.Where(b => b.ProductId == product.Id).ToList();
             }
         }
 
-        public IList<Bid> GetAllBidsByUserId(int userId)
+        public IList<Bid> GetAllBidsByUserId(User user)
         {
-            CoreValidator.ThrowIfNegativeOrZero(userId, nameof(userId));
+            CoreValidator.ThrowIfNull(user, nameof(user));
+            CoreValidator.ThrowIfNegativeOrZero(user.Id, nameof(user.Id));
+
+            var isUserExists = new UserControllerMock(dbContext).IsUserExistingById(user.Id);
+
+            if (!isUserExists)
+            {
+                throw new ArgumentException("User does not exist in the system.");
+            }
 
             using (dbContext)
             {
-                return dbContext.Bids.Where(b => b.UserId == userId).ToList();
+                return dbContext.Bids.Where(b => b.UserId == user.Id).ToList();
             }
         }
 
@@ -59,13 +75,13 @@
             }
         }
 
-        public bool IsBidWon(int bidId)
+        public bool IsBidWon(Bid bid)
         {
-            CoreValidator.ThrowIfNegativeOrZero(bidId, nameof(bidId));
+            CoreValidator.ThrowIfNegativeOrZero(bid.Id, nameof(bid.Id));
 
             using (dbContext)
             {
-                var currentBid = GetBidById(bidId);
+                var currentBid = GetBidById(bid.Id);
 
                 CoreValidator.ThrowIfNull(currentBid, nameof(currentBid));
 
@@ -73,10 +89,12 @@
             }
         }
 
-        public void MakeBid(int userId, int productId, int coins)
+        public void MakeBid(User user, Product product, int coins)
         {
-            CoreValidator.ThrowIfNegativeOrZero(userId, nameof(userId));
-            CoreValidator.ThrowIfNegativeOrZero(productId, nameof(productId));
+            CoreValidator.ThrowIfNull(user, nameof(user));
+            CoreValidator.ThrowIfNull(product, nameof(product));
+            CoreValidator.ThrowIfNegativeOrZero(user.Id, nameof(user.Id));
+            CoreValidator.ThrowIfNegativeOrZero(product.Id, nameof(product.Id));
             CoreValidator.ThrowIfNegativeOrZero(coins, nameof(coins));
 
             using (dbContext)
@@ -85,15 +103,15 @@
                 var userController = new UserControllerMock(dbContext);
                 var productController = new ProductControllerMock(dbContext);
 
-                var isUserExisting = userController.IsUserExistingById(userId);
-                var isProductExisting = productController.IsProductExistingById(productId);
+                var isUserExisting = userController.IsUserExistingById(user.Id);
+                var isProductExisting = productController.IsProductExistingById(product.Id);
 
                 if (!isUserExisting || !isProductExisting)
                 {
                     throw new ArgumentException("The product or the user is not existing in the system.");
                 }
 
-                var currentUser = userController.GetUserById(userId);
+                var currentUser = userController.GetUserById(user.Id);
 
                 dbContext.Users.Attach(currentUser);
 
@@ -104,12 +122,12 @@
                 #endregion
 
                 #region LOGIC FOR OVERBIDDING 
-                var isThereAnyBid = dbContext.Bids.Any(b => b.ProductId == productId && b.IsWon == false);
+                var isThereAnyBid = dbContext.Bids.Any(b => b.ProductId == product.Id && b.IsWon == false);
 
                 if (isThereAnyBid)
                 {
                     var lastBidEntry = dbContext.Bids
-                                            .Where(b => b.ProductId == productId)
+                                            .Where(b => b.ProductId == product.Id)
                                             .OrderByDescending(b => b.DateOfCreated)
                                             .Take(1)
                                             .FirstOrDefault();
@@ -119,7 +137,7 @@
                         throw new ArgumentException($"You cannot overbid with less than or equal to the last bidders coins: {lastBidEntry.Coins}");
                     }
 
-                    var newBid = GetNewBid(userId, productId, coins);
+                    var newBid = GetNewBid(user.Id, product.Id, coins);
 
                     currentUser.Coins -= coins;
 
@@ -131,7 +149,7 @@
 
                     lastUser.Coins += lastBidEntry.Coins;
 
-                    //dbContext.Entry(lastUser).State = System.Data.Entity.EntityState.Modified;
+                    dbContext.Entry(lastUser).State = System.Data.Entity.EntityState.Modified;
 
                     dbContext.Bids.Add(newBid);
                     dbContext.SaveChanges();
@@ -141,7 +159,7 @@
                 #endregion
 
                 #region LOGIC FOR CREATE BID FOR FIRST TIME
-                var bid = GetNewBid(userId, productId, coins);
+                var bid = GetNewBid(user.Id, product.Id, coins);
 
                 currentUser.Coins -= coins;
 
@@ -163,6 +181,23 @@
                 DateOfCreated = DateTime.Now,
                 IsWon = false
             };
+        }
+
+        public Bid GetBidByIdWithAllObjects(int bidId)
+        {
+            CoreValidator.ThrowIfNegativeOrZero(bidId, nameof(bidId));
+
+            using (dbContext)
+            {
+                var resultBid = dbContext.Bids
+                                    .Include("User")
+                                    .Include("Product")
+                                    .FirstOrDefault(b => b.Id == bidId);
+
+                CoreValidator.ThrowIfNull(resultBid, nameof(resultBid));
+
+                return resultBid;
+            }
         }
     }
 }

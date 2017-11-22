@@ -11,41 +11,41 @@
     {
         // TODO: fix all the return list methods (try to return list of bidDtos)
 
-        public void MakeBid(int userId, int productId, int coins)
+        
+
+        private BidDto MapDbBidToBidDto(Bid dbBid)
         {
-            BidController.Instance().MakeBid(userId, productId, coins);
+            return Mapper.Map<BidDto>(dbBid);
         }
 
-        public bool IsBidWon(int bidId)
+        public void MakeBid(User user, Product product, int coins)
         {
-            return BidController.Instance().IsBidWon(bidId);
+            BidController.Instance().MakeBid(user, product, coins);
         }
 
-        public IList<Bid> GetAllBidsByUserId(int id)
+        public bool IsBidWon(Bid bid)
         {
-            return BidController.Instance().GetAllBidsByUserId(id);
+            return BidController.Instance().IsBidWon(bid);
         }
 
-        public IList<Bid> GetAllBidsByProductId(int id)
+        public Bid GetBidById(int bidId)
         {
-            return BidController.Instance().GetAllBidsByProductId(id);
+            return BidController.Instance().GetBidById(bidId);
+        }
+
+        public IList<Bid> GetAllBidsByUserId(User user)
+        {
+            return BidController.Instance().GetAllBidsByUserId(user);
+        }
+
+        public IList<Bid> GetAllBidsByProductId(Product product)
+        {
+            return BidController.Instance().GetAllBidsByProductId(product);
         }
 
         public IList<Bid> GetAllEarnedBids()
         {
             return BidController.Instance().GetAllEarnedBids();
-        }
-
-        public BidDto GetBidById(int bidId)
-        {
-            var dbBid = BidController.Instance().GetBidByIdWithAllObjects(bidId);
-
-            return MapDbBidToBidDto(dbBid);
-        }
-
-        private BidDto MapDbBidToBidDto(Bid dbBid)
-        {
-            return Mapper.Map<BidDto>(dbBid);
         }
     }
 }

@@ -25,50 +25,55 @@
             return instance;
         }
 
-        public void CreateInvoice(int userId, int productId)
+        public void CreateInvoice(User user, Product product)
         {
-            CoreValidator.ThrowIfNegativeOrZero(userId, nameof(userId));
-            CoreValidator.ThrowIfNegativeOrZero(productId, nameof(productId));
+            CoreValidator.ThrowIfNull(user, nameof(user));
+            CoreValidator.ThrowIfNull(product, nameof(product));
+            CoreValidator.ThrowIfNegativeOrZero(user.Id, nameof(user.Id));
+            CoreValidator.ThrowIfNegativeOrZero(product.Id, nameof(product.Id));
 
             using (var db = new AuctionContext())
             {
                 var invoice = new Invoice
                 {
-                    UserId = userId,
-                    ProductId = productId
+                    UserId = user.Id,
+                    ProductId = product.Id
                 };
 
                 db.Invoices.Add(invoice);
                 db.SaveChanges();
             }
         }
-        public IList<Invoice> GetAllInvoicesForUser(int userId)
+        public IList<Invoice> GetAllInvoicesForUser(User user)
         {
-            CoreValidator.ThrowIfNegativeOrZero(userId, nameof(userId));
+            CoreValidator.ThrowIfNull(user, nameof(user));
+            CoreValidator.ThrowIfNegativeOrZero(user.Id, nameof(user.Id));
 
             using (var db = new AuctionContext())
             {
-                return db.Invoices.Where(u => u.UserId == userId).ToList();
+                return db.Invoices.Where(u => u.UserId == user.Id).ToList();
             }
         }
 
-        public Invoice GetInvoiceByProductId(int productId)
+        public Invoice GetInvoiceByProductId(Product product)
         {
-            CoreValidator.ThrowIfNegativeOrZero(productId, nameof(productId));
+            CoreValidator.ThrowIfNull(product, nameof(product));
+            CoreValidator.ThrowIfNegativeOrZero(product.Id, nameof(product.Id));
 
             using (var db = new AuctionContext())
             {
-                return db.Invoices.FirstOrDefault(p => p.ProductId == productId);
+                return db.Invoices.FirstOrDefault(p => p.ProductId == product.Id);
             }
         }
 
-        public Invoice GetInvoiceByUserId(int userId)
+        public Invoice GetInvoiceByUserId(User user)
         {
-            CoreValidator.ThrowIfNegativeOrZero(userId, nameof(userId));
+            CoreValidator.ThrowIfNull(user, nameof(user));
+            CoreValidator.ThrowIfNegativeOrZero(user.Id, nameof(user.Id));
 
             using (var db = new AuctionContext())
             {
-                return db.Invoices.FirstOrDefault(u => u.UserId == userId);
+                return db.Invoices.FirstOrDefault(u => u.UserId == user.Id);
             }
         }
     }

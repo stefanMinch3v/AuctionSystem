@@ -7,26 +7,26 @@
 
     public interface IUserController
     {
-        void CreateUser(string username, string password, string name, string address, string email, string phone, string dateOfBirth, Gender gender, int zipId, int coins, List<Payment> payments);
+        void CreateUser(User user);
 
-        bool UpdateUser(int userId, string property, string value);
+        bool UpdateUser(User user, string property, string value);
 
-        bool DeleteUser(int userId);
+        bool DeleteUser(User user);
 
         User GetUserByUsername(string username);
 
         User GetUserById(int id);
 
-        bool IsUserExisting(string username);
+        bool IsUserExisting(User user);
 
-        int CountUserBidsForGivenProduct(int userId, int productId);
+        int CountUserBidsForGivenProduct(User user, Product product);
 
-        int GetAllUserSpentCoinsForGivenProduct(int userId, int productId);
+        int GetAllUserSpentCoinsForGivenProduct(User user, Product product);
 
-        IList<Product> GetUserProducts(int userId);
+        IList<Product> GetUserProducts(User user);
 
-        IList<Bid> GetUserBids(int userId);
+        IList<Bid> GetUserBids(User user);
 
-        IList<Invoice> GetUserInvoices(int userId);
+        IList<Invoice> GetUserInvoices(User user);
     }
 }

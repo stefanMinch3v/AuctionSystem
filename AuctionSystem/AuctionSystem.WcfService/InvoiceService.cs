@@ -7,30 +7,19 @@
 
     public class InvoiceService : IInvoiceService
     {
-        public void CreateInvoice(int userId, int productId)
+        public void CreateInvoice(User user, Product product)
         {
-            var controller = InvoiceController.Instance();
-            controller.CreateInvoice(userId,productId);
+            InvoiceController.Instance().CreateInvoice(user, product);
         }
 
-        public IList<Invoice> GetAllInvoicesForUser(int userId)
+        public Invoice GetInvoiceByUserId(User user)
         {
-            return InvoiceController.Instance().GetAllInvoicesForUser(userId);
+            return InvoiceController.Instance().GetInvoiceByUserId(user);
         }
 
-        public Invoice GetInvoiceByUserId(int id)
+        public IList<Invoice> GetAllInvoicesForUser(User user)
         {
-            return InvoiceController.Instance().GetInvoiceByUserId(id);
-        }
-
-        private Invoice TransferDbObjectToRegularObject(Invoice dbInvoice)
-        {
-            var newInvoice = new Invoice
-            {
-                UserId = dbInvoice.UserId,
-                ProductId = dbInvoice.ProductId
-            };
-            return newInvoice;
+            return InvoiceController.Instance().GetAllInvoicesForUser(user);
         }
     }
 }

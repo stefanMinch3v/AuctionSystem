@@ -8,19 +8,19 @@
     [ServiceContract]
     public interface IPaymentService
     {
-        [OperationContract]
-        void AddPayment(PaymentType type, string paymentTypeCode, int userId);
+        [OperationContract(IsOneWay = true)]
+        void AddPayment(Payment payment, User user);
 
         [OperationContract]
-        bool DeletePaymentById(int paymentId);
+        Payment GetPayment(int paymentId);
 
         [OperationContract]
-        IList<Payment> GetPaymentsByUser(int userId);
+        bool DeletePayment(Payment payment);
 
         [OperationContract]
-        bool UpdatePayment(int userId,string property,string value);
+        bool UpdatePayment(Payment payment, string property, string value);
 
         [OperationContract]
-        Payment GetPaymentById(int paymentId);
+        IList<Payment> GetPaymentsByUser(User user);
     }
 }

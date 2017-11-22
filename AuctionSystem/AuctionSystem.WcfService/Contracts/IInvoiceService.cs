@@ -7,13 +7,13 @@
     [ServiceContract]
     public interface IInvoiceService
     {
-        [OperationContract]
-        void CreateInvoice(int userId, int productId);
+        [OperationContract(IsOneWay = true)]
+        void CreateInvoice(User user, Product product);
 
         [OperationContract]
-        Invoice GetInvoiceByUserId(int id);
+        Invoice GetInvoiceByUserId(User user);
 
         [OperationContract]
-        IList<Invoice> GetAllInvoicesForUser(int userId);
+        IList<Invoice> GetAllInvoicesForUser(User user);
     }
 }

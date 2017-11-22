@@ -5,12 +5,12 @@
 
     public interface IInvoiceController
     {
-        void CreateInvoice(int userId, int productId);
+        void CreateInvoice(User user, Product product);
 
-        Invoice GetInvoiceByUserId(int id);
+        Invoice GetInvoiceByUserId(User user);
 
-        Invoice GetInvoiceByProductId(int id);
-
-        IList<Invoice> GetAllInvoicesForUser(int userId);
+        IList<Invoice> GetAllInvoicesForUser(User user);
+        
+        Invoice GetInvoiceByProductId(Product product);
     }
 }

@@ -9,13 +9,13 @@
     public interface IProductService
     {
         [OperationContract(IsOneWay = true)]
-        void CreateProduct(string name, string description, decimal price, DateTime startDate, DateTime endDate);
+        void CreateProduct(Product product);
 
         [OperationContract]
-        bool UpdateProduct(int id, string property, string value);
+        bool UpdateProduct(Product product, string property, string value);
 
         [OperationContract]
-        bool DeleteProduct(int id);
+        bool DeleteProduct(Product product);
 
         [OperationContract]
         Product GetProductByName(string name);
@@ -24,12 +24,12 @@
         Product GetProductById(int id);
 
         [OperationContract]
-        bool IsProductExisting(string productName);
+        bool IsProductExisting(Product product);
 
         [OperationContract]
         int CountUserBidsForProduct(int id);
 
         [OperationContract]
-        IList<User> GetProductUsers(int id);
+        IList<User> GetProductUsers(Product product);
     }
 }

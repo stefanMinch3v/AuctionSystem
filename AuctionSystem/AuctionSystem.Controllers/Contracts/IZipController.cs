@@ -4,11 +4,11 @@
 
     public interface IZipController
     {
-        void AddZip(string zipCode, string country, string city);
+        void AddZip(Zip zip);
 
-        bool IsZipExisting(int zipId);
+        bool IsZipExisting(Zip zip);
 
-        bool UpdateZip(string zipCode, string property, string value);
+        bool UpdateZip(Zip zip, string property, string value);
 
         Zip GetZipByZipCode(string zipCode);
     }

@@ -25,47 +25,50 @@
 
             return instance;
         }
-        
-        public void CreateProduct(string name, string description, decimal price, DateTime startDate, DateTime endDate)
+
+        public void CreateProduct(Product product)
         {
-            CoreValidator.ThrowIfNullOrEmpty(name, nameof(name));
-            CoreValidator.ThrowIfNullOrEmpty(description, nameof(description));
-            CoreValidator.ThrowIfNegativeOrZero(price, nameof(price));
+            CoreValidator.ThrowIfNull(product, nameof(product));
+            CoreValidator.ThrowIfNullOrEmpty(product.Name, nameof(product.Name));
+            CoreValidator.ThrowIfNullOrEmpty(product.Description, nameof(product.Description));
+            CoreValidator.ThrowIfNegativeOrZero(product.Price, nameof(product.Price));
 
             using (var db = new AuctionContext())
             {
-                var product = new Product
+                var productNew = new Product
                 {
-                    Name = name,
-                    Price = price,
-                    Description = description,
-                    StartDate = startDate,
-                    IsAvailable = startDate <= DateTime.Now && endDate > DateTime.Now,
-                    EndDate = endDate
+                    Name = product.Name,
+                    Price = product.Price,
+                    Description = product.Description,
+                    StartDate = product.StartDate,
+                    IsAvailable = product.StartDate <= DateTime.Now && product.EndDate > DateTime.Now,
+                    EndDate = product.EndDate
                 };
 
-                db.Products.Add(product);
+                db.Products.Add(productNew);
                 db.SaveChanges();
             }
         }
 
-        public bool UpdateProduct(int id, string property, string value)
+        public bool UpdateProduct(Product product, string property, string value)
         {
-            CoreValidator.ThrowIfNullOrEmpty(value, nameof(property));
+            CoreValidator.ThrowIfNull(product, nameof(product));
+            CoreValidator.ThrowIfNull(property, nameof(property));
+            CoreValidator.ThrowIfNullOrEmpty(value, nameof(value));
 
             using (var db = new AuctionContext())
             {
-                var product = GetProductById(id);
+                var productNew = GetProductById(product.Id);
 
-                CoreValidator.ThrowIfNull(product, nameof(product));
+                CoreValidator.ThrowIfNull(productNew, nameof(productNew));
 
-                db.Products.Attach(product);
+                db.Products.Attach(productNew);
 
                 switch (property.ToLower())
                 {
                     case "name":
                         CoreValidator.ThrowIfNullOrEmpty(value, nameof(property));
-                        product.Name = value;
+                        productNew.Name = value;
                         break;
                     case "price":
                         if (!Int32.TryParse(value, out int result))
@@ -75,19 +78,19 @@
 
                         CoreValidator.ThrowIfNegativeOrZero(Int32.Parse(value), nameof(property));
 
-                        product.Price = Int32.Parse(value);
+                        productNew.Price = Int32.Parse(value);
                         break;
                     case "description":
                         CoreValidator.ThrowIfNullOrEmpty(value, nameof(property));
 
-                        product.Description = value;
+                        productNew.Description = value;
                         break;
                     case "startdate":
                         CoreValidator.ThrowIfDateIsNotCorrect(value, nameof(property));
 
                         DateTime date = DateTime.Parse(value);
 
-                        if (date > product.EndDate)
+                        if (date > productNew.EndDate)
                         {
                             throw new ArgumentException("Start date cannot be bigger than the end date");
                         }
@@ -96,14 +99,14 @@
                             throw new ArgumentException("Start date cannot be lower than the current date");
                         }
 
-                        product.StartDate = date;
+                        productNew.StartDate = date;
                         break;
                     case "enddate":
                         CoreValidator.ThrowIfDateIsNotCorrect(value, nameof(property));
 
                         DateTime dateEnd = DateTime.Parse(value);
 
-                        if (dateEnd < product.StartDate)
+                        if (dateEnd < productNew.StartDate)
                         {
                             throw new ArgumentException("End date cannot be lower than the start date");
                         }
@@ -112,32 +115,32 @@
                             throw new ArgumentException("End date cannot be lower than the current date");
                         }
 
-                        product.EndDate = dateEnd;
+                        productNew.EndDate = dateEnd;
                         break;
                     default:
                         throw new ArgumentException("No such property");
                 }
 
-                db.Entry(product).State = System.Data.Entity.EntityState.Modified;
+                db.Entry(productNew).State = System.Data.Entity.EntityState.Modified;
                 db.SaveChanges();
                 return true;
             }
         }
 
-        public bool DeleteProduct(int id)
+        public bool DeleteProduct(Product product)
         {
-            CoreValidator.ThrowIfNegativeOrZero(id, nameof(id));
+            CoreValidator.ThrowIfNegativeOrZero(product.Id, nameof(product.Id));
 
             using (var db = new AuctionContext())
             {
-                var product = GetProductById(id);
+                var productNew = GetProductById(product.Id);
 
-                CoreValidator.ThrowIfNull(product, nameof(product));
+                CoreValidator.ThrowIfNull(productNew, nameof(productNew));
 
-                db.Products.Attach(product);
+                db.Products.Attach(productNew);
 
-                db.Products.Remove(product);
-                db.Entry(product).State = System.Data.Entity.EntityState.Deleted;
+                db.Products.Remove(productNew);
+                db.Entry(productNew).State = System.Data.Entity.EntityState.Deleted;
                 db.SaveChanges();
 
                 return true;
@@ -172,13 +175,14 @@
             }
         }
 
-        public bool IsProductExisting(string productName)
+        public bool IsProductExisting(Product product)
         {
-            CoreValidator.ThrowIfNullOrEmpty(productName, nameof(productName));
+            CoreValidator.ThrowIfNull(product, nameof(product));
+            CoreValidator.ThrowIfNullOrEmpty(product.Name, nameof(product.Name));
 
             using (var db = new AuctionContext())
             {
-                return db.Products.Any(p => p.Name == productName);
+                return db.Products.Any(p => p.Name == product.Name);
             }
         }
 
@@ -186,16 +190,20 @@
         {
             using (var db = new AuctionContext())
             {
-                var collection = GetProductUsers(id);
-                return collection != null ? this.GetProductUsers(id).Count : 0;
+                var collection = GetProductUsers(GetProductById(id));
+                return collection != null ? collection.Count : 0;
             }
         }
 
-        public IList<User> GetProductUsers(int id)
+        public IList<User> GetProductUsers(Product product)
         {
+            CoreValidator.ThrowIfNull(product, nameof(product));
+            CoreValidator.ThrowIfNegativeOrZero(product.Id, nameof(product.Id));
+            
             using (var db = new AuctionContext())
             {
-                var collection = db.Products.SingleOrDefault(p => p.Id == id).Bids.Select(u => u.UserId);
+                var collection = db.Products.SingleOrDefault(p => p.Id == product.Id).Bids.Select(u => u.UserId);
+                CoreValidator.ThrowIfNull(collection, nameof(collection));
                 return collection.Select(userId => db.Users.FirstOrDefault(u => u.Id == userId)).ToList();
             }
         }

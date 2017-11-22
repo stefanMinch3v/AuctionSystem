@@ -10,57 +10,61 @@
 
     public class UserService : IUserService
     {
-        public int CountUserBidsForGivenProduct(int userId, int productId)
-        {
-            return UserController.Instance().CountUserBidsForGivenProduct(userId, productId);
-        }
-
-        public void CreateUser(string username, string password, string name, string address, string email, string phone, string dateOfBirth, Gender gender, int zipId, int coins, List<Payment> payments)
-        {
-            var controller = UserController.Instance();
-            controller.CreateUser(username, password, name, address, email, phone, dateOfBirth, gender, zipId, coins, payments);
-        }
-
-        public UserDto GetUserById(int id)
+        
+        /*public UserDto GetUserById(int id)
         {
             var dbUser = UserController.Instance().GetUserByIdWithAllCollections(id);
             
             return MapDbUserToUserDto(dbUser);
+        }*/
+        public void CreateUser(User user)
+        {
+            UserController.Instance().CreateUser(user);
         }
 
-        private UserDto MapDbUserToUserDto(User dbUser)
+        public bool UpdateUser(User user, string property, string value)
+        {
+            return UserController.Instance().UpdateUser(user, property, value);
+        }
+
+        public User GetUserById(int id)
+        {
+            return UserController.Instance().GetUserById(id);
+        }
+
+        public bool DeleteUser(User user)
+        {
+            return UserController.Instance().DeleteUser(user);
+        }
+
+        public bool IsUserExisting(User user)
+        {
+            return UserController.Instance().IsUserExisting(user);
+        }
+
+        public int CountUserBidsForGivenProduct(User user, Product product)
+        {
+            return UserController.Instance().CountUserBidsForGivenProduct(user, product);
+        }
+
+        public IList<Product> GetUserProducts(User user)
+        {
+            return UserController.Instance().GetUserProducts(user);
+        }
+
+        public IList<Bid> GetUserBids(User user)
+        {
+            return UserController.Instance().GetUserBids(user);
+        }
+
+        public IList<Invoice> GetUserInvoices(User user)
+        {
+            return UserController.Instance().GetUserInvoices(user);
+        }
+
+        /*private UserDto MapDbUserToUserDto(User dbUser)
         {
             return Mapper.Map<UserDto>(dbUser);
-        }
-
-        public bool DeleteUser(int userId)
-        {
-            return UserController.Instance().DeleteUser(userId);
-        }
-
-        public IList<Bid> GetUserBids(int userId)
-        {
-            return UserController.Instance().GetUserBids(userId);
-        }
-
-        public IList<Invoice> GetUserInvoices(int userId)
-        {
-            return UserController.Instance().GetUserInvoices(userId);
-        }
-
-        public IList<Product> GetUserProducts(int userId)
-        {
-            return UserController.Instance().GetUserProducts(userId);
-        }
-
-        public bool IsUserExisting(string username)
-        {
-            return UserController.Instance().IsUserExisting(username);
-        }
-
-        public bool UpdateUser(int userId, string property, string value)
-        {
-            return UserController.Instance().UpdateUser(userId, property, value);
-        }
+        }*/
     }
 }

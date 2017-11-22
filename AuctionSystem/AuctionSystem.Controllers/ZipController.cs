@@ -1,4 +1,6 @@
-﻿namespace AuctionSystem.Controllers
+﻿using System.Data.Entity;
+
+namespace AuctionSystem.Controllers
 {
     using Common;
     using Data;
@@ -25,22 +27,23 @@
             return instance;
         }
 
-        public void AddZip(string zipCode, string country, string city)
+        public void AddZip(Zip zip)
         {
-            CoreValidator.ThrowIfNullOrEmpty(zipCode, nameof(zipCode));
-            CoreValidator.ThrowIfNullOrEmpty(country, nameof(country));
-            CoreValidator.ThrowIfNullOrEmpty(city, nameof(city));
+            CoreValidator.ThrowIfNull(zip, nameof(zip));
+            CoreValidator.ThrowIfNullOrEmpty(zip.ZipCode, nameof(zip.ZipCode));
+            CoreValidator.ThrowIfNullOrEmpty(zip.Country, nameof(zip.Country));
+            CoreValidator.ThrowIfNullOrEmpty(zip.City, nameof(zip.City));
 
             using (var db = new AuctionContext())
             {
-                var zip = new Zip
+                var zipNew = new Zip
                 {
-                    ZipCode = zipCode,
-                    Country = country,
-                    City = city
+                    ZipCode = zip.ZipCode,
+                    Country = zip.Country,
+                    City = zip.City
                 };
 
-                db.Zips.Add(zip);
+                db.Zips.Add(zipNew);
                 db.SaveChanges();
             }
 
@@ -56,44 +59,49 @@
             }
         }
 
-        public bool IsZipExisting(int zipId)
+        public bool IsZipExisting(Zip zip)
         {
-            CoreValidator.ThrowIfNegativeOrZero(zipId, nameof(zipId));
+            CoreValidator.ThrowIfNull(zip, nameof(zip));
+            CoreValidator.ThrowIfNegativeOrZero(zip.ZipId, nameof(zip.ZipId));
 
             using (var db = new AuctionContext())
             {
-                return db.Zips.Any(z => z.ZipId == zipId);
+                return db.Zips.Any(z => z.ZipId == zip.ZipId);
             }
         }
 
 
-        public bool UpdateZip(string zipCode, string property, string value)
+        public bool UpdateZip(Zip zip, string property, string value)
         {
-            CoreValidator.ThrowIfNullOrEmpty(zipCode, nameof(zipCode));
+            CoreValidator.ThrowIfNull(zip, nameof(zip));
+            CoreValidator.ThrowIfNullOrEmpty(zip.ZipCode, nameof(zip.ZipCode));
             CoreValidator.ThrowIfNullOrEmpty(property, nameof(property));
             CoreValidator.ThrowIfNullOrEmpty(value, nameof(value));
 
             using (var db = new AuctionContext())
             {
-                var zip = GetZipByZipCode(zipCode);
+                var zipNew = GetZipByZipCode(zip.ZipCode);
 
-                CoreValidator.ThrowIfNull(zip, nameof(zip));
+                CoreValidator.ThrowIfNull(zipNew, nameof(zipNew));
 
+                db.Zips.Attach(zipNew);
+                
                 switch (property)
                 {
                     case "ZipCode":
-                        zip.ZipCode = value;
+                        zipNew.ZipCode = value;
                         break;
                     case "Country":
-                        zip.Country = value;
+                        zipNew.Country = value;
                         break;
                     case "City":
-                        zip.City = value;
+                        zipNew.City = value;
                         break;
                     default:
                         throw new Exception("There is no such property!");
                 }
 
+                db.Entry(zipNew).State = EntityState.Modified;
                 db.SaveChanges();
 
                 return true;

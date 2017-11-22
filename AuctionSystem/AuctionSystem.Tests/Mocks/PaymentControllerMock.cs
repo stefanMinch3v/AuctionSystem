@@ -19,82 +19,95 @@
         }
 
         // TODO
-        public void AddPayment(PaymentType type, string paymentTypeCode, int userId)
+       public void AddPayment(Payment payment, User user)
         {
-            CoreValidator.ThrowIfNullOrEmpty(paymentTypeCode, nameof(paymentTypeCode));
-            CoreValidator.ThrowIfNegativeOrZero(userId, nameof(userId));
-            using (dbContext)
+            CoreValidator.ThrowIfNull(payment, nameof(payment));
+            CoreValidator.ThrowIfNull(user, nameof(user));
+            CoreValidator.ThrowIfNullOrEmpty(payment.PaymentTypeCode, nameof(payment.PaymentTypeCode));
+            CoreValidator.ThrowIfNegativeOrZero(user.Id, nameof(user.Id));
+
+            using (var db = dbContext)
             {
-                var payment = new Payment
+                var paymentNew = new Payment
                 {
-                    Type = type,
-                    PaymentTypeCode = paymentTypeCode,
-                    UserId = userId
+                    Type = payment.Type,
+                    PaymentTypeCode = payment.PaymentTypeCode,
+                    UserId = user.Id
                 };
-                dbContext.Payments.Add(payment);
-                dbContext.SaveChanges();
-            }
-        }
-         public Payment GetPayment(int paymentId)
-         {
-                CoreValidator.ThrowIfNegativeOrZero(paymentId, nameof(paymentId));
-                using (dbContext)
-                {
-                return dbContext.Payments.SingleOrDefault(p => p.Id == paymentId);
-                }
 
-         }
-        public bool DeletePayment(int id)
-        {
-            CoreValidator.ThrowIfNegativeOrZero(id, nameof(id));
-            using (dbContext)
-            {
-                var payment = GetPayment(id);
-
-                if (payment == null)
-                {
-                    return false;
-                }
-                dbContext.Payments.Remove(payment);
-                dbContext.SaveChanges();
-                return true;
+                db.Payments.Add(paymentNew);
+                db.SaveChanges();
             }
         }
 
-        public IList<Payment> GetPaymentsByUser(int userId)
-        {
-            CoreValidator.ThrowIfNegativeOrZero(userId, nameof(userId));
-            using (dbContext)
-            {
-                var payment = dbContext.Payments.Where(p => p.UserId == userId).ToList();
-
-                return payment;
-            }
-        }
-       
-
-        public bool UpdatePayment(int paymentId, string property, string value)
+        public Payment GetPayment(int paymentId)
         {
             CoreValidator.ThrowIfNegativeOrZero(paymentId, nameof(paymentId));
+
+            using (var db = dbContext)
+            {
+                return db.Payments.FirstOrDefault(p => p.Id == paymentId);
+            }
+
+        }
+
+
+        public bool UpdatePayment(Payment payment, string property, string value)
+        {
+            CoreValidator.ThrowIfNull(payment, nameof(payment));
+            CoreValidator.ThrowIfNegativeOrZero(payment.Id, nameof(payment.Id));
             CoreValidator.ThrowIfNullOrEmpty(property, nameof(property));
             CoreValidator.ThrowIfNullOrEmpty(value, nameof(value));
-            using (dbContext)
+
+            using (var db = dbContext)
             {
-                var payment = GetPayment(paymentId);
-                CoreValidator.ThrowIfNull(payment, nameof(payment));
-                dbContext.Payments.Attach(payment);
+                var paymentNew = GetPayment(payment.Id);
+
+                CoreValidator.ThrowIfNull(paymentNew, nameof(paymentNew));
+
+                db.Payments.Attach(paymentNew);
 
                 switch (property.ToLower())
                 {
-
                     case "paymenttypecode":
                         payment.PaymentTypeCode = value;
                         break;
-
                     default:
                         throw new ArgumentException("No such property.");
                 }
+
+                db.Entry(paymentNew).State = System.Data.Entity.EntityState.Modified;
+                db.SaveChanges();
+
                 return true;
+            }
+        }
+        public bool DeletePayment(Payment payment)
+        {
+            CoreValidator.ThrowIfNegativeOrZero(payment.Id, nameof(payment.Id));
+
+            using (var db = dbContext)
+            {
+                var paymentNew = GetPayment(payment.Id);
+
+                CoreValidator.ThrowIfNull(payment, nameof(payment));
+
+                db.Payments.Attach(paymentNew);
+                db.Payments.Remove(paymentNew);
+                //db.Entry(paymentNew).State = EntityState.Deleted;
+                db.SaveChanges();
+
+                return true;
+            }
+        }
+
+        public IList<Payment> GetPaymentsByUser(User user)
+        {
+            using (var db = dbContext)
+            {
+                var payment = db.Payments.Where(p => p.UserId == user.Id).ToList();
+
+                return payment;
             }
         }
     }
