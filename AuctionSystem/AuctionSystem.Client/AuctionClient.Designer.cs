@@ -29,11 +29,11 @@
         private void InitializeComponent()
         {
             this.topPanel = new System.Windows.Forms.Panel();
-            this.maximizeBtn = new System.Windows.Forms.Button();
-            this.exitBtn = new System.Windows.Forms.Button();
             this.ebidBtn = new System.Windows.Forms.Button();
             this.leftMenuPanel = new System.Windows.Forms.Panel();
             this.selectionPanel = new System.Windows.Forms.Panel();
+            this.maximizeBtn = new System.Windows.Forms.Button();
+            this.exitBtn = new System.Windows.Forms.Button();
             this.newsBtn = new System.Windows.Forms.Button();
             this.settingsBtn = new System.Windows.Forms.Button();
             this.myaccountbtn = new System.Windows.Forms.Button();
@@ -53,36 +53,6 @@
             this.topPanel.Name = "topPanel";
             this.topPanel.Size = new System.Drawing.Size(1248, 103);
             this.topPanel.TabIndex = 5;
-            // 
-            // maximizeBtn
-            // 
-            this.maximizeBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.maximizeBtn.BackgroundImage = global::AuctionSystem.Client.Properties.Resources.expand;
-            this.maximizeBtn.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.maximizeBtn.FlatAppearance.BorderSize = 0;
-            this.maximizeBtn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.maximizeBtn.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            this.maximizeBtn.Location = new System.Drawing.Point(1172, 0);
-            this.maximizeBtn.Name = "maximizeBtn";
-            this.maximizeBtn.Size = new System.Drawing.Size(35, 35);
-            this.maximizeBtn.TabIndex = 7;
-            this.maximizeBtn.UseVisualStyleBackColor = true;
-            this.maximizeBtn.Click += new System.EventHandler(this.maximizeBtn_Click);
-            // 
-            // exitBtn
-            // 
-            this.exitBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.exitBtn.BackColor = System.Drawing.Color.DimGray;
-            this.exitBtn.BackgroundImage = global::AuctionSystem.Client.Properties.Resources.error__2_;
-            this.exitBtn.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.exitBtn.FlatAppearance.BorderSize = 0;
-            this.exitBtn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.exitBtn.Location = new System.Drawing.Point(1213, 0);
-            this.exitBtn.Name = "exitBtn";
-            this.exitBtn.Size = new System.Drawing.Size(35, 35);
-            this.exitBtn.TabIndex = 6;
-            this.exitBtn.UseVisualStyleBackColor = false;
-            this.exitBtn.Click += new System.EventHandler(this.exitBtn_Click);
             // 
             // ebidBtn
             // 
@@ -124,6 +94,36 @@
             this.selectionPanel.Size = new System.Drawing.Size(17, 70);
             this.selectionPanel.TabIndex = 5;
             // 
+            // maximizeBtn
+            // 
+            this.maximizeBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.maximizeBtn.BackgroundImage = global::AuctionSystem.Client.Properties.Resources.expand;
+            this.maximizeBtn.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.maximizeBtn.FlatAppearance.BorderSize = 0;
+            this.maximizeBtn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.maximizeBtn.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
+            this.maximizeBtn.Location = new System.Drawing.Point(1172, 0);
+            this.maximizeBtn.Name = "maximizeBtn";
+            this.maximizeBtn.Size = new System.Drawing.Size(35, 35);
+            this.maximizeBtn.TabIndex = 7;
+            this.maximizeBtn.UseVisualStyleBackColor = true;
+            this.maximizeBtn.Click += new System.EventHandler(this.maximizeBtn_Click);
+            // 
+            // exitBtn
+            // 
+            this.exitBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.exitBtn.BackColor = System.Drawing.Color.DimGray;
+            this.exitBtn.BackgroundImage = global::AuctionSystem.Client.Properties.Resources.error__2_;
+            this.exitBtn.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.exitBtn.FlatAppearance.BorderSize = 0;
+            this.exitBtn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.exitBtn.Location = new System.Drawing.Point(1213, 0);
+            this.exitBtn.Name = "exitBtn";
+            this.exitBtn.Size = new System.Drawing.Size(35, 35);
+            this.exitBtn.TabIndex = 6;
+            this.exitBtn.UseVisualStyleBackColor = false;
+            this.exitBtn.Click += new System.EventHandler(this.exitBtn_Click);
+            // 
             // newsBtn
             // 
             this.newsBtn.FlatAppearance.BorderSize = 0;
@@ -154,6 +154,7 @@
             this.settingsBtn.TabIndex = 8;
             this.settingsBtn.Text = "    Settings";
             this.settingsBtn.UseVisualStyleBackColor = true;
+            this.settingsBtn.Click += new System.EventHandler(this.settingsBtn_Click);
             // 
             // myaccountbtn
             // 
@@ -186,6 +187,7 @@
             this.catalogueBtn.TabIndex = 6;
             this.catalogueBtn.Text = "   Catalog";
             this.catalogueBtn.UseVisualStyleBackColor = true;
+            this.catalogueBtn.Click += new System.EventHandler(this.catalogueBtn_Click);
             // 
             // biddingBtn
             // 
