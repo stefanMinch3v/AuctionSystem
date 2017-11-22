@@ -41,12 +41,14 @@ namespace AuctionSystem.Client
         }
         private void myaccountbtn_Click(object sender, EventArgs e)
         {
-
+            selectionPanel.Height = myaccountbtn.Height;
+            selectionPanel.Top = myaccountbtn.Top;
         }
 
         private void newsBtn_Click(object sender, EventArgs e)
         {
-
+            selectionPanel.Height = newsBtn.Height;
+            selectionPanel.Top = newsBtn.Top;
         }
 
         private void exitBtn_Click(object sender, EventArgs e)
@@ -56,7 +58,20 @@ namespace AuctionSystem.Client
 
         private void biddingBtn_Click(object sender, EventArgs e)
         {
+            selectionPanel.Height = biddingBtn.Height;
+            selectionPanel.Top = biddingBtn.Top;
+        }
 
+        private void catalogueBtn_Click(object sender, EventArgs e)
+        {
+            selectionPanel.Height = catalogueBtn.Height;
+            selectionPanel.Top = catalogueBtn.Top;
+        }
+
+        private void settingsBtn_Click(object sender, EventArgs e)
+        {
+            selectionPanel.Height = settingsBtn.Height;
+            selectionPanel.Top = settingsBtn.Top;
         }
     }
 }
