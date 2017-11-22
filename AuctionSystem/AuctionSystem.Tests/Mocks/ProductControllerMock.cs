@@ -92,7 +92,6 @@
                         break;
                     default:
                         throw new ArgumentException("No such property");
-                        break;
                 }
                 dbContext.SaveChanges();
                 return true;
@@ -157,6 +156,14 @@
             {
                 var collection = dbContext.Products.SingleOrDefault(p => p.Id == id).Bids.Select(u => u.UserId);
                 return collection.Select(userId => dbContext.Users.FirstOrDefault(u => u.Id == userId)).ToList();
+            }
+        }
+
+        public bool IsProductExistingById(int productId)
+        {
+            using (dbContext)
+            {
+                return dbContext.Products.Any(p => p.Id == productId);
             }
         }
     }

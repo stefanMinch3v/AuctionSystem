@@ -1,8 +1,8 @@
 ﻿namespace AuctionSystem.WcfService.Interfaces
 {
     using Models;
+    using Models.DTOs;
     using Models.Enums;
-    using System;
     using System.Collections.Generic;
     using System.ServiceModel;
 
@@ -16,7 +16,7 @@
         bool UpdateUser(int userId, string property, string value);
 
         [OperationContract]
-        User GetUserById(int id);
+        UserDto GetUserById(int id);
 
         [OperationContract]
         bool DeleteUser(int userId);

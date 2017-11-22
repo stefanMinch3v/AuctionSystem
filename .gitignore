@@ -289,3 +289,6 @@ __pycache__/
 
 # Ignore all packages
 ./AuctionSystem/packages
+
+# Ignore all EF
+*/App.config

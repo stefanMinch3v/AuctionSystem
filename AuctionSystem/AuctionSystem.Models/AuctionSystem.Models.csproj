@@ -43,6 +43,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Bid.cs" />
+    <Compile Include="DTOs\BidDto.cs" />
+    <Compile Include="DTOs\InvoiceDto.cs" />
+    <Compile Include="DTOs\PaymentDto.cs" />
+    <Compile Include="DTOs\ProductDto.cs" />
+    <Compile Include="DTOs\UserDto.cs" />
+    <Compile Include="DTOs\ZipDto.cs" />
     <Compile Include="Enums\Gender.cs" />
     <Compile Include="Enums\PaymentType.cs" />
     <Compile Include="Invoice.cs" />

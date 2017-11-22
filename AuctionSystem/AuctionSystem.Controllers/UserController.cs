@@ -1,9 +1,11 @@
 ﻿namespace AuctionSystem.Controllers
 {
+    using AutoMapper;
     using Common;
     using Data;
     using Interfaces;
     using Models;
+    using Models.DTOs;
     using Models.Enums;
     using System;
     using System.Collections.Generic;
@@ -11,6 +13,32 @@
 
     public class UserController : IUserController
     {
+        private static UserController instance;
+
+        private UserController()
+        {
+            Mapper.Initialize(cfg =>
+            {
+                cfg.CreateMap<User, UserDto>()
+                                        .ForMember(dest => dest.ZipCountryCity, opt => opt.MapFrom(src => src.Zip.Country + ", " + src.Zip.City))
+                                        .ForMember(dest => dest.Payments, opt => opt.MapFrom(src => string.Join(Environment.NewLine, src.Payments.Select(p => p.Type + ", " + p.PaymentTypeCode))))
+                                        .ForMember(dest => dest.Invoices, opt => opt.MapFrom(src => string.Join(Environment.NewLine, src.Invoices.Select(p => p.ProductId + ", " + p.Product.Name))))
+                                        .ForMember(dest => dest.Bids, opt => opt.MapFrom(src => string.Join(Environment.NewLine, src.Bids.Select(b => b.Product.Name + ", " + b.Coins + ", " + b.IsWon + ", " + b.DateOfCreated))));
+                cfg.CreateMap<Bid, BidDto>()
+                                        .ForMember(dest => dest.Username, opt => opt.MapFrom(src => src.User.Username))
+                                        .ForMember(dest => dest.ProductName, opt => opt.MapFrom(src => src.Product.Name));
+            });
+        }
+
+        public static UserController Instance()
+        {
+            if (instance == null)
+            {
+                instance = new UserController();
+            }
+
+            return instance;
+        }
 
         public int CountUserBidsForGivenProduct(int userId, int productId)
         {
@@ -33,6 +61,14 @@
                 }
 
                 return bids.Select(b => b.ProductId == productId).Count();
+            }
+        }
+
+        public bool IsUserExistingById(int userId)
+        {
+            using (var db = new AuctionContext())
+            {
+                return db.Users.Any(u => u.Id == userId);
             }
         }
 
@@ -145,6 +181,26 @@
             using (var db = new AuctionContext())
             {
                 var currentUser = db.Users.FirstOrDefault(u => u.Id == id);
+
+                CoreValidator.ThrowIfNull(currentUser, nameof(currentUser));
+
+                return currentUser;
+            }
+        }
+
+        public User GetUserByIdWithAllCollections(int id)
+        {
+            CoreValidator.ThrowIfNegativeOrZero(id, nameof(id));
+
+            using (var db = new AuctionContext())
+            {
+                var currentUser = db.Users
+                                        .Include("Bids")
+                                        .Include("Bids.Product")
+                                        .Include("Payments")
+                                        .Include("Invoices")
+                                        .Include("Zip")
+                                        .FirstOrDefault(u => u.Id == id);
 
                 CoreValidator.ThrowIfNull(currentUser, nameof(currentUser));
 
