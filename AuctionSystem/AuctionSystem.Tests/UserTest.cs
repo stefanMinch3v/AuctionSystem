@@ -30,7 +30,7 @@
 
             this.userController = new UserControllerMock(this.db.Object);
 
-            var user = CreateTestUserWorking();
+            var user = GetUserCreatedInDb();
             var bid = CreateTestBid();
             var zip = CreateFakeZip();
 
@@ -82,7 +82,7 @@
         [TestMethod]
         public void getUserByIdShouldPass()
         {
-            var expected = getExistingUserById().Id;
+            var expected = GetExistingUserById().Id;
             var actual = userController.GetUserById(1).Id;
             Assert.AreEqual(expected, actual);
         }
@@ -117,12 +117,12 @@
         [TestMethod]
         public void CreateUserShouldPass()
         {
+            var user = GetUserNotFromDb();
+            this.userController.CreateUser(user);
 
-            this.userController.CreateUser("name", "pass", "name name", "adress", "email", "phone", DateTime.Now.AddYears(-20).ToString(), Models.Enums.Gender.Female, 1, 10, paymentData);
+            var actual = this.db.Object.Users.First(p => p.Name == "Pesho");
 
-            var actual = this.db.Object.Users.First(p => p.Name == "name name");
-
-            Assert.AreEqual("name name", actual.Name);
+            Assert.AreEqual("Pesho", actual.Name);
         }
 
         [TestMethod]
@@ -130,22 +130,29 @@
         public void CreateUserShouldThrowEmptyUsernameNameArgumentException()
         {
 
-            this.userController.CreateUser("", "pass", "name name", "adress", "email", "phone", DateTime.Now.AddYears(-20).ToString(), Models.Enums.Gender.Female, 1, 10, paymentData);
+            var user = GetUserNotFromDb();
+            user.Username = "";
+
+            this.userController.CreateUser(user);
         }
         [TestMethod]
         [ExpectedException(typeof(ArgumentException))]
         public void CreateUserShouldThrowNullUsernameArgumentException()
         {
+            var user = GetUserNotFromDb();
+            user.Username = null;
 
-            this.userController.CreateUser(null, "pass", "name name", "adress", "email", "phone", DateTime.Now.AddYears(-20).ToString(), Models.Enums.Gender.Female, 1, 10, paymentData);
+            this.userController.CreateUser(user);
         }
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentException))]
         public void CreateUserShouldThrowEmptyPasswordArgumentException()
         {
+            var user = GetUserNotFromDb();
+            user.Password = "";
 
-            this.userController.CreateUser("name", "", "name name", "adress", "email", "phone", DateTime.Now.AddYears(-20).ToString(), Models.Enums.Gender.Female, 1, 10, paymentData);
+            this.userController.CreateUser(user);
         }
 
         [TestMethod]
@@ -153,7 +160,10 @@
         public void CreateUserShouldThrowNullPasswordArgumentException()
         {
 
-            this.userController.CreateUser("name", null, "name name", "adress", "email", "phone", DateTime.Now.AddYears(-20).ToString(), Models.Enums.Gender.Female, 1, 10, paymentData);
+            var user = GetUserNotFromDb();
+            user.Password = null;
+
+            this.userController.CreateUser(user);
         }
 
         [TestMethod]
@@ -161,7 +171,10 @@
         public void CreateUserShouldThrowEmptyNameArgumentException()
         {
 
-            this.userController.CreateUser("name", "pass", "", "adress", "email", "phone", DateTime.Now.AddYears(-20).ToString(), Models.Enums.Gender.Female, 1, 10, paymentData);
+            var user = GetUserNotFromDb();
+            user.Name = "";
+
+            this.userController.CreateUser(user);
         }
 
         [TestMethod]
@@ -169,7 +182,10 @@
         public void CreateUserShouldThrowNullNameArgumentException()
         {
 
-            this.userController.CreateUser("name", "pass", null, "address", "email", "phone", DateTime.Now.AddYears(-20).ToString(), Models.Enums.Gender.Female, 1, 10, paymentData);
+            var user = GetUserNotFromDb();
+            user.Name = null;
+
+            this.userController.CreateUser(user);
         }
 
         [TestMethod]
@@ -177,7 +193,10 @@
         public void CreateUserShouldThrowEmptyAddressArgumentException()
         {
 
-            this.userController.CreateUser("name", "pass", "name name", "", "email", "phone", DateTime.Now.AddYears(-20).ToString(), Models.Enums.Gender.Female, 1, 10, paymentData);
+            var user = GetUserNotFromDb();
+            user.Address = "";
+
+            this.userController.CreateUser(user);
         }
 
         [TestMethod]
@@ -185,7 +204,10 @@
         public void CreateUserShouldThrowNullAddressArgumentException()
         {
 
-            this.userController.CreateUser("name", "pass", "name name", null, "email", "phone", DateTime.Now.AddYears(-20).ToString(), Models.Enums.Gender.Female, 1, 10, paymentData);
+            var user = GetUserNotFromDb();
+            user.Address = null;
+
+            this.userController.CreateUser(user);
         }
 
         [TestMethod]
@@ -193,7 +215,10 @@
         public void CreateUserShouldThrowEmptyEmailArgumentException()
         {
 
-            this.userController.CreateUser("name", "pass", "name name", "address", "", "phone", DateTime.Now.AddYears(-20).ToString(), Models.Enums.Gender.Female, 1, 10, paymentData);
+            var user = GetUserNotFromDb();
+            user.Email = "";
+
+            this.userController.CreateUser(user);
         }
 
         [TestMethod]
@@ -201,14 +226,20 @@
         public void CreateUserShouldThrowNullEmailArgumentException()
         {
 
-            this.userController.CreateUser("name", "pass", "name name", "address", null, "phone", DateTime.Now.AddYears(-20).ToString(), Models.Enums.Gender.Female, 1, 10, paymentData);
+            var user = GetUserNotFromDb();
+            user.Email = null;
+
+            this.userController.CreateUser(user);
         }
         [TestMethod]
         [ExpectedException(typeof(ArgumentException))]
         public void CreateUserShouldThrowEmptyPhoneArgumentException()
         {
 
-            this.userController.CreateUser("name", "pass", "name name", "address", "email", "", DateTime.Now.AddYears(-20).ToString(), Models.Enums.Gender.Female, 1, 10, paymentData);
+            var user = GetUserNotFromDb();
+            user.Phone = "";
+
+            this.userController.CreateUser(user);
         }
 
         [TestMethod]
@@ -216,31 +247,43 @@
         public void CreateUserShouldThrowNullPhoneArgumentException()
         {
 
-            this.userController.CreateUser("name", "pass", "name name", "address", "email", null, DateTime.Now.AddYears(-20).ToString(), Models.Enums.Gender.Female, 1, 10, paymentData);
+            var user = GetUserNotFromDb();
+            user.Phone = null;
+
+            this.userController.CreateUser(user);
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ArgumentException))]
+        [ExpectedException(typeof(FormatException))]
         public void CreateUserShouldThrowDateTypeArgumentException()
         {
 
-            this.userController.CreateUser("name", "pass", "name name", "adress", "email", "phone", "57", Models.Enums.Gender.Female, 1, 10, paymentData);
+            var user = GetUserNotFromDb();
+            user.DateOfBirth = DateTime.Parse("55");
+
+            this.userController.CreateUser(user);
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ArgumentException))]
+        [ExpectedException(typeof(FormatException))]
         public void CreateUserShouldThrowDateEmptyArgumentException()
         {
 
-            this.userController.CreateUser("name", "pass", "name name", "adress", "email", "phone", "", Models.Enums.Gender.Female, 1, 10, paymentData);
+            var user = GetUserNotFromDb();
+            user.DateOfBirth = DateTime.Parse("");
+
+            this.userController.CreateUser(user);
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ArgumentException))]
+        [ExpectedException(typeof(ArgumentNullException))]
         public void CreateUserShouldThrowDateNullArgumentException()
         {
 
-            this.userController.CreateUser("name", "pass", "name name", "adress", "email", "phone", null, Models.Enums.Gender.Female, 1, 10, paymentData);
+            var user = GetUserNotFromDb();
+            user.DateOfBirth = DateTime.Parse(null);
+
+            this.userController.CreateUser(user);
         }
 
         [TestMethod]
@@ -248,7 +291,10 @@
         public void CreateUserShouldThrowNegativeCoinArgumentException()
         {
 
-            this.userController.CreateUser("name", "pass", "name name", "adress", "email", "phone", DateTime.Now.AddYears(-20).ToString(), Models.Enums.Gender.Female, 1, -1, paymentData);
+            var user = GetUserNotFromDb();
+            user.Coins = -1;
+
+            this.userController.CreateUser(user);
         }
 
         //DELETE USER
@@ -256,7 +302,7 @@
         [TestMethod]
         public void DeleteUserShouldPass()
         {
-            var existingUser = getExistingUserByUserName().Id;
+            var existingUser = getExistingUserByUserName();
 
             var deletedUser = this.userController.DeleteUser(existingUser);
             Assert.IsTrue(deletedUser);
@@ -265,22 +311,30 @@
         [TestMethod]
         [ExpectedException(typeof(ArgumentNullException))]
         public void DeleteUserWithNonExistingIdShouldThrowException()
-        {  
-            var deletedUser = this.userController.DeleteUser(15);
+        {
+            var user = GetUserNotFromDb();
+
+            var deletedUser = this.userController.DeleteUser(user);
         }
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentException))]
         public void DeleteUserWithNegativeIdShoulThrowException()
         {
-            var deletedUser = this.userController.DeleteUser(-1);
+            var user = GetUserNotFromDb();
+            user.Id = -1;
+
+            var deletedUser = this.userController.DeleteUser(user);
         }
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentException))]
         public void DeleteUserWithZeroIdShoulThrowException()
         {
-            var deletedUser = this.userController.DeleteUser(0);
+            var user = GetUserNotFromDb();
+            user.Id = 0;
+
+            var deletedUser = this.userController.DeleteUser(user);
         }
 
         //IS USER EXISTING
@@ -288,7 +342,9 @@
         [TestMethod]
         public void IsUserExistingShouldPass()
         {
-            var existingUser = this.userController.IsUserExisting("John");
+            var user = GetUserCreatedInDb();
+
+            var existingUser = this.userController.IsUserExisting(user);
 
             Assert.IsTrue(existingUser);
         }
@@ -296,7 +352,9 @@
         [TestMethod]
         public void IsUserExistingShouldNotPass()
         {
-            var existingUser = this.userController.IsUserExisting("Peter");
+            var user = GetUserNotFromDb();
+
+            var existingUser = this.userController.IsUserExisting(user);
 
             Assert.IsFalse(existingUser);
         }
@@ -305,14 +363,20 @@
         [ExpectedException(typeof(ArgumentException))]
         public void IsUserExistingWithNullUserNameShouldThrowException()
         {
-            var existingUser = this.userController.IsUserExisting(null);
+            var user = GetUserNotFromDb();
+            user.Name = null;
+
+            var existingUser = this.userController.IsUserExisting(user);
         }
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentException))]
         public void IsUserExistingWithEmptyUserNameShouldThrowException()
         {
-            var existingUser = this.userController.IsUserExisting("");
+            var user = GetUserNotFromDb();
+            user.Name = "";
+
+            var existingUser = this.userController.IsUserExisting(user);
         }
 
 
@@ -321,20 +385,20 @@
         [TestMethod]
         public void UpdateUserPhoneShouldPass()
         {
-            
-            var currentUserId = GetExistingUserFromDb(1).Id;
 
-            var successUpdating = this.userController.UpdateUser(currentUserId, "phone", "111111");
+            var currentUser = GetExistingUserFromDb(1);
 
-            var changedUser = this.db.Object.Users.FirstOrDefault(u => u.Id == currentUserId).Phone;
+            var successUpdating = this.userController.UpdateUser(currentUser, "phone", "111111");
+
+            var changedUser = this.db.Object.Users.FirstOrDefault(u => u.Id == currentUser.Id).Phone;
 
             // Assert
-            
+
 
             Assert.AreEqual("111111", changedUser);
         }
-        
-        
+
+
         //TO DO
         //CountUserBidsForGivenProduct 
         //GetAllUserSpentCoinsForGivenProduct 
@@ -349,53 +413,45 @@
             return this.db.Object.Users.First(u => u.Username == "John");
         }
 
-        public User getExistingUserById()
+        public User GetExistingUserById()
         {
             return this.db.Object.Users.First(u => u.Id == 1);
         }
 
         //LIBOR TESTS
-        
-        /*
-         
-         [TestMethod]
-            [ExpectedException(typeof(ArgumentException))]
-            public void UpdateUserWithNegativeIdShouldThrowException()
 
-            {
-                var successUpdate = this.userController.UpdateUser(-1, "Name", "John");
-            }
+
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentException))]
+        public void UpdateUserWithNegativeIdShouldThrowException()
+        {
+            var user = GetUserNotFromDb();
+            user.Id = -1;
+
+            var successUpdate = this.userController.UpdateUser(user, "Name", "John");
+        }
+
         [TestMethod]
         [ExpectedException(typeof(ArgumentException))]
         public void UpdateUserWithZeroIdShouldThrowException()
         {
-            var successUpdate = this.userController.UpdateUser(0, "Name", "John");
-        }
+            var user = GetUserNotFromDb();
+            user.Id = 0;
 
-        [TestMethod]
-        public void UpdateUserIdShouldPass()
-        {
-            var currentUserId = getExistingUserById().Id;
-
-            var successUpdating = this.userController.UpdateUser(15, "Name", "John");
-
-            var changedUserId = this.db.Object.Users.FirstOrDefault(u => u.Id == currentUserId).Id;
-
-            // Assert
-
-            Assert.AreEqual(15, changedUserId);
+            var successUpdate = this.userController.UpdateUser(user, "Name", "John");
         }
 
         [TestMethod]
         public void UpdateUserNameShouldPassIfNameIsChanged()
         {
             // Act
+             
+            var currentUser = GetExistingUserById();
 
-            var currentUserId = getExistingUserById().Id;
+            var successUpdating = this.userController.UpdateUser(currentUser, "Name", "Conor");
 
-            var successUpdating = this.userController.UpdateUser(currentUserId, "Name", "Conor");
-
-            var changedUserName = this.db.Object.Users.FirstOrDefault(u => u.Id == currentUserId).Name;
+            var changedUserName = this.db.Object.Users.FirstOrDefault(u => u.Id == currentUser.Id).Name;
 
             // Assert
 
@@ -407,9 +463,9 @@
         {
             // Act
 
-            var currentUserId = getExistingUserById().Id;
+            var currentUser = GetExistingUserById();
 
-            var successUpdating = this.userController.UpdateUser(currentUserId, "Name", "Conor");
+            var successUpdating = this.userController.UpdateUser(currentUser, "Name", "Conor");
 
             // Assert
 
@@ -419,19 +475,19 @@
         [TestMethod]
         [ExpectedException(typeof(ArgumentException))]
         public void UpdateUserNameShouldThrowExceptionIfNameIsNull()
-        {
-            var currentUserId = getExistingUserById().Id;
+        { 
+            var currentUser = GetExistingUserById();
 
-            var successUpdating = this.userController.UpdateUser(currentUserId, "Name", null);
+            var successUpdating = this.userController.UpdateUser(currentUser, "Name", null);
         }
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentException))]
         public void UpdateUserNameShouldThrowExceptionIfNameIsEmpty()
         {
-            var currentUserId = getExistingUserById().Id;
+            var currentUser = GetExistingUserById();
 
-            var successUpdating = this.userController.UpdateUser(currentUserId, "Name", "");
+            var successUpdating = this.userController.UpdateUser(currentUser, "Name", "");
         }
 
         [TestMethod]
@@ -439,11 +495,11 @@
         {
             // Act
 
-            var currentUserId = getExistingUserById().Id;
+            var currentUser = GetExistingUserById();
 
-            var successUpdating = this.userController.UpdateUser(currentUserId, "Phone", "545644888");
+            var successUpdating = this.userController.UpdateUser(currentUser, "Phone", "545644888");
 
-            var changedUserPhone = this.db.Object.Users.FirstOrDefault(u => u.Id == currentUserId).Phone;
+            var changedUserPhone = this.db.Object.Users.FirstOrDefault(u => u.Id == currentUser.Id).Phone;
 
             // Assert
 
@@ -454,9 +510,9 @@
         [ExpectedException(typeof(ArgumentException))]
         public void UpdateUserPhoneShouldThrowExceptionIfPhoneIsNull()
         {
-            var currentUserId = getExistingUserById().Id;
+            var currentUser = GetExistingUserById();
 
-            var successUpdating = this.userController.UpdateUser(currentUserId, "Phone", null);
+            var successUpdating = this.userController.UpdateUser(currentUser, "Phone", null);
         }
 
 
@@ -464,9 +520,9 @@
         [ExpectedException(typeof(ArgumentException))]
         public void UpdateUserPhoneShouldThrowExceptionIfPhoneIsEmpty()
         {
-            var currentUserId = getExistingUserById().Id;
+            var currentUser = GetExistingUserById();
 
-            var successUpdating = this.userController.UpdateUser(currentUserId, "Phone", "");
+            var successUpdating = this.userController.UpdateUser(currentUser, "Phone", "");
         }
 
         [TestMethod]
@@ -474,11 +530,11 @@
         {
             // Act
 
-            var currentUserId = getExistingUserById().Id;
+            var currentUser = GetExistingUserById();
 
-            var successUpdating = this.userController.UpdateUser(currentUserId, "Email", "Conor.Mcgregor@gmail.com");
+            var successUpdating = this.userController.UpdateUser(currentUser, "Email", "Conor.Mcgregor@gmail.com");
 
-            var changedUserEmail = this.db.Object.Users.FirstOrDefault(u => u.Id == currentUserId).Email;
+            var changedUserEmail = this.db.Object.Users.FirstOrDefault(u => u.Id == currentUser.Id).Email;
 
             // Assert
 
@@ -489,18 +545,18 @@
         [ExpectedException(typeof(ArgumentException))]
         public void UpdateUserEmailShouldThrowExceptionIfEmailIsEmpty()
         {
-            var currentUserId = getExistingUserById().Id;
+            var currentUser = GetExistingUserById();
 
-            var successUpdating = this.userController.UpdateUser(currentUserId, "Email", "");
+            var successUpdating = this.userController.UpdateUser(currentUser, "Email", "");
         }
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentException))]
         public void UpdateUserEmailShouldThrowExceptionIfEmailIsNull()
         {
-            var currentUserId = getExistingUserById().Id;
+            var currentUser = GetExistingUserById();
 
-            var successUpdating = this.userController.UpdateUser(currentUserId, "Email", null);
+            var successUpdating = this.userController.UpdateUser(currentUser, "Email", null);
         }
 
         [TestMethod]
@@ -508,11 +564,11 @@
         {
             // Act
 
-            var currentUserId = getExistingUserById().Id;
+            var currentUser = GetExistingUserById();
 
-            var successUpdating = this.userController.UpdateUser(currentUserId, "Address", "Nytorv");
+            var successUpdating = this.userController.UpdateUser(currentUser, "Address", "Nytorv");
 
-            var changedUserAddress = this.db.Object.Users.FirstOrDefault(u => u.Id == currentUserId).Address;
+            var changedUserAddress = this.db.Object.Users.FirstOrDefault(u => u.Id == currentUser.Id).Address;
 
             // Assert
 
@@ -522,35 +578,35 @@
         [ExpectedException(typeof(ArgumentException))]
         public void UpdateUserAddressShouldThrowExceptionIfAddressIsNull()
         {
-            var currentUserId = getExistingUserById().Id;
+            var currentUser = GetExistingUserById();
 
-            var successUpdating = this.userController.UpdateUser(currentUserId, "Address", null);
+            var successUpdating = this.userController.UpdateUser(currentUser, "Address", null);
         }
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentException))]
         public void UpdateUserAddressShouldThrowExceptionIfAddressIsEmpty()
         {
-            var currentUserId = getExistingUserById().Id;
+            var currentUser = GetExistingUserById();
 
-            var successUpdating = this.userController.UpdateUser(currentUserId, "Address", "");
+            var successUpdating = this.userController.UpdateUser(currentUser, "Address", "");
         }
 
         public void UpdateUserAddressShouldThrowExceptionIfAddressIsEmpty1()
         {
-            var currentUserId = getExistingUserById().Id;
+            var currentUserId = GetExistingUserById().Id;
 
         }
-        */
+
 
         //Creating Simple Test Data
 
-        public User CreateTestUserWorking()
+        public User GetUserCreatedInDb()
         {
-           
+
             return new User
             {
-                
+
                 Id = 1,
                 Username = "John",
                 Name = "Arafat Khadiri",
@@ -566,7 +622,7 @@
                 IsDeleted = false,
                 //Bids = new List<Bid> { CreateTestBid() }
 
-        };
+            };
 
 
         }
@@ -575,7 +631,25 @@
             return this.db.Object.Users.First(p => p.Id == id);
         }
 
-        public Product CreateTestProduct()
+        public User GetUserNotFromDb()
+        {
+            return new User
+            {
+                Id = 2,
+                Username = "Pesho",
+                Name = "Pesho",
+                DateOfBirth = DateTime.Now.AddYears(-19),
+                Gender = Models.Enums.Gender.Female,
+                Phone = "666999696",
+                Email = "Pesho.Cena@gmail.com",
+                Address = "street",
+                Zip = CreateFakeZip(),
+                Coins = 11,
+                Password = "password"
+            };
+        }
+
+        private Product CreateTestProduct()
         {
             return new Product
             {
@@ -587,11 +661,12 @@
             };
         }
 
-        public Bid CreateTestBid()
+        private Bid CreateTestBid()
         {
-            return new Bid {
+            return new Bid
+            {
 
-                UserId=  CreateTestUserWorking().Id,
+                UserId = GetUserCreatedInDb().Id,
                 ProductId = CreateTestProduct().Id,
                 Coins = 1,
                 DateOfCreated = DateTime.Now,
@@ -602,7 +677,7 @@
 
         }
 
-        public Zip CreateFakeZip()
+        private Zip CreateFakeZip()
         {
             var zip = new Zip
             {

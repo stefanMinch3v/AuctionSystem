@@ -76,7 +76,7 @@
                         throw new ArgumentException("No such property.");
                 }
 
-                db.Entry(paymentNew).State = System.Data.Entity.EntityState.Modified;
+                // db.Entry(paymentNew).State = System.Data.Entity.EntityState.Modified;
                 db.SaveChanges();
 
                 return true;

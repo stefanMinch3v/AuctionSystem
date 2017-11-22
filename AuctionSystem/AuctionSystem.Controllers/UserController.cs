@@ -271,6 +271,13 @@
         {
             CoreValidator.ThrowIfNull(user, nameof(user));
             CoreValidator.ThrowIfNullOrEmpty(user.Username, nameof(user.Username));
+            CoreValidator.ThrowIfNullOrEmpty(user.Password, nameof(user.Password));
+            CoreValidator.ThrowIfNullOrEmpty(user.Name, nameof(user.Name));
+            CoreValidator.ThrowIfNullOrEmpty(user.Address, nameof(user.Address));
+            CoreValidator.ThrowIfNullOrEmpty(user.Email, nameof(user.Email));
+            CoreValidator.ThrowIfNullOrEmpty(user.Phone, nameof(user.Phone));
+            CoreValidator.ThrowIfDateIsNotCorrect(user.DateOfBirth.ToString(), nameof(user.DateOfBirth));
+            CoreValidator.SpecialThrowForCoinsIfValueIsNegativeOnly(user.Coins, nameof(user.Coins));
 
             using (var db = new AuctionContext())
             {
@@ -295,6 +302,9 @@
 
                 switch (property.ToLower())
                 {
+                    case "name":
+                        userNew.Name = value;
+                        break;
                     case "phone":
                         userNew.Phone = value;
                         break;

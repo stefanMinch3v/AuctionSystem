@@ -149,7 +149,7 @@
 
                     lastUser.Coins += lastBidEntry.Coins;
 
-                    dbContext.Entry(lastUser).State = System.Data.Entity.EntityState.Modified;
+                    // dbContext.Entry(lastUser).State = System.Data.Entity.EntityState.Modified;
 
                     dbContext.Bids.Add(newBid);
                     dbContext.SaveChanges();

@@ -113,7 +113,7 @@
                         throw new ArgumentException("No such property");
                 }
 
-                db.Entry(productNew).State = System.Data.Entity.EntityState.Modified;
+                // db.Entry(productNew).State = System.Data.Entity.EntityState.Modified;
                 db.SaveChanges();
                 return true;
             }
@@ -132,7 +132,7 @@
                 db.Products.Attach(productNew);
 
                 db.Products.Remove(productNew);
-                db.Entry(productNew).State = System.Data.Entity.EntityState.Deleted;
+                // db.Entry(productNew).State = System.Data.Entity.EntityState.Deleted;
                 db.SaveChanges();
 
                 return true;
