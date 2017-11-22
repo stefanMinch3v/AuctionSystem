@@ -1,5 +1,6 @@
 ﻿namespace AuctionSystem.Tests.Mocks
 {
+    using AuctionSystem.Controllers.Common;
     using Controllers.Interfaces;
     using Data;
     using Models;
@@ -21,6 +22,8 @@
         // TODO
         public void CreateInvoice(int userId, int productId)
         {
+            CoreValidator.ThrowIfNegativeOrZero(userId, nameof(userId));
+            CoreValidator.ThrowIfNegativeOrZero(productId, nameof(productId));
             using (dbContext)
             {
                 var invoice = new Invoice
@@ -36,25 +39,28 @@
 
         public IList<Invoice> GetAllInvoicesForUser(int userId)
         {
+            CoreValidator.ThrowIfNegativeOrZero(userId, nameof(userId));
             using (this.dbContext)
             {
-                return GetAllInvoicesForUser(userId).ToList();
+                return dbContext.Invoices.Where(u => u.UserId == userId).ToList();
             }
         }
 
-        public Invoice GetInvoiceByProductId(int id)
+        public Invoice GetInvoiceByProductId(int productId)
         {
+            CoreValidator.ThrowIfNegativeOrZero(productId, nameof(productId));
             using (this.dbContext)
             {
-                return this.dbContext.Invoices.FirstOrDefault(p => p.ProductId == id);
+                return this.dbContext.Invoices.FirstOrDefault(p => p.ProductId == productId);
             }
         }
 
-        public Invoice GetInvoiceByUserId(int id)
+        public Invoice GetInvoiceByUserId(int userId)
         {
+            CoreValidator.ThrowIfNegativeOrZero(userId, nameof(userId));
             using (this.dbContext)
             {
-                return dbContext.Invoices.FirstOrDefault(u => u.UserId == id);
+                return dbContext.Invoices.FirstOrDefault(u => u.UserId == userId);
             }
         }
     }

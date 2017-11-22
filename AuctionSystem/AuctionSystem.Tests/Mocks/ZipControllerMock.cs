@@ -1,5 +1,6 @@
 ﻿namespace AuctionSystem.Tests.Mocks
 {
+    using AuctionSystem.Controllers.Common;
     using Controllers.Interfaces;
     using Data;
     using Models;
@@ -17,6 +18,9 @@
 
         public void AddZip(string zipCode, string country, string city)
         {
+            CoreValidator.ThrowIfNullOrEmpty(zipCode, nameof(zipCode));
+            CoreValidator.ThrowIfNullOrEmpty(country, nameof(country));
+            CoreValidator.ThrowIfNullOrEmpty(city, nameof(city));
             using (dbContext)
             {
                 var zip = new Zip
@@ -33,23 +37,29 @@
 
         public Zip GetZipByZipCode(string zipCode)
         {
+            CoreValidator.ThrowIfNullOrEmpty(zipCode, nameof(zipCode));
             using (dbContext)
             {
                 return dbContext.Zips.SingleOrDefault(z => z.ZipCode == zipCode);
             }
         }
 
-        public bool IsZipExisting(int id)
+        public bool IsZipExisting(int zipId)
         {
+            CoreValidator.ThrowIfNegativeOrZero(zipId, nameof(zipId));
             using (dbContext)
             {
-                return dbContext.Users.Any(z => z.Id == id);
+                
+                return dbContext.Zips.Any(z => z.ZipId == zipId) ;
 
             }
         }
 
         public bool UpdateZip(string zipCode, string property, string value)
         {
+            CoreValidator.ThrowIfNullOrEmpty(zipCode, nameof(zipCode));
+            CoreValidator.ThrowIfNullOrEmpty(property, nameof(property));
+            CoreValidator.ThrowIfNullOrEmpty(value, nameof(value));
             using (dbContext)
             {
                 var zip = GetZipByZipCode(zipCode);
