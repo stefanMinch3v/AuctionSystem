@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace AuctionSystem.Controllers.Contracts
+﻿namespace AuctionSystem.Controllers.Contracts
 {
-    interface ILoginController
+    public interface ILoginController
     {
         bool ValidateLogin(string username, string password);
     }
