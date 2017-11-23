@@ -111,7 +111,6 @@
         {
             var expected = data;
             var user = GetSomeUser();
-            
 
             var actual = this.paymetController.GetPaymentsByUser(user).ToList();
             CollectionAssert.AreEqual(expected, actual);
@@ -138,12 +137,12 @@
         }
 
         [TestMethod]
-        public void DeletePaymentShouldRerturnFalse()
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void DeletePaymentShouldFail()
         {
             var unexistingPayment = GetPaymentNotFromDb();
 
-            var deletedPayment = this.paymetController.DeletePayment(unexistingPayment);
-            Assert.IsFalse(deletedPayment);
+            var deletedPayment = this.paymetController.DeletePayment(unexistingPayment);          
         }
 
 
@@ -287,7 +286,8 @@
                 Gender = Gender.Female,
                 ZipId = 1,
                 Coins = 10,
-                Payments = this.data
+                Payments = this.data,
+                Id = 1
             };
         }
 

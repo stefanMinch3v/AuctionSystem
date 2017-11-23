@@ -94,13 +94,14 @@ namespace AuctionSystem.Controllers
         }
         public bool DeletePayment(Payment payment)
         {
+            CoreValidator.ThrowIfNull(payment, nameof(payment));
             CoreValidator.ThrowIfNegativeOrZero(payment.Id, nameof(payment.Id));
 
             using (var db = new AuctionContext())
             {
                 var paymentNew = GetPayment(payment.Id);
 
-                CoreValidator.ThrowIfNull(payment, nameof(payment));
+                CoreValidator.ThrowIfNull(paymentNew, nameof(paymentNew));
 
                 db.Payments.Attach(paymentNew);
                 db.Payments.Remove(paymentNew);

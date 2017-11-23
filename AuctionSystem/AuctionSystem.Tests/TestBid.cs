@@ -135,7 +135,8 @@
         }
 
         [TestMethod]
-        public void GetAllBidsByUserIdShouldReturnNull()
+        [ExpectedException(typeof(ArgumentException))]
+        public void GetAllBidsByUserIdShouldFail()
         {
             // Act
             var bids = this.bidController.GetAllBidsByUserId(new User{Id = Int32.MaxValue});
@@ -270,7 +271,7 @@
         {
             //Arrange further
             productController.CreateProduct(GetProduct());
-            var product = productController.GetProductByName(GetProduct().Name + "Test");
+            var product = productController.GetProductByName(GetProduct().Name);
 
             // Act
             var coins = 50;
@@ -286,7 +287,7 @@
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ArgumentException))]
+        [ExpectedException(typeof(ArgumentNullException))]
         public void MakeBidWithZeroUserIdShouldFail()
         {
             //Arrange further
