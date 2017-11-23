@@ -1,7 +1,7 @@
 ﻿namespace AuctionSystem.WcfService.Contracts
 {
     using Models;
-    using System;
+    using Models.DTOs;
     using System.Collections.Generic;
     using System.ServiceModel;
 
@@ -21,7 +21,7 @@
         Product GetProductByName(string name);
 
         [OperationContract]
-        Product GetProductById(int id);
+        ProductDto GetProductById(int id);
 
         [OperationContract]
         bool IsProductExisting(Product product);

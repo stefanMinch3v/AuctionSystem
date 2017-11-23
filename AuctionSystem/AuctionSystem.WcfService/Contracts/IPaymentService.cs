@@ -1,7 +1,7 @@
 ﻿namespace AuctionSystem.WcfService.Contracts
 {
     using Models;
-    using Models.Enums;
+    using Models.DTOs;
     using System.Collections.Generic;
     using System.ServiceModel;
 
@@ -12,7 +12,7 @@
         void AddPayment(Payment payment, User user);
 
         [OperationContract]
-        Payment GetPayment(int paymentId);
+        PaymentDto GetPayment(int paymentId);
 
         [OperationContract]
         bool DeletePayment(Payment payment);

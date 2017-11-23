@@ -11,8 +11,6 @@
     {
         // TODO: fix all the return list methods (try to return list of bidDtos)
 
-        
-
         private BidDto MapDbBidToBidDto(Bid dbBid)
         {
             return Mapper.Map<BidDto>(dbBid);
@@ -28,9 +26,11 @@
             return BidController.Instance().IsBidWon(bid);
         }
 
-        public Bid GetBidById(int bidId)
+        public BidDto GetBidById(int bidId)
         {
-            return BidController.Instance().GetBidById(bidId);
+            var bidDb = BidController.Instance().GetBidByIdWithAllObjects(bidId);
+
+            return MapDbBidToBidDto(bidDb);
         }
 
         public IList<Bid> GetAllBidsByUserId(User user)

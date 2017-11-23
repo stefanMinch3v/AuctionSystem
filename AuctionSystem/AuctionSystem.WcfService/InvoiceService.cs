@@ -1,8 +1,10 @@
 ﻿namespace AuctionSystem.WcfService
 {
-    using Controllers;
+    using AutoMapper;
     using Contracts;
+    using Controllers;
     using Models;
+    using Models.DTOs;
     using System.Collections.Generic;
 
     public class InvoiceService : IInvoiceService
@@ -12,9 +14,16 @@
             InvoiceController.Instance().CreateInvoice(user, product);
         }
 
-        public Invoice GetInvoiceByUserId(User user)
+        public InvoiceDto GetInvoiceByUserId(int userId)
         {
-            return InvoiceController.Instance().GetInvoiceByUserId(user);
+            var invoiceDb = InvoiceController.Instance().GetInvoiceInlcudeCollections(userId);
+
+            return MapDbInvoiceToInvoiceDto(invoiceDb);
+        }
+
+        public InvoiceDto MapDbInvoiceToInvoiceDto(Invoice invoice)
+        {
+            return Mapper.Map<InvoiceDto>(invoice);
         }
 
         public IList<Invoice> GetAllInvoicesForUser(User user)

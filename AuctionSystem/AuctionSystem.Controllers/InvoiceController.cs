@@ -76,6 +76,23 @@
                 return db.Invoices.FirstOrDefault(u => u.UserId == user.Id);
             }
         }
+
+        public Invoice GetInvoiceInlcudeCollections(int userId)
+        {
+            CoreValidator.ThrowIfNegativeOrZero(userId, nameof(userId));
+
+            using (var db = new AuctionContext())
+            {
+                var invoice = db.Invoices
+                                    .Include("User")
+                                    .Include("Product")
+                                    .FirstOrDefault(i => i.UserId == userId);
+
+                CoreValidator.ThrowIfNull(invoice, nameof(invoice));
+
+                return invoice;
+            }
+        }
     }
 }
 

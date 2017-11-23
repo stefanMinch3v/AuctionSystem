@@ -175,6 +175,23 @@
             }
         }
 
+        public Product GetProductByIdWithBidsAndUser(int id)
+        {
+            CoreValidator.ThrowIfNegativeOrZero(id, nameof(id));
+
+            using (var db = new AuctionContext())
+            {
+                var product = db.Products
+                                    .Include("Bids")
+                                    .Include("Bids.User")
+                                    .FirstOrDefault(p => p.Id == id);
+
+                CoreValidator.ThrowIfNull(product, nameof(product));
+
+                return product;
+            }
+        }
+
         public bool IsProductExisting(Product product)
         {
             CoreValidator.ThrowIfNull(product, nameof(product));

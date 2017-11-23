@@ -15,7 +15,7 @@
         bool IsBidWon(Bid bid);
 
         [OperationContract]
-        Bid GetBidById(int bidId);
+        BidDto GetBidById(int bidId);
 
         [OperationContract]
         IList<Bid> GetAllBidsByUserId(User user);

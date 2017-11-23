@@ -1,10 +1,10 @@
 ﻿namespace AuctionSystem.WcfService
 {
-    using Controllers;
-    using Controllers.Contracts;
+    using AutoMapper;
     using Contracts;
+    using Controllers;
     using Models;
-    using System;
+    using Models.DTOs;
     using System.Collections.Generic;
 
     public class ProductService : IProductService
@@ -29,9 +29,16 @@
             return ProductController.Instance().GetProductByName(name);
         }
 
-        public Product GetProductById(int id)
+        public ProductDto GetProductById(int id)
         {
-            return ProductController.Instance().GetProductById(id);
+            var dbProduct = ProductController.Instance().GetProductByIdWithBidsAndUser(id);
+
+            return MapDbProductToProductDto(dbProduct);
+        }
+
+        public ProductDto MapDbProductToProductDto(Product product)
+        {
+            return Mapper.Map<ProductDto>(product);
         }
 
         public bool IsProductExisting(Product product)

@@ -1,12 +1,9 @@
 ﻿namespace AuctionSystem.Controllers
 {
-    using AutoMapper;
     using Common;
-    using Data;
     using Contracts;
+    using Data;
     using Models;
-    using Models.DTOs;
-    using Models.Enums;
     using System;
     using System.Collections.Generic;
     using System.Linq;

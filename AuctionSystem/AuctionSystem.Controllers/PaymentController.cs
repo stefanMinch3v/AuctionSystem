@@ -56,9 +56,14 @@ namespace AuctionSystem.Controllers
 
             using (var db = new AuctionContext())
             {
-                return db.Payments.FirstOrDefault(p => p.Id == paymentId);
-            }
+                var payment = db.Payments
+                                        .Include("User")
+                                        .FirstOrDefault(p => p.Id == paymentId);
 
+                CoreValidator.ThrowIfNull(payment, nameof(payment));
+
+                return payment;
+            }
         }
 
 

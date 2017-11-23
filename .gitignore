@@ -292,3 +292,4 @@ __pycache__/
 
 # Ignore all EF
 */App.config
+/AuctionSystem/Test

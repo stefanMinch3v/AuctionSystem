@@ -9,7 +9,7 @@
         public int UserId { get; set; }
 
         [DataMember]
-        public User User { get; set; }
+        public virtual User User { get; set; }
 
         [DataMember]
         public int ProductId { get; set; }

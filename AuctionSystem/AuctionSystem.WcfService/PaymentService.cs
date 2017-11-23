@@ -1,23 +1,29 @@
 ﻿namespace AuctionSystem.WcfService
 {
-    using Controllers;
+    using AutoMapper;
     using Contracts;
+    using Controllers;
     using Models;
-    using Models.Enums;
+    using Models.DTOs;
     using System.Collections.Generic;
 
     public class PaymentService : IPaymentService
     {
-        // TODO in each method return the controller that supposed to handle its operation
-
         public void AddPayment(Payment payment, User user)
         {
             PaymentController.Instance().AddPayment(payment, user);
         }
 
-        public Payment GetPayment(int paymentId)
+        public PaymentDto GetPayment(int paymentId)
         {
-            return PaymentController.Instance().GetPayment(paymentId);
+            var payment = PaymentController.Instance().GetPayment(paymentId);
+
+            return MapDbPaymentToPaymentDto(payment);
+        }
+
+        public PaymentDto MapDbPaymentToPaymentDto(Payment payment)
+        {
+            return Mapper.Map<PaymentDto>(payment);
         }
 
         public bool DeletePayment(Payment payment)
