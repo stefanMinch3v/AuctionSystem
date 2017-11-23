@@ -1,22 +1,14 @@
 ﻿namespace AuctionSystem.WcfService
 {
     using AutoMapper;
-    using Controllers;
     using Contracts;
+    using Controllers;
     using Models;
     using Models.DTOs;
-    using Models.Enums;
     using System.Collections.Generic;
 
     public class UserService : IUserService
     {
-        
-        /*public UserDto GetUserById(int id)
-        {
-            var dbUser = UserController.Instance().GetUserByIdWithAllCollections(id);
-            
-            return MapDbUserToUserDto(dbUser);
-        }*/
         public void CreateUser(User user)
         {
             UserController.Instance().CreateUser(user);
@@ -27,9 +19,11 @@
             return UserController.Instance().UpdateUser(user, property, value);
         }
 
-        public User GetUserById(int id)
+        public UserDto GetUserById(int id)
         {
-            return UserController.Instance().GetUserById(id);
+            var dbUser = UserController.Instance().GetUserByIdWithAllCollections(id);
+
+            return MapDbUserToUserDto(dbUser);
         }
 
         public bool DeleteUser(User user)
@@ -62,9 +56,9 @@
             return UserController.Instance().GetUserInvoices(user);
         }
 
-        /*private UserDto MapDbUserToUserDto(User dbUser)
+        private UserDto MapDbUserToUserDto(User dbUser)
         {
             return Mapper.Map<UserDto>(dbUser);
-        }*/
+        }
     }
 }

@@ -191,11 +191,11 @@
             using (var db = new AuctionContext())
             {
                 var currentUser = db.Users
+                                        //.Include("Zip")
                                         .Include("Bids")
                                         .Include("Bids.Product")
                                         .Include("Payments")
                                         .Include("Invoices")
-                                        .Include("Zip")
                                         .FirstOrDefault(u => u.Id == id);
 
                 CoreValidator.ThrowIfNull(currentUser, nameof(currentUser));

@@ -17,7 +17,7 @@
             Mapper.Initialize(cfg =>
             {
                 cfg.CreateMap<User, UserDto>()
-                                        .ForMember(dest => dest.ZipCountryCity, opt => opt.MapFrom(src => src.Zip.Country + ", " + src.Zip.City))
+                                        //.ForMember(dest => dest.ZipCountryCity, opt => opt.MapFrom(src => src.Zip.Country + ", " + src.Zip.City))
                                         .ForMember(dest => dest.Payments, opt => opt.MapFrom(src => string.Join(Environment.NewLine, src.Payments.Select(p => p.Type + ", " + p.PaymentTypeCode))))
                                         .ForMember(dest => dest.Invoices, opt => opt.MapFrom(src => string.Join(Environment.NewLine, src.Invoices.Select(p => p.ProductId + ", " + p.Product.Name))))
                                         .ForMember(dest => dest.Bids, opt => opt.MapFrom(src => string.Join(Environment.NewLine, src.Bids.Select(b => b.Product.Name + ", " + b.Coins + ", " + b.IsWon + ", " + b.DateOfCreated))));
