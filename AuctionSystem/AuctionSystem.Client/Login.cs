@@ -1,4 +1,5 @@
-﻿using AuctionSystem.Data;
+﻿using AuctionSystem.Controllers;
+using AuctionSystem.Data;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -30,17 +31,16 @@ namespace AuctionSystem.Client
         private static bool Maximized = false;
         private void loginBtn_Click(object sender, EventArgs e)
         {
-            using (var db = new AuctionContext())
+            LoginController l = new Controllers.LoginController();
+
+            if (l.ValidateLogin(usernameTxtBox.Text, passwordTxtBox.Text))
             {
-                var t = from p in db.Users where p.Username == usernameTxtBox.Text select p;
-                var b = db.Users.Where(p => p.Username == usernameTxtBox.Text).Select(p => p.Username);
-                if (b.Any())
-                {
-                    this.Hide();
-                    AuctionClient a = new AuctionClient();
-                    a.Show();
-                }
+                this.Close();
+                AuctionClient a = new AuctionClient();
+                a.Show();
             }
+
+
         }
 
         private void topPanel_Paint(object sender, PaintEventArgs e)

@@ -118,6 +118,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\AuctionSystem.Controllers\AuctionSystem.Controllers.csproj">
+      <Project>{7abb33cf-9dbb-4acf-9305-8c831dfe85af}</Project>
+      <Name>AuctionSystem.Controllers</Name>
+    </ProjectReference>
     <ProjectReference Include="..\AuctionSystem.Data\AuctionSystem.Data.csproj">
       <Project>{9cf5cdc3-0d7c-4ea3-8b18-bb612c40b0c8}</Project>
       <Name>AuctionSystem.Data</Name>

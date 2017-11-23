@@ -55,11 +55,13 @@
     <Compile Include="Common\CoreValidator.cs" />
     <Compile Include="Contracts\IBidController.cs" />
     <Compile Include="Contracts\IInvoiceController.cs" />
+    <Compile Include="Contracts\ILoginController.cs" />
     <Compile Include="Contracts\IPaymentController.cs" />
     <Compile Include="Contracts\IProductController.cs" />
     <Compile Include="Contracts\IUserController.cs" />
     <Compile Include="Contracts\IZipController.cs" />
     <Compile Include="InvoiceController.cs" />
+    <Compile Include="LoginController.cs" />
     <Compile Include="PaymentController.cs" />
     <Compile Include="ProductController.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
