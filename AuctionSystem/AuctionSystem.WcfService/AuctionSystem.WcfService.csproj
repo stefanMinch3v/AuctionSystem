@@ -58,6 +58,8 @@
   <ItemGroup>
     <Compile Include="Contracts\IBidService.cs" />
     <Compile Include="Contracts\IInvoiceService.cs" />
+    <Compile Include="Contracts\ILoginService.cs" />
+    <Compile Include="LoginService.cs" />
     <Compile Include="InvoiceService.cs" />
     <Compile Include="Contracts\IPaymentService.cs" />
     <Compile Include="Contracts\IProductService.cs" />
