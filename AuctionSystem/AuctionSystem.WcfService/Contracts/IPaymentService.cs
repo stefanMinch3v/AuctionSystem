@@ -18,7 +18,7 @@
         bool DeletePayment(Payment payment);
 
         [OperationContract]
-        bool UpdatePayment(Payment payment, string property, string value);
+        bool UpdatePayment(Payment payment);
 
         [OperationContract]
         IList<Payment> GetPaymentsByUser(User user);

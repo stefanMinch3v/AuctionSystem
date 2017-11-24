@@ -16,19 +16,26 @@
 
         public InvoiceDto GetInvoiceByUserId(int userId)
         {
-            var invoiceDb = InvoiceController.Instance().GetInvoiceInlcudeCollections(userId);
+            var invoiceDb = InvoiceController.Instance().GetInvoiceInlcudeCollectionByUserId(userId);
 
             return MapDbInvoiceToInvoiceDto(invoiceDb);
         }
 
-        public InvoiceDto MapDbInvoiceToInvoiceDto(Invoice invoice)
+        public InvoiceDto GetInvoiceByProductId(int productId)
         {
-            return Mapper.Map<InvoiceDto>(invoice);
+            var invoiceDb = InvoiceController.Instance().GetInvoiceInlcudeCollectionByProductId(productId);
+
+            return MapDbInvoiceToInvoiceDto(invoiceDb);
         }
 
         public IList<Invoice> GetAllInvoicesForUser(User user)
         {
             return InvoiceController.Instance().GetAllInvoicesForUser(user);
+        }
+
+        public InvoiceDto MapDbInvoiceToInvoiceDto(Invoice invoice)
+        {
+            return Mapper.Map<InvoiceDto>(invoice);
         }
     }
 }

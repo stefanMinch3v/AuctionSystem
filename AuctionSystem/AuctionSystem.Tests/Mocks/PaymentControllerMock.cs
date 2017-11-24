@@ -18,7 +18,6 @@
             this.dbContext = dbContext;
         }
 
-        // TODO
        public void AddPayment(Payment payment, User user)
         {
             CoreValidator.ThrowIfNull(payment, nameof(payment));
@@ -52,32 +51,25 @@
         }
 
 
-        public bool UpdatePayment(Payment payment, string property, string value)
+        public bool UpdatePayment(Payment newPayment)
         {
-            CoreValidator.ThrowIfNull(payment, nameof(payment));
-            CoreValidator.ThrowIfNegativeOrZero(payment.Id, nameof(payment.Id));
-            CoreValidator.ThrowIfNullOrEmpty(property, nameof(property));
-            CoreValidator.ThrowIfNullOrEmpty(value, nameof(value));
+            CoreValidator.ThrowIfNull(newPayment, nameof(newPayment));
+            CoreValidator.ThrowIfNegativeOrZero(newPayment.Id, nameof(newPayment.Id));
+            CoreValidator.ThrowIfNullOrEmpty(newPayment.PaymentTypeCode, nameof(newPayment.PaymentTypeCode));
+            CoreValidator.ThrowIfNegativeOrZero(newPayment.UserId, nameof(newPayment.UserId));
 
-            using (var db = dbContext)
+            using (this.dbContext)
             {
-                var paymentNew = GetPayment(payment.Id);
+                var dbPayment = GetPayment(newPayment.Id);
 
-                CoreValidator.ThrowIfNull(paymentNew, nameof(paymentNew));
+                CoreValidator.ThrowIfNull(dbPayment, nameof(dbPayment));
 
-                db.Payments.Attach(paymentNew);
+                this.dbContext.Payments.Attach(dbPayment);
 
-                switch (property.ToLower())
-                {
-                    case "paymenttypecode":
-                        payment.PaymentTypeCode = value;
-                        break;
-                    default:
-                        throw new ArgumentException("No such property.");
-                }
+                dbPayment = newPayment;
 
-                // db.Entry(paymentNew).State = System.Data.Entity.EntityState.Modified;
-                db.SaveChanges();
+                //db.Entry(dbPayment).State = EntityState.Modified;
+                this.dbContext.SaveChanges();
 
                 return true;
             }

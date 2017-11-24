@@ -1,12 +1,11 @@
-﻿using System.Data.Entity;
-
+﻿
 namespace AuctionSystem.Controllers
 {
     using Common;
-    using Data;
     using Contracts;
+    using Data;
     using Models;
-    using System;
+    using System.Data.Entity;
     using System.Linq;
 
     public class ZipController : IZipController
@@ -70,37 +69,25 @@ namespace AuctionSystem.Controllers
         }
 
 
-        public bool UpdateZip(Zip zip, string property, string value)
+        public bool UpdateZip(Zip newZip)
         {
-            CoreValidator.ThrowIfNull(zip, nameof(zip));
-            CoreValidator.ThrowIfNullOrEmpty(zip.ZipCode, nameof(zip.ZipCode));
-            CoreValidator.ThrowIfNullOrEmpty(property, nameof(property));
-            CoreValidator.ThrowIfNullOrEmpty(value, nameof(value));
+            CoreValidator.ThrowIfNull(newZip, nameof(newZip));
+            CoreValidator.ThrowIfNegativeOrZero(newZip.Id, nameof(newZip.Id));
+            CoreValidator.ThrowIfNullOrEmpty(newZip.ZipCode, nameof(newZip.ZipCode));
+            CoreValidator.ThrowIfNullOrEmpty(newZip.City, nameof(newZip.City));
+            CoreValidator.ThrowIfNullOrEmpty(newZip.Country, nameof(newZip.Country));
 
             using (var db = new AuctionContext())
             {
-                var zipNew = GetZipByZipCode(zip.ZipCode);
+                var dbZip = GetZipByZipCode(newZip.ZipCode);
 
-                CoreValidator.ThrowIfNull(zipNew, nameof(zipNew));
+                CoreValidator.ThrowIfNull(dbZip, nameof(dbZip));
 
-                db.Zips.Attach(zipNew);
-                
-                switch (property)
-                {
-                    case "ZipCode":
-                        zipNew.ZipCode = value;
-                        break;
-                    case "Country":
-                        zipNew.Country = value;
-                        break;
-                    case "City":
-                        zipNew.City = value;
-                        break;
-                    default:
-                        throw new Exception("There is no such property!");
-                }
+                db.Zips.Attach(dbZip);
 
-                db.Entry(zipNew).State = EntityState.Modified;
+                dbZip = newZip;
+
+                db.Entry(dbZip).State = EntityState.Modified;
                 db.SaveChanges();
 
                 return true;

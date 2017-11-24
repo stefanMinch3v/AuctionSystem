@@ -7,10 +7,10 @@
     {
         void CreateInvoice(User user, Product product);
 
-        Invoice GetInvoiceByUserId(User user);
+        Invoice GetInvoiceByUserId(int userId);
+
+        Invoice GetInvoiceByProductId(int product);
 
         IList<Invoice> GetAllInvoicesForUser(User user);
-        
-        Invoice GetInvoiceByProductId(Product product);
     }
 }

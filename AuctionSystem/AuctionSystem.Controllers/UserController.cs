@@ -270,7 +270,7 @@
             }
         }
 
-        public bool IsUserExisting(string username)//
+        public bool IsUserExisting(string username)
         {
             CoreValidator.ThrowIfNullOrEmpty(username, nameof(username));
 
@@ -283,29 +283,30 @@
         public bool UpdateUser(User newUser)
         {
             CoreValidator.ThrowIfNull(newUser, nameof(newUser));
+            CoreValidator.ThrowIfNull(newUser, nameof(newUser));
+            CoreValidator.ThrowIfNullOrEmpty(newUser.Username, nameof(newUser.Username));
+            CoreValidator.ThrowIfNullOrEmpty(newUser.Password, nameof(newUser.Password));
+            CoreValidator.ThrowIfNullOrEmpty(newUser.Name, nameof(newUser.Name));
+            CoreValidator.ThrowIfNullOrEmpty(newUser.Address, nameof(newUser.Address));
+            CoreValidator.ThrowIfNullOrEmpty(newUser.Email, nameof(newUser.Email));
+            CoreValidator.ThrowIfNullOrEmpty(newUser.Phone, nameof(newUser.Phone));
+            CoreValidator.SpecialThrowForCoinsIfValueIsNegativeOnly(newUser.Coins, nameof(newUser.Coins));
+
+            if (newUser.DateOfBirth > DateTime.Now.AddYears(-18))
+            {
+                throw new ArgumentException($"Date of birth is not valid, the customer must be adult.");
+            }
+
+            if (!ZipController.Instance().IsZipExisting(newUser.ZipId ?? 0))
+            {
+                throw new ArgumentException($"Zip id doesn't exist in the system.");
+            }
 
             using (var db = new AuctionContext())
             {
                 var dbUser = GetUserById(newUser.Id);
 
-                CoreValidator.ThrowIfNull(newUser, nameof(newUser));
-                CoreValidator.ThrowIfNullOrEmpty(newUser.Username, nameof(newUser.Username));
-                CoreValidator.ThrowIfNullOrEmpty(newUser.Password, nameof(newUser.Password));
-                CoreValidator.ThrowIfNullOrEmpty(newUser.Name, nameof(newUser.Name));
-                CoreValidator.ThrowIfNullOrEmpty(newUser.Address, nameof(newUser.Address));
-                CoreValidator.ThrowIfNullOrEmpty(newUser.Email, nameof(newUser.Email));
-                CoreValidator.ThrowIfNullOrEmpty(newUser.Phone, nameof(newUser.Phone));
-                CoreValidator.SpecialThrowForCoinsIfValueIsNegativeOnly(newUser.Coins, nameof(newUser.Coins));
-
-                if (newUser.DateOfBirth > DateTime.Now.AddYears(-18))
-                {
-                    throw new ArgumentException($"Date of birth is not valid, the customer must be adult.");
-                }
-
-                if (!ZipController.Instance().IsZipExisting(newUser.ZipId ?? 0))
-                {
-                    throw new ArgumentException($"Zip id doesn't exist in the system.");
-                }
+                db.Users.Attach(dbUser);
 
                 dbUser.Address = newUser.Address;
                 dbUser.Coins = newUser.Coins;
