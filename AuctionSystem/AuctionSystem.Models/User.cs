@@ -1,11 +1,12 @@
 ﻿namespace AuctionSystem.Models
 {
-    using Models.Utility;
-    using Models.Enums;
+    using Enums;
     using System;
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
+    using System.ComponentModel.DataAnnotations.Schema;
     using System.Runtime.Serialization;
+    using Utility;
 
     [DataContract]
     public class User
@@ -15,13 +16,14 @@
 
         [DataMember]
         [Required]
+        [Index("Username", IsUnique = true)]
         [MinLength(3)]
         [MaxLength(30)]
         public string Username { get; set; }
 
         [DataMember]
         [Required]
-        [Password(5, 30)]
+        [Password(5, 100)]
         public string Password { get; set; }
 
         [DataMember]
