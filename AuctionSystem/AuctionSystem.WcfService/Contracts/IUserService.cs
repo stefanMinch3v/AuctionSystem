@@ -34,5 +34,8 @@
 
         [OperationContract]
         IList<Invoice> GetUserInvoices(User user);
+
+        [OperationContract]
+        UserDto GetUserByUsername(string username);
     }
 }

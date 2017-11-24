@@ -26,6 +26,13 @@
             return MapDbUserToUserDto(dbUser);
         }
 
+        public UserDto GetUserByUsername(string username)
+        {
+            var dbUser = UserController.Instance().GetUserByNameWithAllCollections(username);
+
+            return MapDbUserToUserDto(dbUser);
+        }
+
         public bool DeleteUser(User user)
         {
             return UserController.Instance().DeleteUser(user);

@@ -201,6 +201,26 @@
             }
         }
 
+        public User GetUserByNameWithAllCollections(string username)
+        {
+            CoreValidator.ThrowIfNullOrEmpty(username, nameof(username));
+
+            using (var db = new AuctionContext())
+            {
+                var currentUser = db.Users
+                                        //.Include("Zip")
+                                        .Include("Bids")
+                                        .Include("Bids.Product")
+                                        .Include("Payments")
+                                        .Include("Invoices")
+                                        .FirstOrDefault(u => u.Username == username);
+
+                CoreValidator.ThrowIfNull(currentUser, nameof(currentUser));
+
+                return currentUser;
+            }
+        }
+
         public User GetUserByUsername(string username)
         {
             CoreValidator.ThrowIfNullOrEmpty(username, nameof(username));
