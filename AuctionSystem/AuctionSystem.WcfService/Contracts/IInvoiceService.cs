@@ -15,6 +15,9 @@
         InvoiceDto GetInvoiceByUserId(int userId);
 
         [OperationContract]
+        InvoiceDto GetInvoiceByProductId(int productId);
+
+        [OperationContract]
         IList<Invoice> GetAllInvoicesForUser(User user);
     }
 }

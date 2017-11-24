@@ -63,7 +63,7 @@
             var product = new Product {Id = 4};
 
             this.invoiceController.CreateInvoice(user, product);
-            var currentInvoice = this.invoiceController.GetInvoiceByProductId(product);
+            var currentInvoice = this.invoiceController.GetInvoiceByProductId(product.Id);
 
             //Assert
 
@@ -105,7 +105,7 @@
         public void CreateInvoiceWithNonExistingUserShouldThrowException()
         {
             // Act
-            var invoice = this.invoiceController.GetInvoiceByUserId(new User{Id = Int32.MaxValue});
+            var invoice = this.invoiceController.GetInvoiceByUserId(Int32.MaxValue);
             //Assert
             Assert.IsNull(invoice);
         }
@@ -115,7 +115,7 @@
         public void CreateInvoiceWithNonExistingProductShouldThrowException()
         {
             // Act
-            var invoice = this.invoiceController.GetInvoiceByProductId(new Product{Id = Int32.MaxValue});
+            var invoice = this.invoiceController.GetInvoiceByProductId(Int32.MaxValue);
             //Assert
             Assert.IsNull(invoice);
         }
@@ -127,7 +127,7 @@
         {
             //Act
 
-            var currentInvoice = this.invoiceController.GetInvoiceByProductId(new Product{Id = 1});
+            var currentInvoice = this.invoiceController.GetInvoiceByProductId(1);
             //Assert
 
             Assert.AreEqual(1, currentInvoice.ProductId);
@@ -139,7 +139,7 @@
         {
             // Act
 
-            var currentInvoice = this.invoiceController.GetInvoiceByProductId(new Product{Id = -1});
+            var currentInvoice = this.invoiceController.GetInvoiceByProductId(-1);
         }
 
         [TestMethod]
@@ -148,7 +148,7 @@
         {
             // Act
 
-            var currentInvoice = this.invoiceController.GetInvoiceByProductId(new Product{Id = 0});
+            var currentInvoice = this.invoiceController.GetInvoiceByProductId(0);
         }
 
         //GET INVOICE BY USER ID
@@ -158,7 +158,7 @@
         {
             //Act
 
-            var currentInvoice = this.invoiceController.GetInvoiceByUserId(new User{Id = 2});
+            var currentInvoice = this.invoiceController.GetInvoiceByUserId(2);
             //Assert
 
             Assert.AreEqual(2, currentInvoice.UserId);
@@ -171,14 +171,14 @@
         {
             // Act
 
-            var currentInvoice = this.invoiceController.GetInvoiceByUserId(new User{Id = 0});
+            var currentInvoice = this.invoiceController.GetInvoiceByUserId(0);
         }
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentException))]
         public void GetInvoiceByUserIdWithNegativeIntShouldThrowException()
         {
-            var currentInvoice = this.invoiceController.GetInvoiceByUserId(new User{Id = -1});
+            var currentInvoice = this.invoiceController.GetInvoiceByUserId(-1);
         }
 
 
@@ -187,7 +187,7 @@
         {
             //Act
 
-            var currentInvoice = this.invoiceController.GetInvoiceByUserId(new User{Id = Int32.MaxValue});
+            var currentInvoice = this.invoiceController.GetInvoiceByUserId(Int32.MaxValue);
             //Assert
             Assert.IsNull(currentInvoice);
         }

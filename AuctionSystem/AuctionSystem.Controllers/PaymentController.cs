@@ -1,14 +1,12 @@
-﻿using System.Data.Entity;
-
-namespace AuctionSystem.Controllers
+﻿namespace AuctionSystem.Controllers
 {
     using Common;
-    using Data;
     using Contracts;
+    using Data;
     using Models;
-    using Models.Enums;
     using System;
     using System.Collections.Generic;
+    using System.Data.Entity;
     using System.Linq;
 
     public class PaymentController : IPaymentController
@@ -67,31 +65,24 @@ namespace AuctionSystem.Controllers
         }
 
 
-        public bool UpdatePayment(Payment payment, string property, string value)
+        public bool UpdatePayment(Payment newPayment)
         {
-            CoreValidator.ThrowIfNull(payment, nameof(payment));
-            CoreValidator.ThrowIfNegativeOrZero(payment.Id, nameof(payment.Id));
-            CoreValidator.ThrowIfNullOrEmpty(property, nameof(property));
-            CoreValidator.ThrowIfNullOrEmpty(value, nameof(value));
+            CoreValidator.ThrowIfNull(newPayment, nameof(newPayment));
+            CoreValidator.ThrowIfNegativeOrZero(newPayment.Id, nameof(newPayment.Id));
+            CoreValidator.ThrowIfNullOrEmpty(newPayment.PaymentTypeCode, nameof(newPayment.PaymentTypeCode));
+            CoreValidator.ThrowIfNegativeOrZero(newPayment.UserId, nameof(newPayment.UserId));
 
             using (var db = new AuctionContext())
             {
-                var paymentNew = GetPayment(payment.Id);
+                var dbPayment = GetPayment(newPayment.Id);
 
-                CoreValidator.ThrowIfNull(paymentNew, nameof(paymentNew));
+                CoreValidator.ThrowIfNull(dbPayment, nameof(dbPayment));
 
-                db.Payments.Attach(paymentNew);
+                db.Payments.Attach(dbPayment);
 
-                switch (property.ToLower())
-                {
-                    case "paymenttypecode":
-                        payment.PaymentTypeCode = value;
-                        break;
-                    default:
-                        throw new ArgumentException("No such property.");
-                }
+                dbPayment = newPayment;
 
-                db.Entry(paymentNew).State = System.Data.Entity.EntityState.Modified;
+                db.Entry(dbPayment).State = EntityState.Modified;
                 db.SaveChanges();
 
                 return true;

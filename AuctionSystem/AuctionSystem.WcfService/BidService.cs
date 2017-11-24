@@ -33,14 +33,14 @@
             return MapDbBidToBidDto(bidDb);
         }
 
-        public IList<Bid> GetAllBidsByUserId(User user)
+        public IList<Bid> GetAllBidsByUserId(int userId)
         {
-            return BidController.Instance().GetAllBidsByUserId(user);
+            return BidController.Instance().GetAllBidsByUserId(userId);
         }
 
-        public IList<Bid> GetAllBidsByProductId(Product product)
+        public IList<Bid> GetAllBidsByProductId(int productId)
         {
-            return BidController.Instance().GetAllBidsByProductId(product);
+            return BidController.Instance().GetAllBidsByProductId(productId);
         }
 
         public IList<Bid> GetAllEarnedBids()

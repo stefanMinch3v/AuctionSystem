@@ -8,7 +8,7 @@
 
         bool IsZipExisting(int zipId);
 
-        bool UpdateZip(Zip zip, string property, string value);
+        bool UpdateZip(Zip zip);
 
         Zip GetZipByZipCode(string zipCode);
     }

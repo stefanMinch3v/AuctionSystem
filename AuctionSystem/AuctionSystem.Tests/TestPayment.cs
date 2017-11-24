@@ -177,21 +177,13 @@
             // Act
 
             var currentPayment = GetExistingPaymentFromDb();
+            currentPayment.PaymentTypeCode = "New Type";
 
-            var successUpdating = this.paymetController.UpdatePayment(currentPayment, "PaymentTypeCode", "New Type");
+            var successUpdating = this.paymetController.UpdatePayment(currentPayment);
 
             // Assert
 
             Assert.IsTrue(successUpdating);
-        }
-
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentException))]
-        public void UpdatePaymentTypeCodeShouldThrowNoSuchPropertyException()
-        {
-            var currentPayment = GetExistingPaymentFromDb();
-            var successUpdating = this.paymetController.UpdatePayment(currentPayment, "nonexisting exception", "New Type");
-
         }
 
         [TestMethod]
@@ -201,7 +193,7 @@
             var currentPayment = GetExistingPaymentFromDb();
             currentPayment.Id = 0;
 
-            var successUpdating = this.paymetController.UpdatePayment(currentPayment, "nonexisting exception", "New Type");
+            var successUpdating = this.paymetController.UpdatePayment(currentPayment);
 
         }
 
@@ -212,7 +204,7 @@
             var currentPayment = GetExistingPaymentFromDb();
             currentPayment.Id = -5;
 
-            var successUpdating = this.paymetController.UpdatePayment(currentPayment, "nonexisting exception", "New Type");
+            var successUpdating = this.paymetController.UpdatePayment(currentPayment);
 
         }
 
@@ -221,8 +213,9 @@
         {
 
             var currentPayment = GetExistingPaymentFromDb();
+            currentPayment.PaymentTypeCode = "Random paymenttype";
 
-            var successUpdating = this.paymetController.UpdatePayment(currentPayment, "PaymentTypeCode", "Random paymenttype");
+            var successUpdating = this.paymetController.UpdatePayment(currentPayment);
 
             var changedPaymentName = this.db.Object.Payments.FirstOrDefault(p => p.Id == currentPayment.Id).PaymentTypeCode;
 
@@ -236,8 +229,9 @@
         public void UpdatePaymentTypeCodeShouldThrowExceptionIfTypeIsNull()
         {
             var currentPayment = GetExistingPaymentFromDb();
+            currentPayment.PaymentTypeCode = null;
 
-            var successUpdating = this.paymetController.UpdatePayment(currentPayment, "PaymentTypeCode", null);
+            var successUpdating = this.paymetController.UpdatePayment(currentPayment);
         }
 
         [TestMethod]
@@ -245,8 +239,9 @@
         public void UpdatePaymentTypeCodeShouldThrowExceptionIfTypeIsEmpty()
         {
             var currentPayment = GetExistingPaymentFromDb();
+            currentPayment.PaymentTypeCode = "";
 
-            var successUpdating = this.paymetController.UpdatePayment(currentPayment, "PaymentTypeCode", "");
+            var successUpdating = this.paymetController.UpdatePayment(currentPayment);
         }
 
         #endregion

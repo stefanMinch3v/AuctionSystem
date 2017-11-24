@@ -26,12 +26,11 @@
             return instance;
         }
 
-        public IList<Bid> GetAllBidsByProductId(Product product)
+        public IList<Bid> GetAllBidsByProductId(int productId)
         {
-            CoreValidator.ThrowIfNull(product, nameof(product));
-            CoreValidator.ThrowIfNegativeOrZero(product.Id, nameof(product.Id));
+            CoreValidator.ThrowIfNegativeOrZero(productId, nameof(productId));
 
-            var isProductExists = ProductController.Instance().IsProductExistingById(product.Id);
+            var isProductExists = ProductController.Instance().IsProductExistingById(productId);
 
             if (!isProductExists)
             {
@@ -40,16 +39,15 @@
 
             using (var db = new AuctionContext())
             {
-                return db.Bids.Where(b => b.ProductId == product.Id).ToList();
+                return db.Bids.Where(b => b.ProductId == productId).ToList();
             }
         }
 
-        public IList<Bid> GetAllBidsByUserId(User user)
+        public IList<Bid> GetAllBidsByUserId(int userId)
         {
-            CoreValidator.ThrowIfNull(user, nameof(user));
-            CoreValidator.ThrowIfNegativeOrZero(user.Id, nameof(user.Id));
+            CoreValidator.ThrowIfNegativeOrZero(userId, nameof(userId));
 
-            var isUserExists = UserController.Instance().IsUserExistingById(user.Id);
+            var isUserExists = UserController.Instance().IsUserExistingById(userId);
 
             if (!isUserExists)
             {
@@ -58,7 +56,7 @@
 
             using (var db = new AuctionContext())
             {
-                return db.Bids.Where(b => b.UserId == user.Id).ToList();
+                return db.Bids.Where(b => b.UserId == userId).ToList();
             }
         }
 

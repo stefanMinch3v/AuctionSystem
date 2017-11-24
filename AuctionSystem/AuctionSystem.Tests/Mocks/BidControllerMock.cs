@@ -17,12 +17,11 @@
             this.dbContext = dbContext;
         }
 
-        public IList<Bid> GetAllBidsByProductId(Product product)
+        public IList<Bid> GetAllBidsByProductId(int productId)
         {
-            CoreValidator.ThrowIfNull(product, nameof(product));
-            CoreValidator.ThrowIfNegativeOrZero(product.Id, nameof(product.Id));
+            CoreValidator.ThrowIfNegativeOrZero(productId, nameof(productId));
 
-            var isProductExists = new ProductControllerMock(dbContext).IsProductExistingById(product.Id);
+            var isProductExists = new ProductControllerMock(dbContext).IsProductExistingById(productId);
 
             if (!isProductExists)
             {
@@ -31,16 +30,15 @@
 
             using (dbContext)
             {
-                return dbContext.Bids.Where(b => b.ProductId == product.Id).ToList();
+                return dbContext.Bids.Where(b => b.ProductId == productId).ToList();
             }
         }
 
-        public IList<Bid> GetAllBidsByUserId(User user)
+        public IList<Bid> GetAllBidsByUserId(int userId)
         {
-            CoreValidator.ThrowIfNull(user, nameof(user));
-            CoreValidator.ThrowIfNegativeOrZero(user.Id, nameof(user.Id));
+            CoreValidator.ThrowIfNegativeOrZero(userId, nameof(userId));
 
-            var isUserExists = new UserControllerMock(dbContext).IsUserExistingById(user.Id);
+            var isUserExists = new UserControllerMock(dbContext).IsUserExistingById(userId);
 
             if (!isUserExists)
             {
@@ -49,7 +47,7 @@
 
             using (dbContext)
             {
-                return dbContext.Bids.Where(b => b.UserId == user.Id).ToList();
+                return dbContext.Bids.Where(b => b.UserId == userId).ToList();
             }
         }
 

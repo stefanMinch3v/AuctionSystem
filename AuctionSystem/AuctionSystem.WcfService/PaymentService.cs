@@ -31,9 +31,9 @@
             return PaymentController.Instance().DeletePayment(payment);
         }
 
-        public bool UpdatePayment(Payment payment, string property, string value)
+        public bool UpdatePayment(Payment payment)
         {
-            return PaymentController.Instance().UpdatePayment(payment, property, value);
+            return PaymentController.Instance().UpdatePayment(payment);
         }
 
         public IList<Payment> GetPaymentsByUser(User user)
