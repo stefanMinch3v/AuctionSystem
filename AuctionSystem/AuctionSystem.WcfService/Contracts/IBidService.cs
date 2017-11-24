@@ -8,7 +8,7 @@
     [ServiceContract]
     public interface IBidService
     {
-        [OperationContract(IsOneWay = true)]
+        [OperationContract]
         void MakeBid(User user, Product product, int coins);
 
         [OperationContract]
@@ -18,10 +18,10 @@
         BidDto GetBidById(int bidId);
 
         [OperationContract]
-        IList<Bid> GetAllBidsByUserId(User user);
+        IList<Bid> GetAllBidsByUserId(int userId);
 
         [OperationContract]
-        IList<Bid> GetAllBidsByProductId(Product product);
+        IList<Bid> GetAllBidsByProductId(int productId);
 
         [OperationContract]
         IList<Bid> GetAllEarnedBids();

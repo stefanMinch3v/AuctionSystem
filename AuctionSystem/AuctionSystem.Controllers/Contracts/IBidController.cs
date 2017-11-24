@@ -11,9 +11,9 @@
 
         Bid GetBidById(int bidId);
 
-        IList<Bid> GetAllBidsByUserId(User user);
+        IList<Bid> GetAllBidsByUserId(int userId);
 
-        IList<Bid> GetAllBidsByProductId(Product product);
+        IList<Bid> GetAllBidsByProductId(int productId);
 
         IList<Bid> GetAllEarnedBids();
     }
