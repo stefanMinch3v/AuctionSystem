@@ -12,7 +12,7 @@
         void CreateProduct(Product product);
 
         [OperationContract]
-        bool UpdateProduct(Product product, string property, string value);
+        bool UpdateProduct(Product product);
 
         [OperationContract]
         bool DeleteProduct(Product product);
@@ -24,7 +24,7 @@
         ProductDto GetProductById(int id);
 
         [OperationContract]
-        bool IsProductExisting(Product product);
+        bool IsProductExisting(string name);
 
         [OperationContract]
         int CountUserBidsForProduct(int id);

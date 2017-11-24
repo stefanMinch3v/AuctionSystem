@@ -8,7 +8,7 @@
     {
         void CreateProduct(Product product);
 
-        bool UpdateProduct(Product product, string property, string value);
+        bool UpdateProduct(Product product);
 
         bool DeleteProduct(Product product);
 
@@ -16,7 +16,7 @@
 
         Product GetProductById(int id);
 
-        bool IsProductExisting(Product product);
+        bool IsProductExisting(string name);
 
         int CountUserBidsForProduct(int id);
 

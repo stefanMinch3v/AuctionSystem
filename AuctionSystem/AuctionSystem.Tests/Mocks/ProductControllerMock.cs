@@ -42,78 +42,45 @@
             }
         }
 
-        public bool UpdateProduct(Product product, string property, string value)
+        public bool UpdateProduct(Product product)
         {
             CoreValidator.ThrowIfNull(product, nameof(product));
-            CoreValidator.ThrowIfNull(property, nameof(property));
-            CoreValidator.ThrowIfNullOrEmpty(value, nameof(value));
+            CoreValidator.ThrowIfNullOrEmpty(product.Name, nameof(product.Name));
+            CoreValidator.ThrowIfNegativeOrZero(product.Price, nameof(product.Price));
+            CoreValidator.ThrowIfNegativeOrZero(product.Id, nameof(product.Id));
+            CoreValidator.ThrowIfNullOrEmpty(product.Description, nameof(product.Description));
+            CoreValidator.ThrowIfDateIsNotCorrect(product.StartDate.ToString(), nameof(product.StartDate));
+            CoreValidator.ThrowIfDateIsNotCorrect(product.EndDate.ToString(), nameof(product.EndDate));
+            if (product.StartDate > product.EndDate)
+            {
+                throw new ArgumentException("Start date cannot be bigger than the end date");
+            }
+
+            if (product.EndDate < product.StartDate)
+            {
+                throw new ArgumentException("End date cannot be lower than the start date");
+            }
 
             using (var db = dbContext)
             {
-                var productNew = GetProductById(product.Id);
+                var dbProduct = GetProductById(product.Id);
+                db.Products.Attach(dbProduct);
 
-                CoreValidator.ThrowIfNull(productNew, nameof(productNew));
-
-                db.Products.Attach(productNew);
-
-                switch (property.ToLower())
+                dbProduct.Name = product.Name;
+                dbProduct.Description = product.Description;
+                dbProduct.Price = product.Price;
+                if (dbProduct.StartDate != product.StartDate && product.StartDate < DateTime.Now)
                 {
-                    case "name":
-                        CoreValidator.ThrowIfNullOrEmpty(value, nameof(property));
-                        productNew.Name = value;
-                        break;
-                    case "price":
-                        if (!Int32.TryParse(value, out int result))
-                        {
-                            throw new ArgumentException("The value cannot be parsed to integer");
-                        }
-
-                        CoreValidator.ThrowIfNegativeOrZero(Int32.Parse(value), nameof(property));
-
-                        productNew.Price = Int32.Parse(value);
-                        break;
-                    case "description":
-                        CoreValidator.ThrowIfNullOrEmpty(value, nameof(property));
-
-                        productNew.Description = value;
-                        break;
-                    case "startdate":
-                        CoreValidator.ThrowIfDateIsNotCorrect(value, nameof(property));
-
-                        DateTime date = DateTime.Parse(value);
-
-                        if (date > productNew.EndDate)
-                        {
-                            throw new ArgumentException("Start date cannot be bigger than the end date");
-                        }
-                        else if (date < DateTime.Now)
-                        {
-                            throw new ArgumentException("Start date cannot be lower than the current date");
-                        }
-
-                        productNew.StartDate = date;
-                        break;
-                    case "enddate":
-                        CoreValidator.ThrowIfDateIsNotCorrect(value, nameof(property));
-
-                        DateTime dateEnd = DateTime.Parse(value);
-
-                        if (dateEnd < productNew.StartDate)
-                        {
-                            throw new ArgumentException("End date cannot be lower than the start date");
-                        }
-                        else if (dateEnd < DateTime.Now)
-                        {
-                            throw new ArgumentException("End date cannot be lower than the current date");
-                        }
-
-                        productNew.EndDate = dateEnd;
-                        break;
-                    default:
-                        throw new ArgumentException("No such property");
+                    throw new ArgumentException("Start date cannot be lower than the current date");
                 }
+                dbProduct.StartDate = product.StartDate;
+                if (dbProduct.EndDate != product.EndDate && product.EndDate < DateTime.Now)
+                {
+                        throw new ArgumentException("End date cannot be lower than the current date");
+                }
+                dbProduct.EndDate = product.EndDate;
 
-                // db.Entry(productNew).State = System.Data.Entity.EntityState.Modified;
+                //db.Entry(dbProduct).State = System.Data.Entity.EntityState.Modified;
                 db.SaveChanges();
                 return true;
             }
@@ -167,14 +134,13 @@
             }
         }
 
-        public bool IsProductExisting(Product product)
+        public bool IsProductExisting(string name)
         {
-            CoreValidator.ThrowIfNull(product, nameof(product));
-            CoreValidator.ThrowIfNullOrEmpty(product.Name, nameof(product.Name));
+            CoreValidator.ThrowIfNullOrEmpty(name, nameof(name));
 
             using (var db = dbContext)
             {
-                return db.Products.Any(p => p.Name == product.Name);
+                return db.Products.Any(p => p.Name == name);
             }
         }
 
@@ -191,7 +157,7 @@
         {
             CoreValidator.ThrowIfNull(product, nameof(product));
             CoreValidator.ThrowIfNegativeOrZero(product.Id, nameof(product.Id));
-            
+
             using (var db = dbContext)
             {
                 var collection = db.Products.SingleOrDefault(p => p.Id == product.Id).Bids.Select(u => u.UserId);

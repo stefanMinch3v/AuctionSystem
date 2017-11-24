@@ -14,9 +14,9 @@
             ProductController.Instance().CreateProduct(product);
         }
 
-        public bool UpdateProduct(Product product, string property, string value)
+        public bool UpdateProduct(Product product)
         {
-            return ProductController.Instance().UpdateProduct(product, property, value);
+            return ProductController.Instance().UpdateProduct(product);
         }
 
         public bool DeleteProduct(Product product)
@@ -41,9 +41,9 @@
             return Mapper.Map<ProductDto>(product);
         }
 
-        public bool IsProductExisting(Product product)
+        public bool IsProductExisting(string name)
         {
-            return ProductController.Instance().IsProductExisting(product);
+            return ProductController.Instance().IsProductExisting(name);
         }
 
         public int CountUserBidsForProduct(int id)
