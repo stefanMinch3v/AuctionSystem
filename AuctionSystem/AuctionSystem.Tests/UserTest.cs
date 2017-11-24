@@ -643,7 +643,7 @@
                 Phone = "666999696",
                 Email = "Pesho.Cena@gmail.com",
                 Address = "street",
-                Zip = CreateFakeZip(),
+                ZipId = CreateFakeZip().Id,
                 Coins = 11,
                 Password = "password"
             };
@@ -681,7 +681,7 @@
         {
             var zip = new Zip
             {
-                ZipId = 1,
+                Id = 1,
                 City = "aalborg",
                 ZipCode = "9000",
                 Country = "china"

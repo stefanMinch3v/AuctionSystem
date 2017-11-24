@@ -59,14 +59,13 @@ namespace AuctionSystem.Controllers
             }
         }
 
-        public bool IsZipExisting(Zip zip)
+        public bool IsZipExisting(int zipId)
         {
-            CoreValidator.ThrowIfNull(zip, nameof(zip));
-            CoreValidator.ThrowIfNegativeOrZero(zip.ZipId, nameof(zip.ZipId));
+            CoreValidator.ThrowIfNegativeOrZero(zipId, nameof(zipId));
 
             using (var db = new AuctionContext())
             {
-                return db.Zips.Any(z => z.ZipId == zip.ZipId);
+                return db.Zips.Any(z => z.Id == zipId);
             }
         }
 

@@ -135,13 +135,11 @@
         }
 
         [TestMethod]
-        public void GetAllBidsByUserIdShouldReturnNull()
+        [ExpectedException(typeof(ArgumentException))]
+        public void GetAllBidsByUserIdShouldThrowException()
         {
             // Act
             var bids = this.bidController.GetAllBidsByUserId(new User{Id = Int32.MaxValue});
-
-            // Assert
-            Assert.AreEqual(0, bids.Count); // list cannot be null if its already initialized so check only his length
         }
         #endregion
 
@@ -270,7 +268,7 @@
         {
             //Arrange further
             productController.CreateProduct(GetProduct());
-            var product = productController.GetProductByName(GetProduct().Name + "Test");
+            var product = productController.GetProductByName(GetProduct().Name);
 
             // Act
             var coins = 50;
@@ -291,7 +289,7 @@
         {
             //Arrange further
             productController.CreateProduct(GetProduct());
-            var product = productController.GetProductByName(GetProduct().Name + "Test");
+            var product = productController.GetProductByName(GetProduct().Name);
 
             // Act
             var coins = 550;
@@ -456,7 +454,7 @@
         };
         private Zip GetZip() => new Zip
         {
-            ZipId = 1,
+            Id = 1,
             City = "Aalborg",
             Country = "Denmark",
             ZipCode = "9000"

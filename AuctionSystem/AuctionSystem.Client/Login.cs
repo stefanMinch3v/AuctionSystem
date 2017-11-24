@@ -31,7 +31,7 @@ namespace AuctionSystem.Client
         private static bool Maximized = false;
         private void loginBtn_Click(object sender, EventArgs e)
         {
-            LoginController l = new Controllers.LoginController();
+            LoginController l = LoginController.Instance();
 
             if (l.ValidateLogin(usernameTxtBox.Text, passwordTxtBox.Text))
             {

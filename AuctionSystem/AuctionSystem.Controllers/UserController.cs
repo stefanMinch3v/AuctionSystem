@@ -92,7 +92,6 @@
             CoreValidator.ThrowIfNullOrEmpty(user.Phone, nameof(user.Phone));
             CoreValidator.ThrowIfDateIsNotCorrect(user.DateOfBirth.ToString(), nameof(user.DateOfBirth));
             CoreValidator.SpecialThrowForCoinsIfValueIsNegativeOnly(user.Coins, nameof(user.Coins));
-            CoreValidator.ThrowIfNull(user.Zip, nameof(user.Zip));
 
             var dateParsed = user.DateOfBirth;
             if (dateParsed > DateTime.Now.AddYears(-18))
@@ -100,7 +99,7 @@
                 throw new ArgumentException($"Date of birth is not valid, the customer must be adult.");
             }
 
-            if (!ZipController.Instance().IsZipExisting(user.Zip))
+            if (!ZipController.Instance().IsZipExisting(user.ZipId ?? 0))
             {
                 throw new ArgumentException($"Zip id doesn't exist in the system.");
             }
@@ -117,7 +116,7 @@
                     Phone = user.Phone,
                     DateOfBirth = dateParsed,
                     Gender = user.Gender,
-                    ZipId = user.Zip.ZipId,
+                    ZipId = user.ZipId,
                     Coins = user.Coins,
                     Payments = user.Payments,
                     IsAdmin = false,

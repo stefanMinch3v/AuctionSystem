@@ -90,7 +90,7 @@
             {
                 var paymentNew = GetPayment(payment.Id);
 
-                CoreValidator.ThrowIfNull(payment, nameof(payment));
+                CoreValidator.ThrowIfNull(paymentNew, nameof(paymentNew));
 
                 db.Payments.Attach(paymentNew);
                 db.Payments.Remove(paymentNew);

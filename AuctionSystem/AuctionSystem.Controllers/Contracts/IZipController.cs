@@ -6,7 +6,7 @@
     {
         void AddZip(Zip zip);
 
-        bool IsZipExisting(Zip zip);
+        bool IsZipExisting(int zipId);
 
         bool UpdateZip(Zip zip, string property, string value);
 

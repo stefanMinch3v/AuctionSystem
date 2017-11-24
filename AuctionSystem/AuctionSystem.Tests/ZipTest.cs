@@ -41,7 +41,7 @@ public class ZipTest
     {
         return new Zip
         {
-            ZipId = 1,
+            Id = 1,
             ZipCode = "9",
             Country = "Den",
             City = "Aal"
@@ -52,7 +52,7 @@ public class ZipTest
     {
         return new Zip
         {
-            ZipId = 2,
+            Id = 2,
             ZipCode = "9000",
             Country = "Denmark",
             City = "Aalborg"
@@ -190,7 +190,7 @@ public class ZipTest
     public void IsZipExistingShouldPass()
     {
         //Act
-        var zip = GetZipFromDb();
+        var zip = GetZipFromDb().Id;
         var actual = this.zipController.IsZipExisting(zip);
 
         //Assert
@@ -201,7 +201,7 @@ public class ZipTest
     public void IsZipExistingShouldReturnFalse()
     {
         //Act
-        var zip = GetZipNotFromDb();
+        var zip = GetZipNotFromDb().Id;
         var actual = this.zipController.IsZipExisting(zip);
 
         //Assert

@@ -18,7 +18,9 @@
         private Mock<AuctionContext> db;
         private PaymentControllerMock paymetController;
         private Mock<DbSet<Payment>> mockSet;
+        private Mock<DbSet<User>> mockSet2;
         private List<Payment> data;
+        private List<User> data2;
 
         [TestInitialize]
         public void Initialize()
@@ -26,13 +28,14 @@
             this.db = new Mock<AuctionContext>();
             this.paymetController = new PaymentControllerMock(this.db.Object);
 
-            var workingPayment = CreateWorkingPayment();
-
-            this.data = new List<Payment>() { workingPayment };
+            this.data = new List<Payment>() { CreateWorkingPayment() };
+            this.data2 = new List<User> { GetSomeUserWithPayments() };
 
             this.mockSet = new Mock<DbSet<Payment>>().SetupData(this.data);
+            this.mockSet2 = new Mock<DbSet<User>>().SetupData(this.data2);
 
             this.db.Setup(m => m.Payments).Returns(mockSet.Object);
+            this.db.Setup(m => m.Users).Returns(mockSet2.Object);
         }
 
         #region CreateTests
@@ -110,7 +113,7 @@
         public void GetPaymentsByUserIdShouldPass()
         {
             var expected = data;
-            var user = GetSomeUser();
+            var user = GetSomeUserWithPayments();
             
 
             var actual = this.paymetController.GetPaymentsByUser(user).ToList();
@@ -120,7 +123,7 @@
         [TestMethod]
         public void GetPaymentsByUserIdShoudReturnEmptyList()
         {
-            var user = GetSomeUser();
+            var user = GetSomeUserWithoutPayments();
 
             var actual = this.paymetController.GetPaymentsByUser(user).ToList();
             Assert.IsFalse(actual.Any());
@@ -138,12 +141,12 @@
         }
 
         [TestMethod]
-        public void DeletePaymentShouldRerturnFalse()
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void DeletePaymentShouldThrowException()
         {
             var unexistingPayment = GetPaymentNotFromDb();
 
             var deletedPayment = this.paymetController.DeletePayment(unexistingPayment);
-            Assert.IsFalse(deletedPayment);
         }
 
 
@@ -265,18 +268,18 @@
         {
             return new Payment
             {
-                Id = 22,
+                Id = 212,
                 Type = PaymentType.CreditCard,
                 PaymentTypeCode = "sdf31",
-                User = null,
                 UserId = 1
             };
         }
 
-        private User GetSomeUser()
+        private User GetSomeUserWithPayments()
         {
             return new User
             {
+                Id = 1,
                 Name = "name",
                 Password = "pass",
                 Username = "name name",
@@ -288,6 +291,24 @@
                 ZipId = 1,
                 Coins = 10,
                 Payments = this.data
+            };
+        }
+
+        private User GetSomeUserWithoutPayments()
+        {
+            return new User
+            {
+                Id = 2,
+                Name = "name",
+                Password = "pass",
+                Username = "name name",
+                Address = "address",
+                Email = "email",
+                Phone = "phone",
+                DateOfBirth = DateTime.Now.AddYears(-20),
+                Gender = Gender.Female,
+                ZipId = 1,
+                Coins = 10,
             };
         }
 

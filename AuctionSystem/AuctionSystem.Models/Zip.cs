@@ -7,7 +7,7 @@
     public class Zip
     {
         [DataMember]
-        public int ZipId { get; set; }
+        public int Id { get; set; }
 
         [DataMember]
         [Required]
