@@ -16,8 +16,10 @@
 
         private Mock<AuctionContext> db;
         private UserControllerMock userController;
-        private Mock<DbSet<User>> mockSet;
-        private Mock<DbSet<Zip>> mockSet2;
+        private Mock<DbSet<User>> mockSetUser;
+        private Mock<DbSet<Zip>> mockSetZip;
+        private Mock<DbSet<Payment>> mockSetPayment;
+        private Mock<DbSet<Bid>> mockSetBid;
         private List<User> userData;
         private List<Zip> zipData;
         private List<Bid> bidData;
@@ -33,22 +35,22 @@
             var user = GetUserCreatedInDb();
             var bid = CreateTestBid();
             var zip = CreateFakeZip();
+            var payment = CreateTestPayment();
 
             this.userData = new List<User>() { user };
-
-            paymentData = new List<Payment>();
-
+            this.paymentData = new List<Payment>() { payment };
             this.bidData = new List<Bid>() { bid };
             this.zipData = new List<Zip>() { zip };
 
-            this.mockSet = new Mock<DbSet<User>>().SetupData(this.userData);
-            this.mockSet2 = new Mock<DbSet<Zip>>().SetupData(this.zipData);
+            this.mockSetUser = new Mock<DbSet<User>>().SetupData(this.userData);
+            this.mockSetZip = new Mock<DbSet<Zip>>().SetupData(this.zipData);
+            this.mockSetPayment = new Mock<DbSet<Payment>>().SetupData(this.paymentData);
+            this.mockSetBid = new Mock<DbSet<Bid>>().SetupData(this.bidData);
 
-            this.db.Setup(m => m.Users).Returns(mockSet.Object);
-            this.db.Setup(m => m.Zips).Returns(mockSet2.Object);
-
-
-
+            this.db.Setup(m => m.Users).Returns(mockSetUser.Object);
+            this.db.Setup(m => m.Zips).Returns(mockSetZip.Object);
+            this.db.Setup(m => m.Payments).Returns(mockSetPayment.Object);
+            this.db.Setup(m => m.Bids).Returns(mockSetBid.Object);
         }
 
         //GET USER BY USERNAME
@@ -342,7 +344,7 @@
         [TestMethod]
         public void IsUserExistingShouldPass()
         {
-            var user = GetUserCreatedInDb();
+            var user = GetUserCreatedInDb().Username;
 
             var existingUser = this.userController.IsUserExisting(user);
 
@@ -352,7 +354,7 @@
         [TestMethod]
         public void IsUserExistingShouldNotPass()
         {
-            var user = GetUserNotFromDb();
+            var user = GetUserNotFromDb().Username;
 
             var existingUser = this.userController.IsUserExisting(user);
 
@@ -364,9 +366,9 @@
         public void IsUserExistingWithNullUserNameShouldThrowException()
         {
             var user = GetUserNotFromDb();
-            user.Name = null;
+            user.Username = null;
 
-            var existingUser = this.userController.IsUserExisting(user);
+            var existingUser = this.userController.IsUserExisting(user.Username);
         }
 
         [TestMethod]
@@ -374,9 +376,9 @@
         public void IsUserExistingWithEmptyUserNameShouldThrowException()
         {
             var user = GetUserNotFromDb();
-            user.Name = "";
+            user.Username = "";
 
-            var existingUser = this.userController.IsUserExisting(user);
+            var existingUser = this.userController.IsUserExisting(user.Username);
         }
 
 
@@ -388,7 +390,9 @@
 
             var currentUser = GetExistingUserFromDb(1);
 
-            var successUpdating = this.userController.UpdateUser(currentUser, "phone", "111111");
+            currentUser.Phone = "111111";
+
+            var successUpdating = this.userController.UpdateUser(currentUser);
 
             var changedUser = this.db.Object.Users.FirstOrDefault(u => u.Id == currentUser.Id).Phone;
 
@@ -426,10 +430,10 @@
         [ExpectedException(typeof(ArgumentException))]
         public void UpdateUserWithNegativeIdShouldThrowException()
         {
-            var user = GetUserNotFromDb();
+            var user = GetExistingUserFromDb(1);
             user.Id = -1;
 
-            var successUpdate = this.userController.UpdateUser(user, "Name", "John");
+            var successUpdate = this.userController.UpdateUser(user);
         }
 
         [TestMethod]
@@ -439,7 +443,7 @@
             var user = GetUserNotFromDb();
             user.Id = 0;
 
-            var successUpdate = this.userController.UpdateUser(user, "Name", "John");
+            var successUpdate = this.userController.UpdateUser(user);
         }
 
         [TestMethod]
@@ -449,7 +453,9 @@
              
             var currentUser = GetExistingUserById();
 
-            var successUpdating = this.userController.UpdateUser(currentUser, "Name", "Conor");
+            currentUser.Name = "Conor";
+
+            var successUpdating = this.userController.UpdateUser(currentUser);
 
             var changedUserName = this.db.Object.Users.FirstOrDefault(u => u.Id == currentUser.Id).Name;
 
@@ -465,7 +471,9 @@
 
             var currentUser = GetExistingUserById();
 
-            var successUpdating = this.userController.UpdateUser(currentUser, "Name", "Conor");
+            currentUser.Name = "Conor";
+
+            var successUpdating = this.userController.UpdateUser(currentUser);
 
             // Assert
 
@@ -478,7 +486,9 @@
         { 
             var currentUser = GetExistingUserById();
 
-            var successUpdating = this.userController.UpdateUser(currentUser, "Name", null);
+            currentUser.Name = null;
+
+            var successUpdating = this.userController.UpdateUser(currentUser);
         }
 
         [TestMethod]
@@ -487,7 +497,9 @@
         {
             var currentUser = GetExistingUserById();
 
-            var successUpdating = this.userController.UpdateUser(currentUser, "Name", "");
+            currentUser.Name = "";
+
+            var successUpdating = this.userController.UpdateUser(currentUser);
         }
 
         [TestMethod]
@@ -497,7 +509,9 @@
 
             var currentUser = GetExistingUserById();
 
-            var successUpdating = this.userController.UpdateUser(currentUser, "Phone", "545644888");
+            currentUser.Phone = "545644888";
+
+            var successUpdating = this.userController.UpdateUser(currentUser);
 
             var changedUserPhone = this.db.Object.Users.FirstOrDefault(u => u.Id == currentUser.Id).Phone;
 
@@ -512,7 +526,9 @@
         {
             var currentUser = GetExistingUserById();
 
-            var successUpdating = this.userController.UpdateUser(currentUser, "Phone", null);
+            currentUser.Phone = null;
+
+            var successUpdating = this.userController.UpdateUser(currentUser);
         }
 
 
@@ -522,7 +538,9 @@
         {
             var currentUser = GetExistingUserById();
 
-            var successUpdating = this.userController.UpdateUser(currentUser, "Phone", "");
+            currentUser.Phone = "";
+
+            var successUpdating = this.userController.UpdateUser(currentUser);
         }
 
         [TestMethod]
@@ -532,7 +550,9 @@
 
             var currentUser = GetExistingUserById();
 
-            var successUpdating = this.userController.UpdateUser(currentUser, "Email", "Conor.Mcgregor@gmail.com");
+            currentUser.Email = "Conor.Mcgregor@gmail.com";
+
+            var successUpdating = this.userController.UpdateUser(currentUser);
 
             var changedUserEmail = this.db.Object.Users.FirstOrDefault(u => u.Id == currentUser.Id).Email;
 
@@ -547,7 +567,9 @@
         {
             var currentUser = GetExistingUserById();
 
-            var successUpdating = this.userController.UpdateUser(currentUser, "Email", "");
+            currentUser.Email = "";
+
+            var successUpdating = this.userController.UpdateUser(currentUser);
         }
 
         [TestMethod]
@@ -556,7 +578,9 @@
         {
             var currentUser = GetExistingUserById();
 
-            var successUpdating = this.userController.UpdateUser(currentUser, "Email", null);
+            currentUser.Email = null;
+
+            var successUpdating = this.userController.UpdateUser(currentUser);
         }
 
         [TestMethod]
@@ -566,7 +590,9 @@
 
             var currentUser = GetExistingUserById();
 
-            var successUpdating = this.userController.UpdateUser(currentUser, "Address", "Nytorv");
+            currentUser.Address = "Nytorv";
+
+            var successUpdating = this.userController.UpdateUser(currentUser);
 
             var changedUserAddress = this.db.Object.Users.FirstOrDefault(u => u.Id == currentUser.Id).Address;
 
@@ -574,13 +600,16 @@
 
             Assert.AreEqual("Nytorv", changedUserAddress);
         }
+
         [TestMethod]
         [ExpectedException(typeof(ArgumentException))]
         public void UpdateUserAddressShouldThrowExceptionIfAddressIsNull()
         {
             var currentUser = GetExistingUserById();
 
-            var successUpdating = this.userController.UpdateUser(currentUser, "Address", null);
+            currentUser.Address = null;
+
+            var successUpdating = this.userController.UpdateUser(currentUser);
         }
 
         [TestMethod]
@@ -589,7 +618,9 @@
         {
             var currentUser = GetExistingUserById();
 
-            var successUpdating = this.userController.UpdateUser(currentUser, "Address", "");
+            currentUser.Address = "";
+
+            var successUpdating = this.userController.UpdateUser(currentUser);
         }
 
         public void UpdateUserAddressShouldThrowExceptionIfAddressIsEmpty1()
@@ -610,18 +641,17 @@
                 Id = 1,
                 Username = "John",
                 Name = "Arafat Khadiri",
-                DateOfBirth = DateTime.Now,
+                DateOfBirth = DateTime.Now.AddYears(-19),
                 Gender = Models.Enums.Gender.Female,
                 Phone = "666999696",
                 Email = "John.Cena@gmail.com",
                 Address = "Fake street ",
                 ZipId = 1,
                 Coins = 1,
-                //IsAdmin = false,
+                IsAdmin = false,
                 Password = "Banana1",
                 IsDeleted = false,
-                //Bids = new List<Bid> { CreateTestBid() }
-
+                Payments = this.paymentData
             };
 
 
@@ -645,7 +675,10 @@
                 Address = "street",
                 ZipId = CreateFakeZip().Id,
                 Coins = 11,
-                Password = "password"
+                IsAdmin = false,
+                IsDeleted = false,
+                Password = "password",
+                Payments = this.paymentData
             };
         }
 
@@ -689,6 +722,14 @@
             };
             return zip;
         }
+
+        private Payment CreateTestPayment()
+            => new Payment
+            {
+                UserId = 1,
+                Type = Models.Enums.PaymentType.PayPal,
+                PaymentTypeCode = "vacklavec@paypal.com"
+            };
 
     }
 }

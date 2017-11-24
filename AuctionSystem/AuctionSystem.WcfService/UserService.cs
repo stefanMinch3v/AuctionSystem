@@ -14,9 +14,9 @@
             UserController.Instance().CreateUser(user);
         }
 
-        public bool UpdateUser(User user, string property, string value)
+        public bool UpdateUser(User user)
         {
-            return UserController.Instance().UpdateUser(user, property, value);
+            return UserController.Instance().UpdateUser(user);
         }
 
         public UserDto GetUserById(int id)
@@ -38,14 +38,14 @@
             return UserController.Instance().DeleteUser(user);
         }
 
-        public bool IsUserExisting(User user)
+        public bool IsUserExisting(string username)
         {
-            return UserController.Instance().IsUserExisting(user);
+            return UserController.Instance().IsUserExisting(username);
         }
 
-        public int CountUserBidsForGivenProduct(User user, Product product)
+        public int CountUserBidsForGivenProduct(User user, string productName)
         {
-            return UserController.Instance().CountUserBidsForGivenProduct(user, product);
+            return UserController.Instance().CountUserBidsForGivenProduct(user, productName);
         }
 
         public IList<Product> GetUserProducts(User user)
@@ -66,6 +66,11 @@
         private UserDto MapDbUserToUserDto(User dbUser)
         {
             return Mapper.Map<UserDto>(dbUser);
+        }
+
+        public int GetAllUserSpentCoinsForGivenProduct(User user, string productName)
+        {
+            return UserController.Instance().GetAllUserSpentCoinsForGivenProduct(user, productName);
         }
     }
 }

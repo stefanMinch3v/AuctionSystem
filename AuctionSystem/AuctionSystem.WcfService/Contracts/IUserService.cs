@@ -12,7 +12,7 @@
         void CreateUser(User user);
 
         [OperationContract]
-        bool UpdateUser(User user, string property, string value);
+        bool UpdateUser(User user);
 
         [OperationContract]
         UserDto GetUserById(int id);
@@ -21,10 +21,13 @@
         bool DeleteUser(User user);
 
         [OperationContract]
-        bool IsUserExisting(User user);
+        bool IsUserExisting(string username);
 
         [OperationContract]
-        int CountUserBidsForGivenProduct(User user, Product product);
+        int CountUserBidsForGivenProduct(User user, string productName);
+
+        [OperationContract]
+        int GetAllUserSpentCoinsForGivenProduct(User user, string productName);
 
         [OperationContract]
         IList<Product> GetUserProducts(User user);

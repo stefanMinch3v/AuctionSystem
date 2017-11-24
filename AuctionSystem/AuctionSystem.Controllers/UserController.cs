@@ -26,12 +26,11 @@
             return instance;
         }
 
-        public int CountUserBidsForGivenProduct(User user, Product product)
+        public int CountUserBidsForGivenProduct(User user, string productName)
         {
             CoreValidator.ThrowIfNull(user, nameof(user));
-            CoreValidator.ThrowIfNull(product, nameof(product));
+            CoreValidator.ThrowIfNullOrEmpty(productName, nameof(productName));
             CoreValidator.ThrowIfNegativeOrZero(user.Id, nameof(user.Id));
-            CoreValidator.ThrowIfNegativeOrZero(product.Id, nameof(product.Id));
 
             using (var db = new AuctionContext())
             {
@@ -48,7 +47,7 @@
                     return 0;
                 }
 
-                return bids.Select(b => b.ProductId == product.Id).Count();
+                return bids.Select(b => b.Product.Name == productName).Count();
             }
         }
 
@@ -60,12 +59,11 @@
             }
         }
 
-        public int GetAllUserSpentCoinsForGivenProduct(User user, Product product)
+        public int GetAllUserSpentCoinsForGivenProduct(User user, string productName)
         {
             CoreValidator.ThrowIfNull(user, nameof(user));
-            CoreValidator.ThrowIfNull(product, nameof(product));
+            CoreValidator.ThrowIfNullOrEmpty(productName, nameof(productName));
             CoreValidator.ThrowIfNegativeOrZero(user.Id, nameof(user.Id));
-            CoreValidator.ThrowIfNegativeOrZero(product.Id, nameof(product.Id));
 
             using (var db = new AuctionContext())
             {
@@ -76,7 +74,7 @@
                 CoreValidator.ThrowIfNull(currentUser, nameof(currentUser));
 
                 return currentUser.Bids
-                                       .Where(b => b.ProductId == product.Id)
+                                       .Where(b => b.Product.Name == productName)
                                        .Sum(b => b.Coins);
             }
         }
@@ -118,7 +116,6 @@
                     Gender = user.Gender,
                     ZipId = user.ZipId,
                     Coins = user.Coins,
-                    Payments = user.Payments,
                     IsAdmin = false,
                     IsDeleted = false
                 };
@@ -130,6 +127,7 @@
 
         public bool DeleteUser(User user)
         {
+            CoreValidator.ThrowIfNull(user, nameof(user));
             CoreValidator.ThrowIfNegativeOrZero(user.Id, nameof(user.Id));
 
             using (var db = new AuctionContext())
@@ -140,7 +138,9 @@
 
                 CoreValidator.ThrowIfNull(currentUser, nameof(currentUser));
 
-                db.Users.Remove(currentUser);
+                currentUser.IsDeleted = true;
+
+                db.Entry(currentUser).State = System.Data.Entity.EntityState.Modified;
                 db.SaveChanges();
 
                 return true;
@@ -165,7 +165,6 @@
             }
         }
 
-
         public User GetUserById(int id)
         {
             CoreValidator.ThrowIfNegativeOrZero(id, nameof(id));
@@ -187,7 +186,7 @@
             using (var db = new AuctionContext())
             {
                 var currentUser = db.Users
-                                        //.Include("Zip")
+                                        .Include("Zip")
                                         .Include("Bids")
                                         .Include("Bids.Product")
                                         .Include("Payments")
@@ -207,7 +206,7 @@
             using (var db = new AuctionContext())
             {
                 var currentUser = db.Users
-                                        //.Include("Zip")
+                                        .Include("Zip")
                                         .Include("Bids")
                                         .Include("Bids.Product")
                                         .Include("Payments")
@@ -265,97 +264,62 @@
                 CoreValidator.ThrowIfNull(currentUser, nameof(currentUser));
 
                 return currentUser.Bids
-                                        .Where(b => b.UserId == user.Id)
-                                        .Select(b => b.Product)
-                                        .ToList();
+                                    .Where(b => b.UserId == user.Id)
+                                    .Select(b => b.Product)
+                                    .ToList();
             }
         }
 
-        public bool IsUserExisting(User user)
+        public bool IsUserExisting(string username)//
         {
-            CoreValidator.ThrowIfNull(user, nameof(user));
-            CoreValidator.ThrowIfNullOrEmpty(user.Username, nameof(user.Username));
-            CoreValidator.ThrowIfNullOrEmpty(user.Password, nameof(user.Password));
-            CoreValidator.ThrowIfNullOrEmpty(user.Name, nameof(user.Name));
-            CoreValidator.ThrowIfNullOrEmpty(user.Address, nameof(user.Address));
-            CoreValidator.ThrowIfNullOrEmpty(user.Email, nameof(user.Email));
-            CoreValidator.ThrowIfNullOrEmpty(user.Phone, nameof(user.Phone));
-            CoreValidator.ThrowIfDateIsNotCorrect(user.DateOfBirth.ToString(), nameof(user.DateOfBirth));
-            CoreValidator.SpecialThrowForCoinsIfValueIsNegativeOnly(user.Coins, nameof(user.Coins));
+            CoreValidator.ThrowIfNullOrEmpty(username, nameof(username));
 
             using (var db = new AuctionContext())
             {
-                return db.Users.Any(u => u.Username == user.Username);
+                return db.Users.Any(u => u.Username == username);
             }
         }
 
-        public bool UpdateUser(User user, string property, string value)
+        public bool UpdateUser(User newUser)
         {
-            CoreValidator.ThrowIfNull(user, nameof(user));
-            CoreValidator.ThrowIfNegativeOrZero(user.Id, nameof(user.Id));
-            CoreValidator.ThrowIfNullOrEmpty(property, nameof(property));
-            CoreValidator.ThrowIfNullOrEmpty(value, nameof(value));
+            CoreValidator.ThrowIfNull(newUser, nameof(newUser));
 
             using (var db = new AuctionContext())
             {
-                var userNew = GetUserById(user.Id);
+                var dbUser = GetUserById(newUser.Id);
 
-                CoreValidator.ThrowIfNull(userNew, nameof(userNew));
+                CoreValidator.ThrowIfNull(newUser, nameof(newUser));
+                CoreValidator.ThrowIfNullOrEmpty(newUser.Username, nameof(newUser.Username));
+                CoreValidator.ThrowIfNullOrEmpty(newUser.Password, nameof(newUser.Password));
+                CoreValidator.ThrowIfNullOrEmpty(newUser.Name, nameof(newUser.Name));
+                CoreValidator.ThrowIfNullOrEmpty(newUser.Address, nameof(newUser.Address));
+                CoreValidator.ThrowIfNullOrEmpty(newUser.Email, nameof(newUser.Email));
+                CoreValidator.ThrowIfNullOrEmpty(newUser.Phone, nameof(newUser.Phone));
+                CoreValidator.SpecialThrowForCoinsIfValueIsNegativeOnly(newUser.Coins, nameof(newUser.Coins));
 
-                db.Users.Attach(userNew);
-
-                switch (property.ToLower())
+                if (newUser.DateOfBirth > DateTime.Now.AddYears(-18))
                 {
-                    case "name":
-                        userNew.Name = value;
-                        break;
-                    case "phone":
-                        userNew.Phone = value;
-                        break;
-                    case "email":
-                        userNew.Email = value;
-                        break;
-                    case "address":
-                        userNew.Address = value;
-                        break;
-                    case "coins":
-                        if (!Int32.TryParse(value, out int temp))
-                        {
-                            throw new ArgumentException("Invalid parameter for coins.");
-                        }
-
-                        var parsedValue = int.Parse(value);
-
-                        CoreValidator.ThrowIfNegativeOrZero(parsedValue, nameof(parsedValue));
-
-                        userNew.Coins = parsedValue;
-                        break;
-                    case "isadmin":
-                        if (userNew.IsAdmin)
-                        {
-                            userNew.IsAdmin = false;
-                        }
-                        else
-                        {
-                            userNew.IsAdmin = true;
-                        }
-                        break;
-                    case "isdeleted":
-                        if (userNew.IsDeleted)
-                        {
-                            userNew.IsDeleted = false;
-                        }
-                        else
-                        {
-                            userNew.IsDeleted = true;
-                        }
-                        break;
-                    default:
-                        throw new ArgumentException("No such property.");
+                    throw new ArgumentException($"Date of birth is not valid, the customer must be adult.");
                 }
 
+                if (!ZipController.Instance().IsZipExisting(newUser.ZipId ?? 0))
+                {
+                    throw new ArgumentException($"Zip id doesn't exist in the system.");
+                }
 
-                db.Entry(userNew).State = System.Data.Entity.EntityState.Modified;
+                dbUser.Address = newUser.Address;
+                dbUser.Coins = newUser.Coins;
+                dbUser.DateOfBirth = newUser.DateOfBirth;
+                dbUser.Email = newUser.Email;
+                dbUser.Gender = newUser.Gender;
+                dbUser.Name = newUser.Name;
+                dbUser.Password = newUser.Password;
+                dbUser.Payments = newUser.Payments;
+                dbUser.Phone = newUser.Phone;
+                dbUser.Username = newUser.Username;
+                dbUser.ZipId = newUser.ZipId;
+
+                db.Entry(dbUser).State = System.Data.Entity.EntityState.Modified;
                 db.SaveChanges();
 
                 return true;
