@@ -106,75 +106,95 @@
 
             using (var db = new AuctionContext())
             {
-                #region CHECK FOR EXISTING USER, PRODUCT AND FOR VALID COINS
-                var userController = UserController.Instance();
-                var productController = ProductController.Instance();
-
-                var isUserExisting = userController.IsUserExistingById(user.Id);
-                var isProductExisting = productController.IsProductExistingById(product.Id);
-
-                if (!isUserExisting || !isProductExisting)
+                using (var transaction = db.Database.BeginTransaction())
                 {
-                    throw new ArgumentException("The product or the user is not existing in the system.");
-                }
-
-                var currentUser = userController.GetUserById(user.Id);
-
-                db.Users.Attach(currentUser);
-
-                if (coins > currentUser.Coins)
-                {
-                    throw new ArgumentException($"Your coins are {currentUser.Coins}, you've tried to spent {coins}.");
-                }
-                #endregion
-
-                #region LOGIC FOR OVERBIDDING 
-                var isThereAnyBid = db.Bids.Any(b => b.ProductId == product.Id && b.IsWon == false);
-
-                if (isThereAnyBid)
-                {
-                    var lastBidEntry = db.Bids
-                                            .Where(b => b.ProductId == product.Id)
-                                            .OrderByDescending(b => b.DateOfCreated)
-                                            .Take(1)
-                                            .FirstOrDefault();
-
-                    if (coins <= lastBidEntry.Coins)
+                    try
                     {
-                        throw new ArgumentException($"You cannot overbid with less than or equal to the last bidders coins: {lastBidEntry.Coins}");
+                        #region CHECK FOR EXISTING USER, PRODUCT AND FOR VALID COINS
+
+                        var userController = UserController.Instance();
+                        var productController = ProductController.Instance();
+
+                        var isUserExisting = userController.IsUserExistingById(user.Id);
+                        var isProductExisting = productController.IsProductExistingById(product.Id);
+
+                        if (!isUserExisting || !isProductExisting)
+                        {
+                            throw new ArgumentException("The product or the user is not existing in the system.");
+                        }
+
+                        var currentUser = userController.GetUserById(user.Id);
+
+                        db.Users.Attach(currentUser);
+
+                        if (coins > currentUser.Coins)
+                        {
+                            throw new ArgumentException($"Your coins are {currentUser.Coins}, you've tried to spent {coins}.");
+                        }
+                        #endregion
+
+                        #region LOGIC FOR OVERBIDDING 
+                        var isThereAnyBid = db.Bids.Any(b => b.ProductId == product.Id && b.IsWon == false);
+
+                        if (isThereAnyBid)
+                        {
+                            var lastBidEntry = db.Bids
+                                                    .Where(b => b.ProductId == product.Id)
+                                                    .OrderByDescending(b => b.DateOfCreated)
+                                                    .Take(1)
+                                                    .FirstOrDefault();
+
+                            if (coins <= lastBidEntry.Coins)
+                            {
+                                transaction.Rollback();
+                                throw new ArgumentException($"You cannot overbid with less than or equal to the last bidders coins: {lastBidEntry.Coins}");
+                            }
+
+                            var newBid = GetNewBid(user.Id, product.Id, coins);
+
+                            currentUser.Coins -= coins;
+
+                            var lastBidUserId = lastBidEntry.UserId;
+
+                            var lastUser = userController.GetUserById(lastBidUserId);
+
+                            db.Users.Attach(lastUser);
+
+                            lastUser.Coins += lastBidEntry.Coins;
+
+                            db.Entry(lastUser).State = System.Data.Entity.EntityState.Modified;
+
+                            db.Bids.Add(newBid);
+                            db.SaveChanges();
+
+                            transaction.Commit();
+
+                            return;
+                        }
+
+                        #endregion
+
+                        #region LOGIC FOR CREATE BID FOR FIRST TIME
+
+                        var bid = GetNewBid(user.Id, product.Id, coins);
+
+                        currentUser.Coins -= coins;
+
+                        db.Entry(currentUser).State = System.Data.Entity.EntityState.Modified;
+
+                        db.Bids.Add(bid);
+                        db.SaveChanges();
+
+                        transaction.Commit();
+
+                        #endregion
                     }
-
-                    var newBid = GetNewBid(user.Id, product.Id, coins);
-
-                    currentUser.Coins -= coins;
-
-                    var lastBidUserId = lastBidEntry.UserId;
-
-                    var lastUser = userController.GetUserById(lastBidUserId);
-
-                    db.Users.Attach(lastUser);
-
-                    lastUser.Coins += lastBidEntry.Coins;
-
-                    db.Entry(lastUser).State = System.Data.Entity.EntityState.Modified;
-
-                    db.Bids.Add(newBid);
-                    db.SaveChanges();
-
-                    return;
+                    catch (Exception)
+                    {
+                        transaction.Rollback();
+                        throw;
+                    }
                 }
-                #endregion
-
-                #region LOGIC FOR CREATE BID FOR FIRST TIME
-                var bid = GetNewBid(user.Id, product.Id, coins);
-
-                currentUser.Coins -= coins;
-
-                db.Entry(currentUser).State = System.Data.Entity.EntityState.Modified;
-
-                db.Bids.Add(bid);
-                db.SaveChanges();
-                #endregion
             }
         }
 
