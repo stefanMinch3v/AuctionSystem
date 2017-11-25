@@ -66,6 +66,8 @@
                             .Include("User")
                             .Include("Product")
                             .Where(b => b.UserId == userId)
+                            .OrderByDescending(b => b.DateOfCreated)
+                            .ThenByDescending(b => b.Coins)
                             .ToList();
             }
         }
@@ -78,6 +80,7 @@
                             .Include("User")
                             .Include("Product")
                             .Where(b => b.IsWon == true)
+                            .OrderByDescending(b => b.DateOfCreated)
                             .ToList();
             }
         }
