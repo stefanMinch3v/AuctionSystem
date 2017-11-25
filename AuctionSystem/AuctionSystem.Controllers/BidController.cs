@@ -43,6 +43,8 @@
                             .Include("User")
                             .Include("Product")
                             .Where(b => b.ProductId == productId)
+                            .OrderByDescending(b => b.DateOfCreated)
+                            .ThenByDescending(b => b.Coins)
                             .ToList();
             }
         }
