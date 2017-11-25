@@ -253,7 +253,7 @@
             // Act
             var coins = GetUser().Coins;
 
-            bidController.MakeBid(GetUser(), GetProduct(), coins);
+            bidController.MakeBid(GetUser().Id, GetProduct().Id, coins);
             var expectedId = 0;
             var actualBid = bidController.GetAllBidsByUserId(GetUser().Id).Last();
             var actualId = actualBid.Id;
@@ -274,7 +274,7 @@
             var coins = 50;
             var coinsBefore = GetUser().Coins;
 
-            bidController.MakeBid(GetUser(), product, coins);
+            bidController.MakeBid(GetUser().Id, product.Id, coins);
 
             var actualBid = bidController.GetAllBidsByUserId(GetUser().Id).Last();
             var coinsAfter = userController.GetUserById(actualBid.UserId).Coins;
@@ -294,7 +294,7 @@
             // Act
             var coins = 550;
 
-            bidController.MakeBid(new User{Id = 0}, product, coins);
+            bidController.MakeBid(0, product.Id, coins);
         }
 
         [TestMethod]
@@ -312,7 +312,7 @@
             var coins = 550;
             var userCoinsBefore = GetUser2().Coins; 
 
-            bidController.MakeBid(GetUser(), product, coins);
+            bidController.MakeBid(GetUser().Id, product.Id, coins);
             var userCoinsAfter = userController.GetUserById(oldUser.Id).Coins;
 
             //Assert
@@ -328,7 +328,7 @@
             // Act
             var coins = GetUser().Coins+1;
 
-            bidController.MakeBid(GetUser(), product, coins);
+            bidController.MakeBid(GetUser().Id, product.Id, coins);
         }
 
         [TestMethod]
@@ -340,7 +340,7 @@
             // Act
             var coins = 10; //current bid is 25
 
-            bidController.MakeBid(GetUser(), product, coins);
+            bidController.MakeBid(GetUser().Id, product.Id, coins);
         }
 
         [TestMethod]
@@ -352,7 +352,7 @@
             // Act
             var coins = 550; 
 
-            bidController.MakeBid(new User{Id = Int32.MaxValue}, product, coins);
+            bidController.MakeBid(Int32.MaxValue, product.Id, coins);
         }
 
         [TestMethod]
@@ -364,7 +364,7 @@
             // Act
             var coins = 550; 
 
-            bidController.MakeBid(new User{ Id = -1}, product, coins);
+            bidController.MakeBid(-1, product.Id, coins);
         }
 
         [TestMethod]
@@ -376,7 +376,7 @@
             // Act
             var coins = 550;
 
-            bidController.MakeBid(GetUser(), new Product{Id = 0},coins);
+            bidController.MakeBid(GetUser().Id, 0,coins);
         }
 
         [TestMethod]
@@ -385,7 +385,7 @@
         {
             var coins = 550; 
 
-            bidController.MakeBid(GetUser(), new Product{Id = -1}, coins);
+            bidController.MakeBid(GetUser().Id, -1, coins);
         }
 
         [TestMethod]
@@ -394,7 +394,7 @@
         {
             var coins = 550; 
 
-            bidController.MakeBid(GetUser(), new Product{Id = Int32.MaxValue}, coins);
+            bidController.MakeBid(GetUser().Id, Int32.MaxValue, coins);
         }
         #endregion
 

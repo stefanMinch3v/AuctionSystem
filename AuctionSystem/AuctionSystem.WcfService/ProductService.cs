@@ -24,9 +24,11 @@
             return ProductController.Instance().DeleteProduct(product);
         }
 
-        public Product GetProductByName(string name)
+        public ProductDto GetProductByName(string name)
         {
-            return ProductController.Instance().GetProductByName(name);
+            var dbProduct = ProductController.Instance().GetProductByName(name);
+
+            return MapDbProductToProductDto(dbProduct);
         }
 
         public ProductDto GetProductById(int id)
@@ -36,7 +38,7 @@
             return MapDbProductToProductDto(dbProduct);
         }
 
-        public ProductDto MapDbProductToProductDto(Product product)
+        private ProductDto MapDbProductToProductDto(Product product)
         {
             return Mapper.Map<ProductDto>(product);
         }

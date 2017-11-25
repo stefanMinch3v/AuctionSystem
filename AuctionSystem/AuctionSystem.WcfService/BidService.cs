@@ -11,14 +11,9 @@
     {
         // TODO: fix all the return list methods (try to return list of bidDtos)
 
-        private BidDto MapDbBidToBidDto(Bid dbBid)
+        public void MakeBid(int userId, int productId, int coins)
         {
-            return Mapper.Map<BidDto>(dbBid);
-        }
-
-        public void MakeBid(User user, Product product, int coins)
-        {
-            BidController.Instance().MakeBid(user, product, coins);
+            BidController.Instance().MakeBid(userId, productId, coins);
         }
 
         public bool IsBidWon(Bid bid)
@@ -33,9 +28,11 @@
             return MapDbBidToBidDto(bidDb);
         }
 
-        public IList<Bid> GetAllBidsByUserId(int userId)
+        public IList<BidDto> GetAllBidsByUserId(int userId)
         {
-            return BidController.Instance().GetAllBidsByUserId(userId);
+            var bids = BidController.Instance().GetAllBidsByUserId(userId);
+
+            return TransferCollectionData(bids);
         }
 
         public IList<Bid> GetAllBidsByProductId(int productId)
@@ -46,6 +43,31 @@
         public IList<Bid> GetAllEarnedBids()
         {
             return BidController.Instance().GetAllEarnedBids();
+        }
+
+        public IList<BidDto> GetAllBidsByProductName(string name)
+        {
+            var bids = BidController.Instance().GetAllBidsByProductName(name);
+
+            return TransferCollectionData(bids);
+        }
+
+        private BidDto MapDbBidToBidDto(Bid dbBid)
+        {
+            return Mapper.Map<BidDto>(dbBid);
+        }
+
+        private IList<BidDto> TransferCollectionData(IList<Bid> bids)
+        {
+            var result = new List<BidDto>();
+
+            foreach (var bid in bids)
+            {
+                var bidDto = MapDbBidToBidDto(bid);
+                result.Add(bidDto);
+            }
+
+            return result;
         }
     }
 }

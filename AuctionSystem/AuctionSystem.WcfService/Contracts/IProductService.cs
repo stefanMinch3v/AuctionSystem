@@ -18,7 +18,7 @@
         bool DeleteProduct(Product product);
 
         [OperationContract]
-        Product GetProductByName(string name);
+        ProductDto GetProductByName(string name);
 
         [OperationContract]
         ProductDto GetProductById(int id);

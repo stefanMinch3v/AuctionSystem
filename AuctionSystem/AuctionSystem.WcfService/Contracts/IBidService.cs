@@ -9,7 +9,7 @@
     public interface IBidService
     {
         [OperationContract]
-        void MakeBid(User user, Product product, int coins);
+        void MakeBid(int userId, int productId, int coins);
 
         [OperationContract]
         bool IsBidWon(Bid bid);
@@ -18,7 +18,10 @@
         BidDto GetBidById(int bidId);
 
         [OperationContract]
-        IList<Bid> GetAllBidsByUserId(int userId);
+        IList<BidDto> GetAllBidsByProductName(string name);
+
+        [OperationContract]
+        IList<BidDto> GetAllBidsByUserId(int userId);
 
         [OperationContract]
         IList<Bid> GetAllBidsByProductId(int productId);

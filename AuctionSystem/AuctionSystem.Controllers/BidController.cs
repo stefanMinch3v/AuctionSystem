@@ -39,7 +39,11 @@
 
             using (var db = new AuctionContext())
             {
-                return db.Bids.Where(b => b.ProductId == productId).ToList();
+                return db.Bids
+                            .Include("User")
+                            .Include("Product")
+                            .Where(b => b.ProductId == productId)
+                            .ToList();
             }
         }
 
@@ -56,7 +60,11 @@
 
             using (var db = new AuctionContext())
             {
-                return db.Bids.Where(b => b.UserId == userId).ToList();
+                return db.Bids
+                            .Include("User")
+                            .Include("Product")
+                            .Where(b => b.UserId == userId)
+                            .ToList();
             }
         }
 
@@ -64,7 +72,11 @@
         {
             using (var db = new AuctionContext())
             {
-                return db.Bids.Where(b => b.IsWon == true).ToList();
+                return db.Bids
+                            .Include("User")
+                            .Include("Product")
+                            .Where(b => b.IsWon == true)
+                            .ToList();
             }
         }
 
@@ -96,12 +108,10 @@
             }
         }
 
-        public void MakeBid(User user, Product product, int coins)
+        public void MakeBid(int userId, int productId, int coins)
         {
-            CoreValidator.ThrowIfNull(user, nameof(user));
-            CoreValidator.ThrowIfNull(product, nameof(product));
-            CoreValidator.ThrowIfNegativeOrZero(user.Id, nameof(user.Id));
-            CoreValidator.ThrowIfNegativeOrZero(product.Id, nameof(product.Id));
+            CoreValidator.ThrowIfNegativeOrZero(userId, nameof(userId));
+            CoreValidator.ThrowIfNegativeOrZero(productId, nameof(productId));
             CoreValidator.ThrowIfNegativeOrZero(coins, nameof(coins));
 
             using (var db = new AuctionContext())
@@ -115,15 +125,15 @@
                         var userController = UserController.Instance();
                         var productController = ProductController.Instance();
 
-                        var isUserExisting = userController.IsUserExistingById(user.Id);
-                        var isProductExisting = productController.IsProductExistingById(product.Id);
+                        var isUserExisting = userController.IsUserExistingById(userId);
+                        var isProductExisting = productController.IsProductExistingById(productId);
 
                         if (!isUserExisting || !isProductExisting)
                         {
                             throw new ArgumentException("The product or the user is not existing in the system.");
                         }
 
-                        var currentUser = userController.GetUserById(user.Id);
+                        var currentUser = userController.GetUserById(userId);
 
                         db.Users.Attach(currentUser);
 
@@ -134,12 +144,12 @@
                         #endregion
 
                         #region LOGIC FOR OVERBIDDING 
-                        var isThereAnyBid = db.Bids.Any(b => b.ProductId == product.Id && b.IsWon == false);
+                        var isThereAnyBid = db.Bids.Any(b => b.ProductId == productId && b.IsWon == false);
 
                         if (isThereAnyBid)
                         {
                             var lastBidEntry = db.Bids
-                                                    .Where(b => b.ProductId == product.Id)
+                                                    .Where(b => b.ProductId == productId)
                                                     .OrderByDescending(b => b.DateOfCreated)
                                                     .Take(1)
                                                     .FirstOrDefault();
@@ -150,7 +160,7 @@
                                 throw new ArgumentException($"You cannot overbid with less than or equal to the last bidders coins: {lastBidEntry.Coins}");
                             }
 
-                            var newBid = GetNewBid(user.Id, product.Id, coins);
+                            var newBid = GetNewBid(userId, productId, coins);
 
                             currentUser.Coins -= coins;
 
@@ -176,7 +186,7 @@
 
                         #region LOGIC FOR CREATE BID FOR FIRST TIME
 
-                        var bid = GetNewBid(user.Id, product.Id, coins);
+                        var bid = GetNewBid(userId, productId, coins);
 
                         currentUser.Coins -= coins;
 
@@ -224,6 +234,33 @@
                 CoreValidator.ThrowIfNull(resultBid, nameof(resultBid));
 
                 return resultBid;
+            }
+        }
+
+        public IList<Bid> GetAllBidsByProductName(string productName)
+        {
+            CoreValidator.ThrowIfNullOrEmpty(productName, nameof(productName));
+
+            using (var db = new AuctionContext())
+            {
+                var isExisting = ProductController.Instance().IsProductExisting(productName);
+
+                if (!isExisting)
+                {
+                    throw new ArgumentException("The product doesn't exist in the system.");
+                }
+
+                var resultBids = db.Bids
+                                    .Include("Product")
+                                    .Include("User")
+                                    .Where(b => b.Product.Name == productName)
+                                    .OrderByDescending(b => b.DateOfCreated)
+                                    .ThenByDescending(b => b.Coins)
+                                    .ToList();
+
+                CoreValidator.ThrowIfNull(resultBids, nameof(resultBids));
+
+                return resultBids;
             }
         }
     }
