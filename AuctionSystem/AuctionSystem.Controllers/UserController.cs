@@ -4,7 +4,6 @@
     using Contracts;
     using Data;
     using Models;
-    using Models.Utility;
     using System;
     using System.Collections.Generic;
     using System.Linq;

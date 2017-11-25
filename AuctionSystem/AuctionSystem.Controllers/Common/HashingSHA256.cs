@@ -1,4 +1,4 @@
-﻿namespace AuctionSystem.Models.Utility
+﻿namespace AuctionSystem.Controllers.Common
 {
     using System;
     using System.Linq;

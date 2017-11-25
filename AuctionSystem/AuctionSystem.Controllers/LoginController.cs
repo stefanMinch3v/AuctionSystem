@@ -1,7 +1,7 @@
 ﻿namespace AuctionSystem.Controllers
 {
-    using AuctionSystem.Models.Utility;
     using AutoMapper;
+    using Common;
     using Controllers.Contracts;
     using Data;
     using Models;
