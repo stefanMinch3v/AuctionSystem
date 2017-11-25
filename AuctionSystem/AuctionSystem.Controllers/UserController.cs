@@ -1,10 +1,10 @@
 ﻿namespace AuctionSystem.Controllers
 {
-    using AuctionSystem.Models.Utility;
     using Common;
     using Contracts;
     using Data;
     using Models;
+    using Models.Utility;
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -92,7 +92,7 @@
             CoreValidator.ThrowIfDateIsNotCorrect(user.DateOfBirth.ToString(), nameof(user.DateOfBirth));
             CoreValidator.SpecialThrowForCoinsIfValueIsNegativeOnly(user.Coins, nameof(user.Coins));
 
-            ValidateUserPassword(user.Password);
+            HashingSHA256.ValidateUserPassword(user.Password);
 
             var dateParsed = user.DateOfBirth;
             if (dateParsed > DateTime.Now.AddYears(-18))
@@ -295,7 +295,7 @@
             CoreValidator.ThrowIfNullOrEmpty(newUser.Phone, nameof(newUser.Phone));
             CoreValidator.SpecialThrowForCoinsIfValueIsNegativeOnly(newUser.Coins, nameof(newUser.Coins));
 
-            ValidateUserPassword(newUser.Password);
+            HashingSHA256.ValidateUserPassword(newUser.Password);
 
             if (newUser.DateOfBirth > DateTime.Now.AddYears(-18))
             {
@@ -319,6 +319,7 @@
                 dbUser.Email = newUser.Email;
                 dbUser.Gender = newUser.Gender;
                 dbUser.Name = newUser.Name;
+
                 if (newUser.Password != dbUser.Password)
                 {
                     dbUser.Password = HashingSHA256.ComputeHash(newUser.Password);
@@ -327,7 +328,18 @@
                 {
                     dbUser.Password = newUser.Password;
                 }
-                dbUser.Payments = newUser.Payments;
+
+                if (newUser.Payments != null && newUser.Payments.Count > 0)
+                {
+                    foreach (var payment in newUser.Payments)
+                    {
+                        if (dbUser.Payments.All(p => p.PaymentTypeCode != payment.PaymentTypeCode))
+                        {
+                            dbUser.Payments.Add(payment);
+                        }
+                    }
+                }
+
                 dbUser.Phone = newUser.Phone;
                 dbUser.Username = newUser.Username;
                 dbUser.ZipId = newUser.ZipId;
@@ -337,34 +349,6 @@
 
                 return true;
             }
-        }
-        private void ValidateUserPassword(string password)
-        {
-            var minLength = 5;
-            var maxLength = 100;
-            bool userPasswordFlag = true;
-            if (password.Length < minLength || password.Length > maxLength)
-            {
-                userPasswordFlag = false;
-            }
-
-            if (!password.Any(c => char.IsLower(c)))
-            {
-                userPasswordFlag = false;
-            }
-
-            if (!password.Any(c => char.IsUpper(c)))
-            {
-                userPasswordFlag = false;
-            }
-
-            if (!password.Any(c => char.IsDigit(c)))
-            {
-                userPasswordFlag = false;
-            }
-
-            if (!userPasswordFlag)
-                throw new ArgumentException("Password must contain at least 5 symbols, at most 100 symbols, a capital letter, small letter and a digit");
         }
     }
 

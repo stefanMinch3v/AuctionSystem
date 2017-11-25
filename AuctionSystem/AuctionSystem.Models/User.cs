@@ -23,7 +23,6 @@
 
         [DataMember]
         [Required]
-        [Password(5, 100)]
         public string Password { get; set; }
 
         [DataMember]

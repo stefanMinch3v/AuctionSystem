@@ -65,7 +65,6 @@
     <Compile Include="User.cs" />
     <Compile Include="Utility\EmailAttribute.cs" />
     <Compile Include="Utility\HashingSHA256.cs" />
-    <Compile Include="Utility\PasswordAttribute.cs" />
     <Compile Include="Zip.cs" />
   </ItemGroup>
   <ItemGroup>
