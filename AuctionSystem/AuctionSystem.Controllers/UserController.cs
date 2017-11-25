@@ -1,5 +1,6 @@
 ﻿namespace AuctionSystem.Controllers
 {
+    using AuctionSystem.Models.Utility;
     using Common;
     using Contracts;
     using Data;
@@ -91,6 +92,35 @@
             CoreValidator.ThrowIfDateIsNotCorrect(user.DateOfBirth.ToString(), nameof(user.DateOfBirth));
             CoreValidator.SpecialThrowForCoinsIfValueIsNegativeOnly(user.Coins, nameof(user.Coins));
 
+            #region password validation
+            var minLength = 5;
+            var maxLength = 100;
+            bool userPasswordFlag = true;
+            if (user.Password.Length < minLength || user.Password.Length > maxLength)
+            {
+                userPasswordFlag = false;
+            }
+
+            if (!user.Password.Any(c => char.IsLower(c)))
+            {
+                userPasswordFlag = false;
+            }
+
+            if (!user.Password.Any(c => char.IsUpper(c)))
+            {
+                userPasswordFlag = false;
+            }
+
+            if (!user.Password.Any(c => char.IsDigit(c)))
+            {
+                userPasswordFlag =  false;
+            }
+
+            if (!userPasswordFlag)
+                throw new ArgumentException("Password must contain at least 5 symbols, at most 100 symbols, a capital letter, small letter and a digit");
+
+            #endregion
+
             var dateParsed = user.DateOfBirth;
             if (dateParsed > DateTime.Now.AddYears(-18))
             {
@@ -107,7 +137,7 @@
                 var userNew = new User
                 {
                     Username = user.Username,
-                    Password = user.Password,
+                    Password = HashingSHA256.ComputeHash(user.Password),
                     Name = user.Name,
                     Address = user.Address,
                     Email = user.Email,
