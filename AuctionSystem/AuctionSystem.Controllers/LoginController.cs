@@ -52,13 +52,11 @@
             {
                 // var t = from p in db.Users where p.Username == username select p;
                 var enteredUsername = db.Users
-                                            .Where(u => u.Username == username)
+                                            .Where(u => u.Username == username && u.Password ==password )
                                             .Select(u => u.Username);
-                var enteredPassword = db.Users
-                                            .Where(p => p.Password == password)
-                                            .Select(p => p.Password);
+                
 
-                if (enteredUsername.Any() && enteredPassword.Any())
+                if (enteredUsername.Any())
                 {
                     return true;
                 }
