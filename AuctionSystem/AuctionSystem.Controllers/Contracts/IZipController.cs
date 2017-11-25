@@ -1,6 +1,7 @@
 ﻿namespace AuctionSystem.Controllers.Contracts
 {
     using Models;
+    using System.Collections.Generic;
 
     public interface IZipController
     {
@@ -11,5 +12,7 @@
         bool UpdateZip(Zip zip);
 
         Zip GetZipByZipCode(string zipCode);
+
+        IList<Zip> GetAllZips();
     }
 }

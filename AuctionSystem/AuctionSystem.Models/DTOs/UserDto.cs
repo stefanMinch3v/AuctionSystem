@@ -17,6 +17,8 @@
 
         public string Email { get; set; }
 
+        public int ZipId { get; set; }
+
         public string Address { get; set; }
 
         public string ZipCountryCity { get; set; }

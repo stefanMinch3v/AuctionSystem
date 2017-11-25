@@ -5,6 +5,7 @@ namespace AuctionSystem.Controllers
     using Contracts;
     using Data;
     using Models;
+    using System.Collections.Generic;
     using System.Data.Entity;
     using System.Linq;
 
@@ -68,6 +69,13 @@ namespace AuctionSystem.Controllers
             }
         }
 
+        public IList<Zip> GetAllZips()
+        {
+            using (var db = new AuctionContext())
+            {
+                return db.Zips.ToList();
+            }
+        }
 
         public bool UpdateZip(Zip newZip)
         {

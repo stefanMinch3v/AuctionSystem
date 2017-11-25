@@ -5,6 +5,7 @@
     using Data;
     using Models;
     using System.Linq;
+    using System.Collections.Generic;
 
     public class ZipControllerMock : IZipController
     {
@@ -35,6 +36,14 @@
                 db.SaveChanges();
             }
 
+        }
+
+        public IList<Zip> GetAllZips()
+        {
+            using (this.dbContext)
+            {
+                return this.dbContext.Zips.ToList();
+            }
         }
 
         public Zip GetZipByZipCode(string zipCode)
