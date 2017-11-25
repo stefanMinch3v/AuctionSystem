@@ -12,7 +12,7 @@
         void CreateUser(User user);
 
         [OperationContract]
-        bool UpdateUser(User user);
+        bool UpdateUser(UserDto user);
 
         [OperationContract]
         UserDto GetUserById(int id);

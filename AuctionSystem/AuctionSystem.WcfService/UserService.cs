@@ -14,9 +14,11 @@
             UserController.Instance().CreateUser(user);
         }
 
-        public bool UpdateUser(User user)
+        public bool UpdateUser(UserDto user)
         {
-            return UserController.Instance().UpdateUser(user);
+            var userToUpdate = MapUserDtoToDbUser(user);
+
+            return UserController.Instance().UpdateUser(userToUpdate);
         }
 
         public UserDto GetUserById(int id)
@@ -63,14 +65,19 @@
             return UserController.Instance().GetUserInvoices(user);
         }
 
+        public int GetAllUserSpentCoinsForGivenProduct(User user, string productName)
+        {
+            return UserController.Instance().GetAllUserSpentCoinsForGivenProduct(user, productName);
+        }
+
         private UserDto MapDbUserToUserDto(User dbUser)
         {
             return Mapper.Map<UserDto>(dbUser);
         }
 
-        public int GetAllUserSpentCoinsForGivenProduct(User user, string productName)
+        private User MapUserDtoToDbUser(UserDto userDto)
         {
-            return UserController.Instance().GetAllUserSpentCoinsForGivenProduct(user, productName);
+            return Mapper.Map<User>(userDto);
         }
     }
 }

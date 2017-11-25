@@ -315,7 +315,18 @@
                 dbUser.Gender = newUser.Gender;
                 dbUser.Name = newUser.Name;
                 dbUser.Password = newUser.Password;
-                dbUser.Payments = newUser.Payments;
+
+                if (newUser.Payments != null && newUser.Payments.Count > 0)
+                {
+                    foreach (var payment in newUser.Payments)
+                    {
+                        if (dbUser.Payments.All(p => p.PaymentTypeCode != payment.PaymentTypeCode))
+                        {
+                            dbUser.Payments.Add(payment);
+                        }
+                    }
+                }
+
                 dbUser.Phone = newUser.Phone;
                 dbUser.Username = newUser.Username;
                 dbUser.ZipId = newUser.ZipId;
