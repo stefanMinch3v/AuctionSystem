@@ -56,9 +56,11 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ZipService.cs" />
     <Compile Include="Contracts\IBidService.cs" />
     <Compile Include="Contracts\IInvoiceService.cs" />
     <Compile Include="Contracts\ILoginService.cs" />
+    <Compile Include="Contracts\IZipService.cs" />
     <Compile Include="LoginService.cs" />
     <Compile Include="InvoiceService.cs" />
     <Compile Include="Contracts\IPaymentService.cs" />
@@ -71,7 +73,9 @@
     <Compile Include="UserService.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

@@ -18,27 +18,6 @@
 
         public override bool IsValid(object value)
         {
-            string password = value.ToString();
-            if (password.Length < this.minLength || password.Length > this.maxLength)
-            {
-                return false;
-            }
-
-            if (!password.Any(c => char.IsLower(c)))
-            {
-                return false;
-            }
-
-            if (!password.Any(c => char.IsUpper(c)))
-            {
-                return false;
-            }
-
-            if (!password.Any(c => char.IsDigit(c)))
-            {
-                return false;
-            }
-
             return true;
         }
     }
