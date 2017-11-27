@@ -19,12 +19,13 @@
             {
                 cfg.CreateMap<User, UserDto>()
                                         .ForMember(dest => dest.Bids, opt => opt.MapFrom(src => string.Join(Environment.NewLine, src.Bids.Select(b => $"Product: {b.Product.Name}, Coins: {b.Coins}, Date: {b.DateOfCreated}, IsWon: {b.IsWon}"))))
-                                        .ForMember(dest => dest.Invoices, opt => opt.MapFrom(src => string.Join(Environment.NewLine, src.Invoices.Select(i => $"{i.Product.Name} - {i.User.Name}"))))
-                                        .ForMember(dest => dest.Payments, opt => opt.MapFrom(src => string.Join(Environment.NewLine ,src.Payments.Select(p => $"{p.Type} - {p.PaymentTypeCode}"))));
+                                        .ForMember(dest => dest.Invoices, opt => opt.MapFrom(src => string.Join(Environment.NewLine, src.Invoices.Select(i => $"Product: {i.Product.Name} - User: {i.User.Name}"))))
+                                        .ForMember(dest => dest.Payments, opt => opt.MapFrom(src => string.Join(Environment.NewLine, src.Payments.Select(p => $"Type: {p.Type} - Code: {p.PaymentTypeCode}"))));
                 cfg.CreateMap<Bid, BidDto>()
                                         .ForMember(dest => dest.Username, opt => opt.MapFrom(src => src.User.Username))
                                         .ForMember(dest => dest.ProductName, opt => opt.MapFrom(src => src.Product.Name));
-                cfg.CreateMap<Product, ProductDto>();
+                cfg.CreateMap<Product, ProductDto>()
+                                                .ForMember(dest => dest.Bids, opt => opt.MapFrom(src => string.Join(Environment.NewLine, src.Bids.Select(b => $"User: {b.User.Username}, Coins: {b.Coins}, IsWon: {b.IsWon}, Date of creation: {b.DateOfCreated}"))));
                 cfg.CreateMap<Invoice, InvoiceDto>()
                                         .ForMember(dest => dest.User, opt => opt.MapFrom(src => src.User.Name))
                                         .ForMember(dest => dest.Product, opt => opt.MapFrom(src => src.Product.Name))
