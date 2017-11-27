@@ -17,7 +17,10 @@
         {
             Mapper.Initialize(cfg =>
             {
-                cfg.CreateMap<User, UserDto>();
+                cfg.CreateMap<User, UserDto>()
+                                        .ForMember(dest => dest.Bids, opt => opt.MapFrom(src => string.Join(Environment.NewLine, src.Bids.Select(b => $"Product: {b.Product.Name}, Coins: {b.Coins}, Date: {b.DateOfCreated}, IsWon: {b.IsWon}"))))
+                                        .ForMember(dest => dest.Invoices, opt => opt.MapFrom(src => string.Join(Environment.NewLine, src.Invoices.Select(i => $"{i.Product.Name} - {i.User.Name}"))))
+                                        .ForMember(dest => dest.Payments, opt => opt.MapFrom(src => string.Join(Environment.NewLine ,src.Payments.Select(p => $"{p.Type} - {p.PaymentTypeCode}"))));
                 cfg.CreateMap<Bid, BidDto>()
                                         .ForMember(dest => dest.Username, opt => opt.MapFrom(src => src.User.Username))
                                         .ForMember(dest => dest.ProductName, opt => opt.MapFrom(src => src.Product.Name));

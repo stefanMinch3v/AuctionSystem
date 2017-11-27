@@ -34,10 +34,10 @@
 
         public int Coins { get; set; }
 
-        public ICollection<Bid> Bids { get; set; }
+        public string Bids { get; set; }
 
-        public ICollection<Invoice> Invoices { get; set; }
+        public string Invoices { get; set; }
 
-        public ICollection<Payment> Payments { get; set; }
+        public string Payments { get; set; }
     }
 }

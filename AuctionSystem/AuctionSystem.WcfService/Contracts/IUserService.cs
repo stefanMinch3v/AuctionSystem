@@ -30,13 +30,13 @@
         int GetAllUserSpentCoinsForGivenProduct(User user, string productName);
 
         [OperationContract]
-        IList<ProductDto> GetUserProducts(User user);
+        ICollection<ProductDto> GetUserProducts(User user);
 
         [OperationContract]
-        IList<BidDto> GetUserBids(User user);
+        ICollection<BidDto> GetUserBids(User user);
 
         [OperationContract]
-        IList<InvoiceDto> GetUserInvoices(User user);
+        ICollection<InvoiceDto> GetUserInvoices(User user);
 
         [OperationContract]
         UserDto GetUserByUsername(string username);

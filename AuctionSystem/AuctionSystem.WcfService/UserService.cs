@@ -6,6 +6,7 @@
     using Models;
     using Models.DTOs;
     using System.Collections.Generic;
+    using System.Linq;
 
     public class UserService : IUserService
     {
@@ -50,21 +51,21 @@
             return UserController.Instance().CountUserBidsForGivenProduct(user, productName);
         }
 
-        public IList<ProductDto> GetUserProducts(User user)
+        public ICollection<ProductDto> GetUserProducts(User user)
         {
             var products = UserController.Instance().GetUserProducts(user);
 
             return TransferCollectionData(products);
         }
 
-        public IList<BidDto> GetUserBids(User user)
+        public ICollection<BidDto> GetUserBids(User user)
         {
             var bids =  UserController.Instance().GetUserBids(user);
 
             return TransferCollectionData(bids);
         }
 
-        public IList<InvoiceDto> GetUserInvoices(User user)
+        public ICollection<InvoiceDto> GetUserInvoices(User user)
         {
             var invoices = UserController.Instance().GetUserInvoices(user);
 
@@ -91,7 +92,7 @@
             return Mapper.Map<PaymentDto>(dbPayment);
         }
 
-        private IList<PaymentDto> TransferCollectionData(IList<Payment> payments)
+        private ICollection<PaymentDto> TransferCollectionData(IList<Payment> payments)
         {
             var result = new List<PaymentDto>();
 
@@ -109,7 +110,7 @@
             return Mapper.Map<InvoiceDto>(dbInvoice);
         }
 
-        private IList<InvoiceDto> TransferCollectionData(IList<Invoice> invoices)
+        private ICollection<InvoiceDto> TransferCollectionData(IList<Invoice> invoices)
         {
             var result = new List<InvoiceDto>();
 
@@ -127,7 +128,7 @@
             return Mapper.Map<BidDto>(dbBid);
         }
 
-        private IList<BidDto> TransferCollectionData(IList<Bid> bids)
+        private ICollection<BidDto> TransferCollectionData(IList<Bid> bids)
         {
             var result = new List<BidDto>();
 
@@ -145,7 +146,7 @@
             return Mapper.Map<ProductDto>(dbProduct);
         }
 
-        private IList<ProductDto> TransferCollectionData(IList<Product> products)
+        private ICollection<ProductDto> TransferCollectionData(IList<Product> products)
         {
             var result = new List<ProductDto>();
 
