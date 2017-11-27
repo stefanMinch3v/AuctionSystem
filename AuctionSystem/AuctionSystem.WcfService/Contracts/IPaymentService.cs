@@ -9,7 +9,7 @@
     public interface IPaymentService
     {
         [OperationContract(IsOneWay = true)]
-        void AddPayment(Payment payment, User user);
+        void AddPayment(Payment payment, int userId);
 
         [OperationContract]
         PaymentDto GetPayment(int paymentId);

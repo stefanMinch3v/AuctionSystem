@@ -18,12 +18,12 @@
             this.dbContext = dbContext;
         }
 
-       public void AddPayment(Payment payment, User user)
+       public void AddPayment(Payment payment, int userId)
         {
             CoreValidator.ThrowIfNull(payment, nameof(payment));
-            CoreValidator.ThrowIfNull(user, nameof(user));
+            
             CoreValidator.ThrowIfNullOrEmpty(payment.PaymentTypeCode, nameof(payment.PaymentTypeCode));
-            CoreValidator.ThrowIfNegativeOrZero(user.Id, nameof(user.Id));
+            CoreValidator.ThrowIfNegativeOrZero(userId, nameof(userId));
 
             using (var db = dbContext)
             {
@@ -31,7 +31,7 @@
                 {
                     Type = payment.Type,
                     PaymentTypeCode = payment.PaymentTypeCode,
-                    UserId = user.Id
+                    UserId = userId
                 };
 
                 db.Payments.Add(paymentNew);

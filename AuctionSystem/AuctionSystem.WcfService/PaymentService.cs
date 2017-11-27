@@ -9,9 +9,9 @@
 
     public class PaymentService : IPaymentService
     {
-        public void AddPayment(Payment payment, User user)
+        public void AddPayment(Payment payment, int userId)
         {
-            PaymentController.Instance().AddPayment(payment, user);
+            PaymentController.Instance().AddPayment(payment, userId);
         }
 
         public PaymentDto GetPayment(int paymentId)

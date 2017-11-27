@@ -5,7 +5,7 @@
 
     public interface IPaymentController
     {
-        void AddPayment(Payment payment, User user);
+        void AddPayment(Payment payment, int userId);
 
         Payment GetPayment(int paymentId);
         

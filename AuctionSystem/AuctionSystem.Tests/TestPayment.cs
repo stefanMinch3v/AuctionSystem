@@ -42,35 +42,35 @@
         [TestMethod]
         public void CreateWorkingPaymentShouldPass()
         {
-            this.paymetController.AddPayment(new Payment { Type = PaymentType.PayPal, PaymentTypeCode = "2ert3", UserId = 2 }, new User { Id = 2 });
+            this.paymetController.AddPayment(new Payment { Type = PaymentType.PayPal, PaymentTypeCode = "2ert3", UserId = 2 }, 2);
         }
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentException))]
         public void CreatePaymentShouldThrowNullPaymentTypeCodeException()
         {
-            this.paymetController.AddPayment(new Payment { Type = PaymentType.AmazonPayment, PaymentTypeCode = null, UserId = 2 }, new User { Id = 2 });
+            this.paymetController.AddPayment(new Payment { Type = PaymentType.AmazonPayment, PaymentTypeCode = null, UserId = 2 }, 2);
         }
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentException))]
         public void CreatePaymentShouldThrowEmptyPaymentTypeCodeException()
         {
-            this.paymetController.AddPayment(new Payment { Type = PaymentType.AmazonPayment, PaymentTypeCode = "", UserId = 2 }, new User { Id = 2 });
+            this.paymetController.AddPayment(new Payment { Type = PaymentType.AmazonPayment, PaymentTypeCode = "", UserId = 2 }, 2);
         }
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentException))]
         public void CreatePaymentShouldThrowZeroUserIdException()
         {
-            this.paymetController.AddPayment(new Payment { Type = PaymentType.AmazonPayment, PaymentTypeCode = null, UserId = 0 }, new User { Id = 0 });
+            this.paymetController.AddPayment(new Payment { Type = PaymentType.AmazonPayment, PaymentTypeCode = null, UserId = 0 }, 2);
         }
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentException))]
         public void CreatePaymentShouldThrowNegativeUserIdException()
         {
-            this.paymetController.AddPayment(new Payment { Type = PaymentType.AmazonPayment, PaymentTypeCode = null, UserId = -1 }, new User { Id = -1 });
+            this.paymetController.AddPayment(new Payment { Type = PaymentType.AmazonPayment, PaymentTypeCode = null, UserId = -1 }, 2);
         }
         #endregion
 
