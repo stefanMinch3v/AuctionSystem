@@ -6,6 +6,7 @@
     using Models;
     using Models.DTOs;
     using System.Collections.Generic;
+    using System.Linq;
 
     public class UserService : IUserService
     {
@@ -50,19 +51,25 @@
             return UserController.Instance().CountUserBidsForGivenProduct(user, productName);
         }
 
-        public IList<Product> GetUserProducts(User user)
+        public ICollection<ProductDto> GetUserProducts(User user)
         {
-            return UserController.Instance().GetUserProducts(user);
+            var products = UserController.Instance().GetUserProducts(user);
+
+            return TransferCollectionData(products);
         }
 
-        public IList<Bid> GetUserBids(User user)
+        public ICollection<BidDto> GetUserBids(User user)
         {
-            return UserController.Instance().GetUserBids(user);
+            var bids =  UserController.Instance().GetUserBids(user);
+
+            return TransferCollectionData(bids);
         }
 
-        public IList<Invoice> GetUserInvoices(User user)
+        public ICollection<InvoiceDto> GetUserInvoices(User user)
         {
-            return UserController.Instance().GetUserInvoices(user);
+            var invoices = UserController.Instance().GetUserInvoices(user);
+
+            return TransferCollectionData(invoices);
         }
 
         public int GetAllUserSpentCoinsForGivenProduct(User user, string productName)
@@ -78,6 +85,78 @@
         private User MapUserDtoToDbUser(UserDto userDto)
         {
             return Mapper.Map<User>(userDto);
+        }
+
+        private PaymentDto MapDbPaymentToPaymentDto(Payment dbPayment)
+        {
+            return Mapper.Map<PaymentDto>(dbPayment);
+        }
+
+        private ICollection<PaymentDto> TransferCollectionData(IList<Payment> payments)
+        {
+            var result = new List<PaymentDto>();
+
+            foreach (var payment in payments)
+            {
+                var productDto = MapDbPaymentToPaymentDto(payment);
+                result.Add(productDto);
+            }
+
+            return result;
+        }
+
+        private InvoiceDto MapDbInvoiceToInvoiceDto(Invoice dbInvoice)
+        {
+            return Mapper.Map<InvoiceDto>(dbInvoice);
+        }
+
+        private ICollection<InvoiceDto> TransferCollectionData(IList<Invoice> invoices)
+        {
+            var result = new List<InvoiceDto>();
+
+            foreach (var invoice in invoices)
+            {
+                var invoiceDto = MapDbInvoiceToInvoiceDto(invoice);
+                result.Add(invoiceDto);
+            }
+
+            return result;
+        }
+
+        private BidDto MapDbBidToBidDto(Bid dbBid)
+        {
+            return Mapper.Map<BidDto>(dbBid);
+        }
+
+        private ICollection<BidDto> TransferCollectionData(IList<Bid> bids)
+        {
+            var result = new List<BidDto>();
+
+            foreach (var bid in bids)
+            {
+                var bidDto = MapDbBidToBidDto(bid);
+                result.Add(bidDto);
+            }
+
+            return result;
+        }
+
+        private ProductDto MapDbProductToProductDto(Product dbProduct)
+        {
+            return Mapper.Map<ProductDto>(dbProduct);
+        }
+
+        private ICollection<ProductDto> TransferCollectionData(IList<Product> products)
+        {
+            var result = new List<ProductDto>();
+
+            foreach (var product in products)
+            {
+                var productDto = MapDbProductToProductDto(product);
+                result.Add(productDto);
+            }
+
+            return result;
         }
     }
 }

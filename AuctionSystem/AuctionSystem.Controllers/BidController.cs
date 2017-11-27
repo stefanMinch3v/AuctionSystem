@@ -161,7 +161,6 @@
 
                             if (coins <= lastBidEntry.Coins)
                             {
-                                transaction.Rollback();
                                 throw new ArgumentException($"You cannot overbid with less than or equal to the last bidders coins: {lastBidEntry.Coins}");
                             }
 

@@ -5,7 +5,9 @@
     using Contracts;
     using Models;
     using Models.DTOs;
+    using System;
     using System.Collections.Generic;
+    using System.ServiceModel;
 
     public class BidService : IBidService
     {
@@ -13,43 +15,94 @@
 
         public void MakeBid(int userId, int productId, int coins)
         {
-            BidController.Instance().MakeBid(userId, productId, coins);
+            try
+            {
+                BidController.Instance().MakeBid(userId, productId, coins);
+            }
+            catch (Exception ex)
+            {
+                throw new FaultException(ex.Message);
+            }
         }
 
         public bool IsBidWon(Bid bid)
         {
-            return BidController.Instance().IsBidWon(bid);
+            try
+            {
+                return BidController.Instance().IsBidWon(bid);
+            }
+            catch (Exception ex)
+            {
+                throw new FaultException(ex.Message);
+            }
         }
 
         public BidDto GetBidById(int bidId)
         {
-            var bidDb = BidController.Instance().GetBidByIdWithAllObjects(bidId);
+            try
+            {
+                var bidDb = BidController.Instance().GetBidByIdWithAllObjects(bidId);
 
-            return MapDbBidToBidDto(bidDb);
+                return MapDbBidToBidDto(bidDb);
+            }
+            catch (Exception ex)
+            {
+                throw new FaultException(ex.Message);
+            }
+            
         }
 
         public IList<BidDto> GetAllBidsByUserId(int userId)
         {
-            var bids = BidController.Instance().GetAllBidsByUserId(userId);
+            try
+            {
+                var bids = BidController.Instance().GetAllBidsByUserId(userId);
 
-            return TransferCollectionData(bids);
+                return TransferCollectionData(bids);
+            }
+            catch (Exception ex)
+            {
+                throw new FaultException(ex.Message);
+            }
+           
         }
 
         public IList<Bid> GetAllBidsByProductId(int productId)
         {
-            return BidController.Instance().GetAllBidsByProductId(productId);
+            try
+            {
+                return BidController.Instance().GetAllBidsByProductId(productId);
+            }
+            catch (Exception ex)
+            {
+                throw new FaultException(ex.Message);
+            }
         }
 
         public IList<Bid> GetAllEarnedBids()
         {
-            return BidController.Instance().GetAllEarnedBids();
+            try
+            {
+                return BidController.Instance().GetAllEarnedBids();
+            }
+            catch (Exception ex)
+            {
+                throw new FaultException(ex.Message);
+            }
         }
 
         public IList<BidDto> GetAllBidsByProductName(string name)
         {
-            var bids = BidController.Instance().GetAllBidsByProductName(name);
+            try
+            {
+                var bids = BidController.Instance().GetAllBidsByProductName(name);
 
-            return TransferCollectionData(bids);
+                return TransferCollectionData(bids);
+            }
+            catch (Exception ex)
+            {
+                throw new FaultException(ex.Message);
+            }
         }
 
         private BidDto MapDbBidToBidDto(Bid dbBid)
