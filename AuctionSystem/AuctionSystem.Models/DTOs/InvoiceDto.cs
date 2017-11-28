@@ -6,7 +6,7 @@
     {
         public string User { get; set; }
 
-        public string Product { get; set; }
+        public ProductDto Product { get; set; }
 
         public decimal Price { get; set; }
 

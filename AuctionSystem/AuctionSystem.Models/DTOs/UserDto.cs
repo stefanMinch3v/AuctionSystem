@@ -2,6 +2,7 @@
 {
     using Enums;
     using System;
+    using System.Collections.Generic;
 
     public class UserDto
     {
@@ -33,10 +34,10 @@
 
         public int Coins { get; set; }
 
-        public string Bids { get; set; }
+        public ICollection<BidDto> Bids { get; set; }
 
-        public string Invoices { get; set; }
+        public ICollection<InvoiceDto> Invoices { get; set; }
 
-        public string Payments { get; set; }
+        public ICollection<PaymentDto> Payments { get; set; }
     }
 }
