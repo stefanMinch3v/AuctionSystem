@@ -127,6 +127,14 @@
             }
         }
 
+        public bool isCookieValid(string cookieId)
+        {
+            using(var db = new AuctionContext())
+            {
+                return db.Users.Any(u => u.RememberToken == cookieId);
+            }
+        }
+
         public bool DeleteUser(User user)
         {
             CoreValidator.ThrowIfNull(user, nameof(user));

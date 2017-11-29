@@ -40,5 +40,8 @@
 
         [OperationContract]
         UserDto GetUserByUsername(string username);
+
+        [OperationContract]
+        bool isCookieValid(string cookieId);
     }
 }

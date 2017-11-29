@@ -83,6 +83,11 @@
             return TransferCollectionData(products);
         }
 
+        public bool isCookieValid(string cookieId)
+        {
+            return UserController.Instance().isCookieValid(cookieId);
+        }
+
         public ICollection<BidDto> GetUserBids(User user)
         {
             var bids =  UserController.Instance().GetUserBids(user);
