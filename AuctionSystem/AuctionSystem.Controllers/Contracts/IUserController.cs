@@ -27,6 +27,8 @@
 
         IList<Invoice> GetUserInvoices(User user);
 
-        bool isCookieValid(string cookieId);
+        bool IsCookieValid(string cookieId);
+
+        string AddCookie(int userId);
     }
 }
