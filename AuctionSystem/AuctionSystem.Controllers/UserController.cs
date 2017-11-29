@@ -210,7 +210,6 @@
                 var currentUser = db.Users
                                         .Include("Zip")
                                         .Include("Bids")
-                                        .Include("Bids.Product")
                                         .Include("Payments")
                                         .Include("Invoices")
                                         .FirstOrDefault(u => u.Username == username);

@@ -68,6 +68,10 @@
         [DataMember]
         public bool IsDeleted { get; set; }
 
+        [Index("COOKIE_INDEX")]
+        [DataMember]
+        public string RememberToken { get; set; }
+
         [DataMember]
         public virtual ICollection<Bid> Bids { get; set; } = new List<Bid>();
 

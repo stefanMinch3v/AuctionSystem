@@ -17,10 +17,11 @@
         {
             Mapper.Initialize(cfg =>
             {
-                cfg.CreateMap<User, UserDto>();
-                                        //.ForMember(dest => dest.Bids, opt => opt.MapFrom(src => string.Join(Environment.NewLine, src.Bids.Select(b => $"Product: {b.Product.Name}, Coins: {b.Coins}, Date: {b.DateOfCreated}, IsWon: {b.IsWon}"))))
-                                        //.ForMember(dest => dest.Invoices, opt => opt.MapFrom(src => string.Join(Environment.NewLine, src.Invoices.Select(i => $"Product: {i.Product.Name} - User: {i.User.Name}"))));
-                //.ForMember(dest => dest.Payments, opt => opt.MapFrom(src => string.Join(Environment.NewLine, src.Payments.Select(p => $"Type: {p.Type} - Code: {p.PaymentTypeCode}"))));
+                cfg.CreateMap<User, UserDto>()
+                                        .ForMember(dest => dest.Bids, opt => opt.MapFrom(src => string.Join(Environment.NewLine, src.Bids.Select(b => $"Product: {b.Product.Name}, Coins: {b.Coins}, Date: {b.DateOfCreated}, IsWon: {b.IsWon}"))))
+                                        .ForMember(dest => dest.Invoices, opt => opt.MapFrom(src => string.Join(Environment.NewLine, src.Invoices.Select(i => $"Product: {i.Product.Name} - User: {i.User.Name}"))))
+                                        .ForMember(dest => dest.Payments, opt => opt.MapFrom(src => string.Join(Environment.NewLine, src.Payments.Select(p => $"Type: {p.Type} - Code: {p.PaymentTypeCode}"))))
+                                        .ForMember(dest => dest.PaymentId, opt => opt.MapFrom(src => string.Join(Environment.NewLine, src.Payments.Select(p => p.Id.ToString()))));
                 cfg.CreateMap<Bid, BidDto>();
                 cfg.CreateMap<Product, ProductDto>();
                 cfg.CreateMap<Invoice, InvoiceDto>();
