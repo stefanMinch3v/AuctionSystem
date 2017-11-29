@@ -92,6 +92,11 @@
             return TransferCollectionData(products);
         }
 
+        public bool IsCookieValid(string cookieId)
+        {
+            return UserController.Instance().IsCookieValid(cookieId);
+        }
+
         public ICollection<BidDto> GetUserBids(User user)
         {
             var bids =  UserController.Instance().GetUserBids(user);
@@ -191,6 +196,11 @@
             }
 
             return result;
+        }
+
+        public string AddCookie(int userId)
+        {
+            return UserController.Instance().AddCookie(userId);
         }
     }
 }

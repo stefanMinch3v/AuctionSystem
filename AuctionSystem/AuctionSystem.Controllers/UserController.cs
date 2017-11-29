@@ -7,7 +7,7 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
-
+    
     public class UserController : IUserController
     {
         private static UserController instance;
@@ -53,6 +53,7 @@
 
         public bool IsUserExistingById(int userId)
         {
+            CoreValidator.ThrowIfNegativeOrZero(userId, nameof(userId));
             using (var db = new AuctionContext())
             {
                 return db.Users.Any(u => u.Id == userId);
@@ -124,6 +125,15 @@
 
                 db.Users.Add(userNew);
                 db.SaveChanges();
+            }
+        }
+
+        public bool IsCookieValid(string cookieId)
+        {
+            CoreValidator.ThrowIfNullOrEmpty(cookieId, nameof(cookieId));
+            using(var db = new AuctionContext())
+            {
+                return db.Users.Any(u => u.RememberToken == cookieId);
             }
         }
 
@@ -337,6 +347,24 @@
                 db.SaveChanges();
 
                 return true;
+            }
+        }
+
+        public string AddCookie(int userId)
+        {
+            CoreValidator.ThrowIfNegativeOrZero(userId, nameof(userId));
+            using (var db = new AuctionContext())
+            {
+                var dbUser = GetUserById(userId);
+                db.Users.Attach(dbUser);
+
+                string guid = Guid.NewGuid().ToString();
+                dbUser.RememberToken = guid;
+
+                db.Entry(dbUser).State = System.Data.Entity.EntityState.Modified;
+                db.SaveChanges();
+
+                return guid;
             }
         }
     }
