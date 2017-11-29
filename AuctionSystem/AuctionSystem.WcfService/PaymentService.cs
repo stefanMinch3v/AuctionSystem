@@ -16,29 +16,46 @@
 
         public PaymentDto GetPayment(int paymentId)
         {
-            var payment = PaymentController.Instance().GetPayment(paymentId);
+            var dbPayment = PaymentController.Instance().GetPayment(paymentId);
 
-            return MapDbPaymentToPaymentDto(payment);
+            return MapDbPaymentToPaymentDto(dbPayment);
         }
 
         public PaymentDto MapDbPaymentToPaymentDto(Payment payment)
         {
             return Mapper.Map<PaymentDto>(payment);
         }
-
-        public bool DeletePayment(Payment payment)
+        private Payment MapPaymentDtoToDbPayment(PaymentDto paymentDto)
         {
-            return PaymentController.Instance().DeletePayment(payment);
+            return new Payment
+            {
+                Id = paymentDto.Id,
+                UserId = paymentDto.UserId,
+                Type = paymentDto.Type,
+                PaymentTypeCode = paymentDto.PaymentTypeCode
+            };
+
+           
+            // return Mapper.Map<Payment>(paymentDto);
+
         }
 
-        public bool UpdatePayment(Payment payment)
+        public bool DeletePayment(int paymentId)
         {
-            return PaymentController.Instance().UpdatePayment(payment);
+            return PaymentController.Instance().DeletePayment(paymentId);
         }
 
-        public IList<Payment> GetPaymentsByUser(User user)
+        public bool UpdatePayment(PaymentDto paymentDto)
         {
-            return PaymentController.Instance().GetPaymentsByUser(user);
+
+            var paymentToUpdate = MapPaymentDtoToDbPayment(paymentDto);
+
+            return PaymentController.Instance().UpdatePayment(paymentToUpdate);
         }
+
+        //public IList<Payment> GetPaymentsByUser(User user)
+        //{
+        //    return PaymentController.Instance().GetPaymentsByUser(user);
+        //}
     }
 }

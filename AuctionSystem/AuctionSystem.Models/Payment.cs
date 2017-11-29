@@ -20,7 +20,7 @@
         [DataMember]
         public int UserId { get; set; }
 
-        [DataMember]
+        //[DataMember]
         public virtual User User { get; set; }
     }
 }

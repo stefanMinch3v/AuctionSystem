@@ -9,7 +9,7 @@
 
         Payment GetPayment(int paymentId);
         
-        bool DeletePayment(Payment payment);
+        bool DeletePayment(int paymentId);
 
         bool UpdatePayment(Payment payment);
         

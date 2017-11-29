@@ -17,8 +17,8 @@
 
         public bool UpdateUser(UserDto user)
         {
-            var userToUpdate = MapUserDtoToDbUser(user);
-
+            //var userToUpdate = MapUserDtoToDbUser(user);
+            var userToUpdate = MapUserDtoIntoUserLukasVersion(user);
             return UserController.Instance().UpdateUser(userToUpdate);
         }
 
@@ -34,6 +34,31 @@
             var dbUser = UserController.Instance().GetUserByNameWithAllCollections(username);
 
             return MapDbUserToUserDto(dbUser);
+        }
+
+        private User MapUserDtoIntoUserLukasVersion(UserDto userDto)
+        {
+            return new User
+            {
+                Id = userDto.Id,
+                Username = userDto.Username,
+                Name = userDto.Name,
+                DateOfBirth = userDto.DateOfBirth,
+                Gender = userDto.Gender,
+                Phone = userDto.Phone,
+                Email = userDto.Email,
+                Address = userDto.Address,
+                ZipId = userDto.ZipId,
+                Coins = userDto.Coins,
+                IsAdmin = userDto.IsAdmin,
+                Password = userDto.Password,
+                IsDeleted = userDto.IsDeleted
+               
+            };
+
+
+            // return Mapper.Map<Payment>(paymentDto);
+
         }
 
         public bool DeleteUser(User user)

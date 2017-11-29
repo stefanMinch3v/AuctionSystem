@@ -34,7 +34,7 @@
 
         public int Coins { get; set; }
 
-        public string Bids { get; set; }
+       // public string Bids { get; set; }
 
         public string Invoices { get; set; }
 

@@ -79,7 +79,10 @@
 
                 db.Payments.Attach(dbPayment);
 
-                dbPayment = newPayment;
+                dbPayment.PaymentTypeCode = newPayment.PaymentTypeCode;
+                dbPayment.Type = newPayment.Type;
+                dbPayment.UserId = newPayment.UserId;
+
 
                 db.Entry(dbPayment).State = EntityState.Modified;
                 db.SaveChanges();
@@ -87,15 +90,15 @@
                 return true;
             }
         }
-        public bool DeletePayment(Payment payment)
+        public bool DeletePayment(int paymentId)
         {
-            CoreValidator.ThrowIfNegativeOrZero(payment.Id, nameof(payment.Id));
+            CoreValidator.ThrowIfNegativeOrZero(paymentId, nameof(paymentId));
 
             using (var db = new AuctionContext())
             {
-                var paymentNew = GetPayment(payment.Id);
+                var paymentNew = GetPayment(paymentId);
 
-                CoreValidator.ThrowIfNull(payment, nameof(payment));
+                CoreValidator.ThrowIfNull(paymentNew, nameof(paymentNew));
 
                 db.Payments.Attach(paymentNew);
                 db.Payments.Remove(paymentNew);
