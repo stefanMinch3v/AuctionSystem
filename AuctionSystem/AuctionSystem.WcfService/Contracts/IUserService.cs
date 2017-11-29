@@ -2,6 +2,7 @@
 {
     using Models;
     using Models.DTOs;
+    using System;
     using System.Collections.Generic;
     using System.ServiceModel;
 
@@ -12,6 +13,8 @@
         void CreateUser(User user);
 
         [OperationContract]
+        [FaultContract(typeof(ArgumentException))]
+        [FaultContract(typeof(ArgumentNullException))]
         bool UpdateUser(UserDto user);
 
         [OperationContract]

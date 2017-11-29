@@ -5,8 +5,10 @@
     using Controllers;
     using Models;
     using Models.DTOs;
+    using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.ServiceModel;
 
     public class UserService : IUserService
     {
@@ -17,9 +19,16 @@
 
         public bool UpdateUser(UserDto user)
         {
-            //var userToUpdate = MapUserDtoToDbUser(user);
-            var userToUpdate = MapUserDtoIntoUserLukasVersion(user);
-            return UserController.Instance().UpdateUser(userToUpdate);
+            try
+            {
+                //var userToUpdate = MapUserDtoToDbUser(user);
+                var userToUpdate = MapUserDtoIntoUserLukasVersion(user);
+                return UserController.Instance().UpdateUser(userToUpdate);
+            }
+            catch(Exception ex)
+            {
+                throw new FaultException(ex.Message);
+            }
         }
 
         public UserDto GetUserById(int id)
