@@ -26,5 +26,9 @@
         IList<Bid> GetUserBids(User user);
 
         IList<Invoice> GetUserInvoices(User user);
+
+        bool IsCookieValid(string cookieId);
+
+        string AddCookie(int userId);
     }
 }

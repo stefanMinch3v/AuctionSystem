@@ -15,12 +15,12 @@
         PaymentDto GetPayment(int paymentId);
 
         [OperationContract]
-        bool DeletePayment(Payment payment);
+        bool DeletePayment(int paymentId);
 
         [OperationContract]
-        bool UpdatePayment(Payment payment);
+        bool UpdatePayment(PaymentDto payment);
 
-        [OperationContract]
-        IList<Payment> GetPaymentsByUser(User user);
+        //[OperationContract]
+        //IList<Payment> GetPaymentsByUser(User user);
     }
 }
