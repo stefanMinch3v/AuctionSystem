@@ -22,7 +22,9 @@
                                         .ForMember(dest => dest.Invoices, opt => opt.MapFrom(src => string.Join(Environment.NewLine, src.Invoices.Select(i => $"Product: {i.Product.Name} - User: {i.User.Name}"))))
                                         .ForMember(dest => dest.Payments, opt => opt.MapFrom(src => string.Join(Environment.NewLine, src.Payments.Select(p => $"Type: {p.Type} - Code: {p.PaymentTypeCode}"))))
                                         .ForMember(dest => dest.PaymentId, opt => opt.MapFrom(src => string.Join(Environment.NewLine, src.Payments.Select(p => p.Id.ToString()))));
-                cfg.CreateMap<Bid, BidDto>();
+                cfg.CreateMap<Bid, BidDto>()
+                                        .ForMember(dest => dest.Username, opt => opt.MapFrom(src => src.User.Username))
+                                        .ForMember(dest => dest.ProductName, opt => opt.MapFrom(src => src.Product.Name));
                 cfg.CreateMap<Product, ProductDto>();
                 cfg.CreateMap<Invoice, InvoiceDto>();
                                         //.ForMember(dest => dest.User, opt => opt.MapFrom(src => src.User.Name))
@@ -50,7 +52,7 @@
             {
                 var hashedPW = HashingSHA256.ComputeHash(password);
                 return db.Users.Any(u => u.Username == username && u.Password == hashedPW);
-            };
+            }
         }
     }
 }

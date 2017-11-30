@@ -6,11 +6,11 @@
     {
         public int UserId { get; set; } 
         
-        public UserDto User { get; set; }
+        public string Username { get; set; }
 
         public int ProductId { get; set; }
         
-        public ProductDto Product { get; set; }
+        public string ProductName { get; set; }
 
         public int Coins { get; set; }
         
