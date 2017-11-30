@@ -74,13 +74,13 @@
                 return true;
             }
         }
-        public bool DeletePayment(Payment payment)
+        public bool DeletePayment(int paymentId)
         {
-            CoreValidator.ThrowIfNegativeOrZero(payment.Id, nameof(payment.Id));
+            CoreValidator.ThrowIfNegativeOrZero(paymentId, nameof(paymentId));
 
             using (var db = dbContext)
             {
-                var paymentNew = GetPayment(payment.Id);
+                var paymentNew = GetPayment(paymentId);
 
                 CoreValidator.ThrowIfNull(paymentNew, nameof(paymentNew));
 

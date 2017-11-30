@@ -136,7 +136,7 @@
         {
             var existingpayment = GetExistingPaymentFromDb();
 
-            var deletedPayment = this.paymetController.DeletePayment(existingpayment);
+            var deletedPayment = this.paymetController.DeletePayment(existingpayment.Id);
             Assert.IsTrue(deletedPayment);
         }
 
@@ -146,7 +146,7 @@
         {
             var unexistingPayment = GetPaymentNotFromDb();
 
-            var deletedPayment = this.paymetController.DeletePayment(unexistingPayment);
+            var deletedPayment = this.paymetController.DeletePayment(unexistingPayment.Id);
         }
 
 
@@ -155,7 +155,7 @@
         public void DeletePaymentShouldThrowZeroIdException()
         {
             var payment = new Payment { Id = 0 };
-            var deletedPayment = this.paymetController.DeletePayment(payment);
+            var deletedPayment = this.paymetController.DeletePayment(payment.Id);
 
         }
 
@@ -165,7 +165,7 @@
         {
             var payment = new Payment { Id = -15 };
 
-            var deletedPayment = this.paymetController.DeletePayment(payment);
+            var deletedPayment = this.paymetController.DeletePayment(payment.Id);
 
         }
         #endregion
