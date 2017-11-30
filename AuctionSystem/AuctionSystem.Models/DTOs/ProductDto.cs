@@ -21,6 +21,6 @@
 
         public decimal Price { get; set; }
 
-        public ICollection<Bid> Bids { get; set; }
+        public string Bids { get; set; }
     }
 }

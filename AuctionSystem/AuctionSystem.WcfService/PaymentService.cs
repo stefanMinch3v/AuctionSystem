@@ -25,18 +25,18 @@
         {
             return Mapper.Map<PaymentDto>(payment);
         }
+
         private Payment MapPaymentDtoToDbPayment(PaymentDto paymentDto)
         {
-            return new Payment
-            {
-                Id = paymentDto.Id,
-                UserId = paymentDto.UserId,
-                Type = paymentDto.Type,
-                PaymentTypeCode = paymentDto.PaymentTypeCode
-            };
+            //return new Payment
+            //{
+            //    Id = paymentDto.Id,
+            //    UserId = paymentDto.UserId,
+            //    Type = paymentDto.Type,
+            //    PaymentTypeCode = paymentDto.PaymentTypeCode
+            //};
 
-           
-            // return Mapper.Map<Payment>(paymentDto);
+            return Mapper.Map<Payment>(paymentDto);
 
         }
 

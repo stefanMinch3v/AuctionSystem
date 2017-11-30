@@ -25,7 +25,8 @@
                 cfg.CreateMap<Bid, BidDto>()
                                         .ForMember(dest => dest.Username, opt => opt.MapFrom(src => src.User.Username))
                                         .ForMember(dest => dest.ProductName, opt => opt.MapFrom(src => src.Product.Name));
-                cfg.CreateMap<Product, ProductDto>();
+                cfg.CreateMap<Product, ProductDto>()
+                                            .ForMember(dest => dest.Bids, opt => opt.MapFrom(src => string.Join(Environment.NewLine, src.Bids.Select(b => $"User: {b.User.Username}, Coins: {b.Coins}, Date: {b.DateOfCreated}"))));
                 cfg.CreateMap<Invoice, InvoiceDto>();
                                         //.ForMember(dest => dest.User, opt => opt.MapFrom(src => src.User.Name))
                                         //.ForMember(dest => dest.Product, opt => opt.MapFrom(src => src.Product.Name))

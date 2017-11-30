@@ -115,7 +115,10 @@
 
             using (var db = new AuctionContext())
             {
-                var product = db.Products.Include("Bids").FirstOrDefault(p => p.Name == name);
+                var product = db.Products
+                                    .Include("Bids")
+                                    .Include("Bids.User")
+                                    .FirstOrDefault(p => p.Name == name);
 
                 CoreValidator.ThrowIfNull(product, nameof(product));
 

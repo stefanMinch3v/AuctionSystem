@@ -38,11 +38,6 @@
             return MapDbProductToProductDto(dbProduct);
         }
 
-        private ProductDto MapDbProductToProductDto(Product product)
-        {
-            return Mapper.Map<ProductDto>(product);
-        }
-
         public bool IsProductExisting(string name)
         {
             return ProductController.Instance().IsProductExisting(name);
@@ -56,6 +51,11 @@
         public IList<User> GetProductUsers(Product product)
         {
             return ProductController.Instance().GetProductUsers(product);
+        }
+
+        private ProductDto MapDbProductToProductDto(Product product)
+        {
+            return Mapper.Map<ProductDto>(product);
         }
     }
 }
