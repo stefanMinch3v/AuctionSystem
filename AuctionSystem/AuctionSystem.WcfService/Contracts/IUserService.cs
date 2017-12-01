@@ -49,5 +49,8 @@
 
         [OperationContract]
         string AddCookie(int userId);
+
+        [OperationContract]
+        UserDto GetUserByCookie(string cookieId);
     }
 }

@@ -300,5 +300,42 @@
                 return true;
             }
         }
+
+        public bool IsCookieValid(string cookieId)
+        {
+            CoreValidator.ThrowIfNullOrEmpty(cookieId, nameof(cookieId));
+            using (var db = dbContext)
+            {
+                return db.Users.Any(u => u.RememberToken == cookieId);
+            }
+        }
+
+        public string AddCookie(int userId)
+        {
+            CoreValidator.ThrowIfNegativeOrZero(userId, nameof(userId));
+            using (var db = dbContext)
+            {
+                var dbUser = GetUserById(userId);
+                db.Users.Attach(dbUser);
+
+                string guid = Guid.NewGuid().ToString();
+                dbUser.RememberToken = guid;
+
+                db.Entry(dbUser).State = System.Data.Entity.EntityState.Modified;
+                db.SaveChanges();
+
+                return guid;
+            }
+        }
+
+        public User GetUserByCookie(string cookieId)
+        {
+            CoreValidator.ThrowIfNullOrEmpty(cookieId, nameof(cookieId));
+
+            using (var db = new AuctionContext())
+            {
+                return db.Users.SingleOrDefault(u => u.RememberToken == cookieId);
+            }
+        }
     }
 }

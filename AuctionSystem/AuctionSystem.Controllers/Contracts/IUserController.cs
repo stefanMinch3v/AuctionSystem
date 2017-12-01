@@ -30,5 +30,7 @@
         bool IsCookieValid(string cookieId);
 
         string AddCookie(int userId);
+
+        User GetUserByCookie(string cookieId);
     }
 }
