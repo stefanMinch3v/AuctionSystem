@@ -7,6 +7,7 @@
     using System.Collections.Generic;
     using Data;
     using System.Linq;
+    using AuctionSystem.Models.DTOs;
 
     public class ProductController : IProductController
     {
@@ -86,6 +87,16 @@
                 db.Entry(dbProduct).State = System.Data.Entity.EntityState.Modified;
                 db.SaveChanges();
                 return true;
+            }
+        }
+        public IList<Product> GetAllProducts()
+        {
+            using (var db = new AuctionContext())
+            {
+                
+                return db.Products.Include("Bids")
+                                  .Include("Bids.User")
+                                  .ToList();
             }
         }
 

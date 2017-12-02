@@ -1,5 +1,6 @@
 ﻿namespace AuctionSystem.Models
 {
+    using AuctionSystem.Models.DTOs;
     using System;
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
@@ -41,6 +42,7 @@
         public decimal Price { get; set; }
 
         [DataMember]
+
         public virtual ICollection<Bid> Bids { get; set; } = new List<Bid>();
     }
 }

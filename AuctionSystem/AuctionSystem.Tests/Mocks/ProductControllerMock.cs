@@ -17,6 +17,8 @@
             this.dbContext = db;
         }
 
+      
+
         // TODO
         public void CreateProduct(Product product)
         {
@@ -172,6 +174,11 @@
             {
                 return db.Products.Any(p => p.Id == productId);
             }
+        }
+
+        IList<Product> IProductController.GetAllProducts()
+        {
+            throw new NotImplementedException();
         }
     }
 }

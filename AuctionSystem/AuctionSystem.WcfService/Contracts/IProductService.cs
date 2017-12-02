@@ -31,5 +31,7 @@
 
         [OperationContract]
         IList<User> GetProductUsers(Product product);
+        [OperationContract]
+        IList<ProductDto> GetAllProducts();
     }
 }

@@ -6,6 +6,7 @@
     using Models;
     using Models.DTOs;
     using System.Collections.Generic;
+    using System.Linq;
 
     public class ProductService : IProductService
     {
@@ -57,5 +58,19 @@
         {
             return Mapper.Map<ProductDto>(product);
         }
+        public IList<ProductDto> GetAllProducts()
+        {
+            var products = ProductController.Instance().GetAllProducts();
+            var products2 = new List<ProductDto>();
+
+            foreach (var product in products)
+            {
+                var productToAdd =Mapper.Map<ProductDto>(product);
+                products2.Add(productToAdd);
+            }
+            return products2;
+        }
+
+        
     }
 }
