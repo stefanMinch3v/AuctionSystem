@@ -35,6 +35,7 @@
 
         [OperationContract]
         bool MakeProductUnavailable(int productId);
+        [OperationContract]
         IList<ProductDto> GetAllProducts();
 
     }

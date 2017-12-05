@@ -394,5 +394,15 @@
 
             Console.WriteLine($"Has winner: {setWinner}");
         }
+        public IList<Product> GetAllProducts()
+         {
+             using (var db = new AuctionContext())
+             {
+                 
+                 return db.Products.Include("Bids")
+                                   .Include("Bids.User")
+                                   .ToList();
+             }
+         }
     }
 }
