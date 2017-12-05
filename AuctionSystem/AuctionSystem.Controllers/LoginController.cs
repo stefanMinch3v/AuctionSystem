@@ -8,6 +8,7 @@
     using Models.DTOs;
     using System;
     using System.Linq;
+    using System.Threading.Tasks;
 
     public class LoginController : ILoginController
     {
@@ -15,6 +16,10 @@
 
         private LoginController()
         {
+            // todo run the product synchronize in a separate thread
+            //Task.Run( () => 
+                        //ProductController.Instance().SyncronizeEndDateWithCurrentDate());
+
             Mapper.Initialize(cfg =>
             {
                 cfg.CreateMap<User, UserDto>()

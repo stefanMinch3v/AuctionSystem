@@ -1,18 +1,31 @@
 ﻿namespace AuctionSystem.Controllers
 {
-    using Contracts;
     using Common;
+    using Contracts;
+    using Data;
     using Models;
     using System;
     using System.Collections.Generic;
-    using Data;
     using System.Linq;
+    using System.Threading.Tasks;
+    using System.Timers;
 
     public class ProductController : IProductController
     {
         private static ProductController instance;
+        private BidController bidController = BidController.Instance();
+        private int days;
+        private int hours;
+        private int minutes;
+        private int seconds;
+        private string parsedDays;
+        private string parsedHours;
+        private string parsedMinutes;
+        private string parsedSeconds;
+        private int currentProductId;
+        private Timer timer;
 
-        private ProductController()
+        public ProductController()
         {
         }
 
@@ -180,7 +193,7 @@
         {
             CoreValidator.ThrowIfNull(product, nameof(product));
             CoreValidator.ThrowIfNegativeOrZero(product.Id, nameof(product.Id));
-            
+
             using (var db = new AuctionContext())
             {
                 var collection = db.Products.SingleOrDefault(p => p.Id == product.Id).Bids.Select(u => u.UserId);
@@ -195,6 +208,191 @@
             {
                 return db.Products.Any(p => p.Id == productId);
             }
+        }
+
+        public bool IsProductAvailableForBidding(int productId)
+        {
+            using (var db = new AuctionContext())
+            {
+                return db.Products.FirstOrDefault(p => p.Id == productId).IsAvailable;
+            }
+        }
+
+        public bool MakeProductUnavailable(int productId)
+        {
+            using (var db = new AuctionContext())
+            {
+                var currentProduct = db.Products.FirstOrDefault(p => p.Id == productId);
+
+                if (currentProduct.IsAvailable)
+                {
+                    currentProduct.IsAvailable = false;
+
+                    db.SaveChanges();
+
+                    return true;
+                }
+
+                return false;
+            }
+        }
+
+        public ICollection<int> GetExpiredProductsIds()
+        {
+            using (var db = new AuctionContext())
+            {
+                var expiredProducts = db.Products
+                                            .Where(p => !p.IsAvailable)
+                                            .Select(p => p.Id)
+                                            .ToList();
+
+                return expiredProducts;
+            }
+        }
+
+        public void SyncronizeEndDateWithCurrentDate()
+        {
+            var products = GetAllAvailableProducts();
+
+            foreach (var product in products)
+            {
+                 SyncronizeProductData(product);
+            }
+        }
+
+        private ICollection<Product> GetAllAvailableProducts()
+        {
+            using (var db = new AuctionContext())
+            {
+                return db.Products
+                                .Where(p => p.IsAvailable)
+                                .ToList();
+            }
+        }
+
+        private void SyncronizeProductData(Product currentProduct)
+        {
+            var dateDiff = currentProduct.EndDate.Subtract(DateTime.UtcNow).ToString(@"dd\:hh\:mm\:ss").Substring(0, 11);
+
+            this.days = int.Parse(dateDiff.Substring(0, 2));
+            this.hours = int.Parse(dateDiff.Substring(3, 2));
+            this.minutes = int.Parse(dateDiff.Substring(6, 2));
+            this.seconds = int.Parse(dateDiff.Substring(9));
+
+            this.currentProductId = currentProduct.Id;
+
+            this.timer = new Timer(1000);
+
+            this.timer.Elapsed += TimerCallback;
+            this.timer.Start();
+        }
+
+        private async void TimerCallback(Object sender, ElapsedEventArgs e)
+        {
+            this.seconds--;
+
+            if (this.days == 0
+                && this.hours == 0
+                && this.minutes == 0
+                && this.seconds == 0)
+            {
+                var text = $"0{this.days}:0{this.hours}:0{this.minutes}:0{this.seconds}";
+
+                Console.WriteLine(text);
+
+                this.timer.Stop();
+
+                await SetWinners();
+
+                GC.Collect();
+
+                return;
+            }
+
+            if (this.seconds < 1)
+            {
+                this.minutes--;
+                this.seconds += 59;
+            }
+
+            if (this.days == 0
+                && this.hours != 0
+                && this.minutes != 0)
+            {
+                if (this.minutes < 1)
+                {
+                    this.hours--;
+                    this.minutes += 59;
+                }
+
+                if (this.hours < 1)
+                {
+                    this.days--;
+                    this.hours += 23;
+                }
+            }
+
+            if (this.days == 0
+                && this.hours == 0
+                && this.minutes != 0)
+            {
+                if (this.minutes < 1)
+                {
+                    this.hours--;
+                    this.minutes += 59;
+                }
+            }
+
+            if (this.seconds < 10)
+            {
+                this.parsedSeconds = $"0{this.seconds}";
+            }
+            else
+            {
+                this.parsedSeconds = this.seconds.ToString();
+            }
+
+            if (this.minutes < 10)
+            {
+                this.parsedMinutes = $"0{this.minutes}";
+            }
+            else
+            {
+                this.parsedMinutes = this.minutes.ToString();
+            }
+
+            if (this.hours < 10)
+            {
+                this.parsedHours = $"0{this.hours}";
+            }
+            else
+            {
+                this.parsedHours = this.hours.ToString();
+            }
+
+            if (this.days < 10)
+            {
+                this.parsedDays = $"0{this.days}";
+            }
+            else
+            {
+                this.parsedDays = this.days.ToString();
+            }
+
+            Console.WriteLine($"{this.parsedDays}:{this.parsedHours}:{this.parsedMinutes}:{this.parsedSeconds}");
+
+            GC.Collect();
+        }
+
+        private async Task SetWinners()
+        {
+            var success = MakeProductUnavailable(currentProductId);
+
+            Console.WriteLine($"Product has expired! : {success}");
+
+            var setWinner = bidController.SetWinnersForProducts();
+
+            Console.WriteLine($"Has winner: {setWinner}");
         }
     }
 }

@@ -2,6 +2,7 @@
 {
     using Models;
     using Models.DTOs;
+    using System;
     using System.Collections.Generic;
     using System.ServiceModel;
 
@@ -31,5 +32,8 @@
 
         [OperationContract]
         IList<User> GetProductUsers(Product product);
+
+        [OperationContract]
+        bool MakeProductUnavailable(int productId);
     }
 }
