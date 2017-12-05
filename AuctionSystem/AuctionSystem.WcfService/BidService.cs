@@ -105,6 +105,18 @@
             }
         }
 
+        public bool SetWinnersForProducts()
+        {
+            try
+            {
+                return BidController.Instance().SetWinnersForProducts();
+            }
+            catch (Exception ex)
+            {
+                throw new FaultException(ex.Message);
+            }
+        }
+
         private BidDto MapDbBidToBidDto(Bid dbBid)
         {
             return Mapper.Map<BidDto>(dbBid);

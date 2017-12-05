@@ -55,6 +55,11 @@
             return ProductController.Instance().GetProductUsers(product);
         }
 
+        public bool MakeProductUnavailable(int productId)
+        {
+            return ProductController.Instance().MakeProductUnavailable(productId);
+        }
+
         private ProductDto MapDbProductToProductDto(Product product)
         {
             return Mapper.Map<ProductDto>(product);

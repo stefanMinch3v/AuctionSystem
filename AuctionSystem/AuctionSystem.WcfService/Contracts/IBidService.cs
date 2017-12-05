@@ -43,5 +43,10 @@
         [FaultContract(typeof(ArgumentException))]
         [FaultContract(typeof(ArgumentNullException))]
         IList<Bid> GetAllEarnedBids();
+
+        [OperationContract]
+        [FaultContract(typeof(ArgumentException))]
+        [FaultContract(typeof(ArgumentNullException))]
+        bool SetWinnersForProducts();
     }
 }

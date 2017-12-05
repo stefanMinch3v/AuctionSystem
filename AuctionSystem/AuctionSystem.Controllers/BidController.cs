@@ -130,22 +130,15 @@
                         var userController = UserController.Instance();
                         var productController = ProductController.Instance();
 
-                        var isUserExisting = userController.IsUserExistingById(userId);
-                        var isProductExisting = productController.IsProductExistingById(productId);
-
-                        if (!isUserExisting || !isProductExisting)
-                        {
-                            throw new ArgumentException("The product or the user is not existing in the system.");
-                        }
+                        ValidateUserAndProduct(userId, productId, userController, productController);
+                        ValidateProductForBidding(productId, productController);
 
                         var currentUser = userController.GetUserById(userId);
 
                         db.Users.Attach(currentUser);
 
-                        if (coins > currentUser.Coins)
-                        {
-                            throw new ArgumentException($"Your coins are {currentUser.Coins}, you've tried to spent {coins}.");
-                        }
+                        ValidateCoins(productId, coins, productController, currentUser);
+
                         #endregion
 
                         #region LOGIC FOR OVERBIDDING 
@@ -212,18 +205,6 @@
             }
         }
 
-        private Bid GetNewBid(int userId, int productId, int coins)
-        {
-            return new Bid
-            {
-                UserId = userId,
-                ProductId = productId,
-                Coins = coins,
-                DateOfCreated = DateTime.Now,
-                IsWon = false
-            };
-        }
-
         public Bid GetBidByIdWithAllObjects(int bidId)
         {
             CoreValidator.ThrowIfNegativeOrZero(bidId, nameof(bidId));
@@ -265,6 +246,89 @@
                 CoreValidator.ThrowIfNull(resultBids, nameof(resultBids));
 
                 return resultBids;
+            }
+        }
+
+        public bool SetWinnersForProducts()
+        {
+            var expiredProducts = ProductController.Instance().GetExpiredProductsIds();
+
+            using (var db = new AuctionContext())
+            {
+                var bids = db.Bids
+                                .Where(b => expiredProducts.Contains(b.ProductId))
+                                .ToList();
+
+                if (bids.Count == 0)
+                {
+                    return false;
+                }
+
+                foreach (var productId in expiredProducts)
+                {
+                    var currentBids = bids
+                                        .Where(b => b.ProductId == productId)
+                                        .ToList();
+
+                    var lastBidder = currentBids
+                                            .OrderByDescending(r => r.DateOfCreated) // or coins doesn't matter
+                                            .Take(1)
+                                            .FirstOrDefault();
+
+                    lastBidder.IsWon = true;
+                }
+
+                db.SaveChanges();
+            }
+
+            return true;
+        }
+
+        private Bid GetNewBid(int userId, int productId, int coins)
+        {
+            return new Bid
+            {
+                UserId = userId,
+                ProductId = productId,
+                Coins = coins,
+                DateOfCreated = DateTime.Now,
+                IsWon = false
+            };
+        }
+
+        private static void ValidateCoins(int productId, int coins, ProductController productController, User currentUser)
+        {
+            if (coins > currentUser.Coins)
+            {
+                throw new ArgumentException($"Your coins are {currentUser.Coins}, you've tried to spent {coins}.");
+            }
+
+            var productPrice = productController.GetProductById(productId).Price;
+
+            if (productPrice > coins)
+            {
+                throw new ArgumentException($"Cannot bid less than the product price.({productPrice})");
+            }
+        }
+
+        private static void ValidateProductForBidding(int productId, ProductController productController)
+        {
+            var isProductAvailableForBidding = productController.IsProductAvailableForBidding(productId);
+
+            if (!isProductAvailableForBidding)
+            {
+                throw new ArgumentException("This product is no longer available for bidding.");
+            }
+        }
+
+        private static void ValidateUserAndProduct(int userId, int productId, UserController userController, ProductController productController)
+        {
+            var isUserExisting = userController.IsUserExistingById(userId);
+            var isProductExisting = productController.IsProductExistingById(productId);
+
+            if (!isUserExisting || !isProductExisting)
+            {
+                throw new ArgumentException("The product or the user is not existing in the system.");
             }
         }
     }
