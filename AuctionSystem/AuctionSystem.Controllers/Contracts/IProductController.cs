@@ -21,5 +21,7 @@
         int CountUserBidsForProduct(int id);
 
         IList<User> GetProductUsers(Product product);
+
+        IList<Product> GetAllProducts();
     }
 }

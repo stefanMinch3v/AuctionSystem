@@ -202,5 +202,12 @@
         {
             return UserController.Instance().AddCookie(userId);
         }
+
+        public UserDto GetUserByCookie(string cookieId)
+        {
+            var user = UserController.Instance().GetUserByCookie(cookieId);
+            LoginController.Instance();
+            return MapDbUserToUserDto(user);
+        }
     }
 }

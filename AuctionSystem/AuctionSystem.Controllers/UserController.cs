@@ -7,7 +7,7 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    
+
     public class UserController : IUserController
     {
         private static UserController instance;
@@ -131,7 +131,7 @@
         public bool IsCookieValid(string cookieId)
         {
             CoreValidator.ThrowIfNullOrEmpty(cookieId, nameof(cookieId));
-            using(var db = new AuctionContext())
+            using (var db = new AuctionContext())
             {
                 return db.Users.Any(u => u.RememberToken == cookieId);
             }
@@ -337,7 +337,7 @@
                     dbUser.Password = newUser.Password;
                 }
 
-               
+
 
                 dbUser.Phone = newUser.Phone;
                 dbUser.Username = newUser.Username;
@@ -365,6 +365,16 @@
                 db.SaveChanges();
 
                 return guid;
+            }
+        }
+
+        public User GetUserByCookie(string cookieId)
+        {
+            CoreValidator.ThrowIfNullOrEmpty(cookieId, nameof(cookieId));
+
+            using (var db = new AuctionContext())
+            {
+                return db.Users.Include("Bids").Include("Invoices").Include("Payments").Include("Zip").SingleOrDefault(u => u.RememberToken == cookieId);
             }
         }
     }
