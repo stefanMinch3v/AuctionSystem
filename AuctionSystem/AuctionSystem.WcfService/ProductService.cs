@@ -15,9 +15,10 @@
             ProductController.Instance().CreateProduct(product);
         }
 
-        public bool UpdateProduct(Product product)
+        public bool UpdateProduct(ProductDto productDto)
         {
-            return ProductController.Instance().UpdateProduct(product);
+            var productToUpdate = MapProductDtoToProduct(productDto);
+            return ProductController.Instance().UpdateProduct(productToUpdate);
         }
 
         public bool DeleteProduct(Product product)
@@ -58,7 +59,22 @@
         {
             return Mapper.Map<ProductDto>(product);
         }
-        public IList<ProductDto> GetAllProducts()
+        private Product MapProductDtoToProduct(ProductDto productDto)
+        {
+            return new Product
+            {
+                Id = productDto.Id,
+                Description = productDto.Description,
+                StartDate = productDto.StartDate,
+                EndDate = productDto.EndDate,
+                Price = productDto.Price,
+                IsAvailable = productDto.IsAvailable,
+                Name = productDto.Name
+                
+
+            };
+        }
+            public IList<ProductDto> GetAllProducts()
         {
             var products = ProductController.Instance().GetAllProducts();
             var products2 = new List<ProductDto>();

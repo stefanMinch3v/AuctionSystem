@@ -12,7 +12,7 @@
         void CreateProduct(Product product);
 
         [OperationContract]
-        bool UpdateProduct(Product product);
+        bool UpdateProduct(ProductDto productDto);
 
         [OperationContract]
         bool DeleteProduct(Product product);
@@ -33,5 +33,6 @@
         IList<User> GetProductUsers(Product product);
         [OperationContract]
         IList<ProductDto> GetAllProducts();
+
     }
 }
