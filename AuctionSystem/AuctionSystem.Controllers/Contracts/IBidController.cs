@@ -18,5 +18,7 @@
         IList<Bid> GetAllEarnedBids();
 
         IList<Bid> GetAllBidsByProductName(string name);
+
+        bool CheckCoinsValid(int productId, double coins);
     }
 }

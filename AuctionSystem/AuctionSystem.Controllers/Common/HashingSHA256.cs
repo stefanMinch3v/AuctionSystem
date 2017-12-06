@@ -33,10 +33,12 @@
             {
                 userPasswordFlag = false;
             }
-
-            if (!password.Any(c => char.IsLower(c)))
+            if (password.Length < 60)
             {
-                userPasswordFlag = false;
+                if (!password.Any(c => char.IsLower(c)))
+                {
+                    userPasswordFlag = false;
+                }
             }
 
             if (!password.Any(c => char.IsUpper(c)))

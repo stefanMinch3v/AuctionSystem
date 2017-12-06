@@ -134,5 +134,10 @@
 
             return result;
         }
+
+        public bool CheckCoinsValid(int productId, double coins)
+        {
+            return BidController.Instance().CheckCoinsValid(productId, coins);
+        }
     }
 }
