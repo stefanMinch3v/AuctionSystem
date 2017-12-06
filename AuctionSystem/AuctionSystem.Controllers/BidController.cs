@@ -291,7 +291,7 @@
                 UserId = userId,
                 ProductId = productId,
                 Coins = coins,
-                DateOfCreated = DateTime.Now,
+                DateOfCreated = DateTime.UtcNow,
                 IsWon = false
             };
         }

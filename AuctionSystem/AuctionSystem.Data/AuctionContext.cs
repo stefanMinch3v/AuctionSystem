@@ -43,6 +43,10 @@ namespace AuctionSystem.Data
 
             builder.Entity<Invoice>()
                             .HasRequired(i => i.Product);
+
+            builder.Entity<Product>()
+                            .Property(p => p.RowVersion)
+                            .IsConcurrencyToken();
         }
 
         public virtual DbSet<Bid> Bids { get; set; }

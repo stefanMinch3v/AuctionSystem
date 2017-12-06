@@ -1,6 +1,5 @@
 ﻿namespace AuctionSystem.Models
 {
-    using AuctionSystem.Models.DTOs;
     using System;
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
@@ -40,6 +39,9 @@
 
         [DataMember]
         public decimal Price { get; set; }
+
+        [Timestamp]
+        public byte[] RowVersion { get; set; }
 
         [DataMember]
 

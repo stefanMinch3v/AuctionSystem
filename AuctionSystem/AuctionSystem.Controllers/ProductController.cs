@@ -95,6 +95,7 @@
                 dbProduct.Price = product.Price;
                 dbProduct.StartDate = product.StartDate;
                 dbProduct.EndDate = product.EndDate;
+                dbProduct.RowVersion = product.RowVersion;
 
                 db.Entry(dbProduct).State = System.Data.Entity.EntityState.Modified;
                 db.SaveChanges();

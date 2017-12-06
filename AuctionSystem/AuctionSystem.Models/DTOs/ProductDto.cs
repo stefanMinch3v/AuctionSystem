@@ -1,7 +1,6 @@
 ﻿namespace AuctionSystem.Models.DTOs
 {
     using System;
-    using System.Collections.Generic;
 
     public class ProductDto
     {
@@ -22,5 +21,7 @@
         public decimal Price { get; set; }
 
         public string Bids { get; set; }
+
+        public byte[] RowVersion { get; set; }
     }
 }
