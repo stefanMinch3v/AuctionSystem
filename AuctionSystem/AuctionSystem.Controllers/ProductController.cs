@@ -12,6 +12,8 @@
 
     public class ProductController : IProductController
     {
+        // TODO finish the logic for winner
+
         private static ProductController instance;
         private BidController bidController = BidController.Instance();
         private int days;
@@ -394,6 +396,9 @@
             var setWinner = bidController.SetWinnersForProducts();
 
             Console.WriteLine($"Has winner: {setWinner}");
+
+            //var invoiceController = InvoiceController.Instance();
+            //invoiceController.CreateInvoice();
         }
         public IList<Product> GetAllProducts()
          {

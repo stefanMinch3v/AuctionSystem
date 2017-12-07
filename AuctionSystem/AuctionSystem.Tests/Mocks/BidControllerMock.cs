@@ -133,6 +133,11 @@
                         throw new ArgumentException($"You cannot overbid with less than or equal to the last bidders coins: {lastBidEntry.Coins}");
                     }
 
+                    if (lastBidEntry.UserId == currentUser.Id)
+                    {
+                        throw new ArgumentException("You cannot overbid yourself.");
+                    }
+
                     var newBid = GetNewBid(userId, productId, coins);
 
                     currentUser.Coins -= coins;
@@ -174,7 +179,7 @@
                 UserId = userId,
                 ProductId = productId,
                 Coins = coins,
-                DateOfCreated = DateTime.Now,
+                DateOfCreated = DateTime.UtcNow,
                 IsWon = false
             };
         }
