@@ -59,6 +59,24 @@
             }
         }
 
+        public bool CheckCoinsValid(int productId, double coins)
+        {
+            using (var db = dbContext)
+            {
+                var lastBidEntry = db.Bids
+                                                    .Where(b => b.ProductId == productId)
+                                                    .OrderByDescending(b => b.DateOfCreated)
+                                                    .Take(1)
+                                                    .FirstOrDefault();
+
+                if (coins <= lastBidEntry.Coins)
+                {
+                    return false;
+                }
+                return true;
+            }
+        }
+
         public Bid GetBidById(int bidId)
         {
             CoreValidator.ThrowIfNegativeOrZero(bidId, nameof(bidId));

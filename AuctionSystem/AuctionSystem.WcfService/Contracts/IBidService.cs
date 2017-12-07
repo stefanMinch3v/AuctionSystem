@@ -56,5 +56,8 @@
         [FaultContract(typeof(FaultException))]
         [FaultContract(typeof(ArgumentNullException))]
         bool SetWinnersForProducts();
+
+        [OperationContract]
+        bool CheckCoinsValid(int productId, double coins);
     }
 }
