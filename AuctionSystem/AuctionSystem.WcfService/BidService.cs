@@ -67,11 +67,13 @@
            
         }
 
-        public IList<Bid> GetAllBidsByProductId(int productId)
+        public IList<BidDto> GetAllBidsByProductId(int productId)
         {
             try
             {
-                return BidController.Instance().GetAllBidsByProductId(productId);
+                var bids = BidController.Instance().GetAllBidsByProductId(productId);
+
+                return TransferCollectionData(bids);
             }
             catch (Exception ex)
             {

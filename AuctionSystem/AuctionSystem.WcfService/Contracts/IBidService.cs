@@ -43,7 +43,7 @@
         [FaultContract(typeof(ArgumentException))]
         [FaultContract(typeof(FaultException))]
         [FaultContract(typeof(ArgumentNullException))]
-        IList<Bid> GetAllBidsByProductId(int productId);
+        IList<BidDto> GetAllBidsByProductId(int productId);
 
         [OperationContract]
         [FaultContract(typeof(ArgumentException))]
