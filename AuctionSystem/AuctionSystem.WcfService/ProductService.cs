@@ -5,8 +5,8 @@
     using Controllers;
     using Models;
     using Models.DTOs;
+    using System;
     using System.Collections.Generic;
-    using System.Linq;
 
     public class ProductService : IProductService
     {
@@ -17,8 +17,15 @@
 
         public bool UpdateProduct(ProductDto productDto)
         {
-            var productToUpdate = MapProductDtoToProduct(productDto);
-            return ProductController.Instance().UpdateProduct(productToUpdate);
+            try
+            {
+                var productToUpdate = MapProductDtoToProduct(productDto);
+                return ProductController.Instance().UpdateProduct(productToUpdate);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
         public bool DeleteProduct(Product product)
@@ -60,25 +67,6 @@
             return ProductController.Instance().MakeProductUnavailable(productId);
         }
 
-        private ProductDto MapDbProductToProductDto(Product product)
-        {
-            return Mapper.Map<ProductDto>(product);
-        }
-        private Product MapProductDtoToProduct(ProductDto productDto)
-        {
-            return new Product
-            {
-                Id = productDto.Id,
-                Description = productDto.Description,
-                StartDate = productDto.StartDate,
-                EndDate = productDto.EndDate,
-                Price = productDto.Price,
-                IsAvailable = productDto.IsAvailable,
-                Name = productDto.Name
-
-
-            };
-        }
         public IList<ProductDto> GetAllProducts()
         {
             var products = ProductController.Instance().GetAllProducts();
@@ -92,6 +80,33 @@
             return products2;
         }
 
-
+        private ProductDto MapDbProductToProductDto(Product product)
+        {
+            return new ProductDto
+            {
+                Id = product.Id,
+                Description = product.Description,
+                StartDate = product.StartDate,
+                EndDate = product.EndDate,
+                Price = product.Price,
+                IsAvailable = product.IsAvailable,
+                Name = product.Name,
+                RowVersion = product.RowVersion
+            };
+        }
+        private Product MapProductDtoToProduct(ProductDto productDto)
+        {
+            return new Product
+            {
+                Id = productDto.Id,
+                Description = productDto.Description,
+                StartDate = productDto.StartDate,
+                EndDate = productDto.EndDate,
+                Price = productDto.Price,
+                IsAvailable = productDto.IsAvailable,
+                Name = productDto.Name,
+                RowVersion = productDto.RowVersion
+            };
+        }
     }
 }

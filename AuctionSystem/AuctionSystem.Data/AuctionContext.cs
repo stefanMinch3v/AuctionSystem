@@ -46,7 +46,7 @@ namespace AuctionSystem.Data
 
             builder.Entity<Product>()
                             .Property(p => p.RowVersion)
-                            .IsConcurrencyToken();
+                            .IsConcurrencyToken(true);
         }
 
         public virtual DbSet<Bid> Bids { get; set; }

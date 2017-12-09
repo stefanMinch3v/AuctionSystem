@@ -6,6 +6,7 @@
     using Models;
     using System;
     using System.Collections.Generic;
+    using System.Data.Entity.Infrastructure;
     using System.Linq;
     using System.Threading.Tasks;
     using System.Timers;
@@ -57,7 +58,8 @@
                     Description = product.Description,
                     StartDate = product.StartDate,
                     IsAvailable = product.StartDate <= DateTime.Now && product.EndDate > DateTime.Now,
-                    EndDate = product.EndDate
+                    EndDate = product.EndDate,
+                    RowVersion = product.RowVersion
                 };
 
                 db.Products.Add(productNew);
@@ -87,22 +89,21 @@
                 throw new ArgumentException("End date cannot be lower than the start date");
             }
 
-            using (var db = new AuctionContext())
+            try
             {
-                var dbProduct = GetProductById(product.Id);
-                db.Products.Attach(dbProduct);
+                using (var db = new AuctionContext())
+                {
+                    db.Products.Attach(product);
 
-                dbProduct.Name = product.Name;
-                dbProduct.Description = product.Description;
-                dbProduct.Price = product.Price;
-                dbProduct.StartDate = product.StartDate;
-                dbProduct.EndDate = product.EndDate;
-                dbProduct.RowVersion = product.RowVersion;
-
-                db.Entry(dbProduct).State = System.Data.Entity.EntityState.Modified;
-                db.SaveChanges();
-                return true;
+                    db.Entry(product).State = System.Data.Entity.EntityState.Modified;
+                    db.SaveChanges();
+                    return true;
+                }
             }
+            catch (DbUpdateConcurrencyException)
+            {
+                throw new DbUpdateConcurrencyException("Someone has already modified this product, please refresh the page.");
+            } 
         }
 
         public bool DeleteProduct(Product product)
