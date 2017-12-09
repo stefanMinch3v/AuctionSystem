@@ -1,7 +1,7 @@
 ﻿namespace AuctionSystem.WcfService.Contracts
 {
     using Models;
-    using Models.Enums;
+    using Models.DTOs;
     using System.Collections.Generic;
     using System.ServiceModel;
 
@@ -9,18 +9,18 @@
     public interface IPaymentService
     {
         [OperationContract(IsOneWay = true)]
-        void AddPayment(Payment payment, User user);
+        void AddPayment(Payment payment, int userId);
 
         [OperationContract]
-        Payment GetPayment(int paymentId);
+        PaymentDto GetPayment(int paymentId);
 
         [OperationContract]
-        bool DeletePayment(Payment payment);
+        bool DeletePayment(int paymentId);
 
         [OperationContract]
-        bool UpdatePayment(Payment payment, string property, string value);
+        bool UpdatePayment(PaymentDto payment);
 
-        [OperationContract]
-        IList<Payment> GetPaymentsByUser(User user);
+        //[OperationContract]
+        //IList<Payment> GetPaymentsByUser(User user);
     }
 }

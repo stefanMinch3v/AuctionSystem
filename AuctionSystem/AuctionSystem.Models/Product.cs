@@ -41,6 +41,10 @@
         public decimal Price { get; set; }
 
         [DataMember]
+        [Timestamp]
+        public byte[] RowVersion { get; set; }
+
+        [DataMember]
         public virtual ICollection<Bid> Bids { get; set; } = new List<Bid>();
     }
 }

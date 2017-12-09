@@ -18,7 +18,9 @@
         private Mock<AuctionContext> db;
         private PaymentControllerMock paymetController;
         private Mock<DbSet<Payment>> mockSet;
+        private Mock<DbSet<User>> mockSet2;
         private List<Payment> data;
+        private List<User> data2;
 
         [TestInitialize]
         public void Initialize()
@@ -26,48 +28,49 @@
             this.db = new Mock<AuctionContext>();
             this.paymetController = new PaymentControllerMock(this.db.Object);
 
-            var workingPayment = CreateWorkingPayment();
-
-            this.data = new List<Payment>() { workingPayment };
+            this.data = new List<Payment>() { CreateWorkingPayment() };
+            this.data2 = new List<User> { GetSomeUserWithPayments() };
 
             this.mockSet = new Mock<DbSet<Payment>>().SetupData(this.data);
+            this.mockSet2 = new Mock<DbSet<User>>().SetupData(this.data2);
 
             this.db.Setup(m => m.Payments).Returns(mockSet.Object);
+            this.db.Setup(m => m.Users).Returns(mockSet2.Object);
         }
 
         #region CreateTests
         [TestMethod]
         public void CreateWorkingPaymentShouldPass()
         {
-            this.paymetController.AddPayment(new Payment { Type = PaymentType.PayPal, PaymentTypeCode = "2ert3", UserId = 2 }, new User { Id = 2 });
+            this.paymetController.AddPayment(new Payment { Type = PaymentType.PayPal, PaymentTypeCode = "2ert3", UserId = 2 }, 2);
         }
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentException))]
         public void CreatePaymentShouldThrowNullPaymentTypeCodeException()
         {
-            this.paymetController.AddPayment(new Payment { Type = PaymentType.AmazonPayment, PaymentTypeCode = null, UserId = 2 }, new User { Id = 2 });
+            this.paymetController.AddPayment(new Payment { Type = PaymentType.AmazonPayment, PaymentTypeCode = null, UserId = 2 }, 2);
         }
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentException))]
         public void CreatePaymentShouldThrowEmptyPaymentTypeCodeException()
         {
-            this.paymetController.AddPayment(new Payment { Type = PaymentType.AmazonPayment, PaymentTypeCode = "", UserId = 2 }, new User { Id = 2 });
+            this.paymetController.AddPayment(new Payment { Type = PaymentType.AmazonPayment, PaymentTypeCode = "", UserId = 2 }, 2);
         }
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentException))]
         public void CreatePaymentShouldThrowZeroUserIdException()
         {
-            this.paymetController.AddPayment(new Payment { Type = PaymentType.AmazonPayment, PaymentTypeCode = null, UserId = 0 }, new User { Id = 0 });
+            this.paymetController.AddPayment(new Payment { Type = PaymentType.AmazonPayment, PaymentTypeCode = null, UserId = 0 }, 2);
         }
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentException))]
         public void CreatePaymentShouldThrowNegativeUserIdException()
         {
-            this.paymetController.AddPayment(new Payment { Type = PaymentType.AmazonPayment, PaymentTypeCode = null, UserId = -1 }, new User { Id = -1 });
+            this.paymetController.AddPayment(new Payment { Type = PaymentType.AmazonPayment, PaymentTypeCode = null, UserId = -1 }, 2);
         }
         #endregion
 
@@ -110,7 +113,8 @@
         public void GetPaymentsByUserIdShouldPass()
         {
             var expected = data;
-            var user = GetSomeUser();
+            var user = GetSomeUserWithPayments();
+            
 
             var actual = this.paymetController.GetPaymentsByUser(user).ToList();
             CollectionAssert.AreEqual(expected, actual);
@@ -119,7 +123,7 @@
         [TestMethod]
         public void GetPaymentsByUserIdShoudReturnEmptyList()
         {
-            var user = GetSomeUser();
+            var user = GetSomeUserWithoutPayments();
 
             var actual = this.paymetController.GetPaymentsByUser(user).ToList();
             Assert.IsFalse(actual.Any());
@@ -132,17 +136,17 @@
         {
             var existingpayment = GetExistingPaymentFromDb();
 
-            var deletedPayment = this.paymetController.DeletePayment(existingpayment);
+            var deletedPayment = this.paymetController.DeletePayment(existingpayment.Id);
             Assert.IsTrue(deletedPayment);
         }
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentNullException))]
-        public void DeletePaymentShouldFail()
+        public void DeletePaymentShouldThrowException()
         {
             var unexistingPayment = GetPaymentNotFromDb();
 
-            var deletedPayment = this.paymetController.DeletePayment(unexistingPayment);          
+            var deletedPayment = this.paymetController.DeletePayment(unexistingPayment.Id);
         }
 
 
@@ -151,7 +155,7 @@
         public void DeletePaymentShouldThrowZeroIdException()
         {
             var payment = new Payment { Id = 0 };
-            var deletedPayment = this.paymetController.DeletePayment(payment);
+            var deletedPayment = this.paymetController.DeletePayment(payment.Id);
 
         }
 
@@ -161,7 +165,7 @@
         {
             var payment = new Payment { Id = -15 };
 
-            var deletedPayment = this.paymetController.DeletePayment(payment);
+            var deletedPayment = this.paymetController.DeletePayment(payment.Id);
 
         }
         #endregion
@@ -173,21 +177,13 @@
             // Act
 
             var currentPayment = GetExistingPaymentFromDb();
+            currentPayment.PaymentTypeCode = "New Type";
 
-            var successUpdating = this.paymetController.UpdatePayment(currentPayment, "PaymentTypeCode", "New Type");
+            var successUpdating = this.paymetController.UpdatePayment(currentPayment);
 
             // Assert
 
             Assert.IsTrue(successUpdating);
-        }
-
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentException))]
-        public void UpdatePaymentTypeCodeShouldThrowNoSuchPropertyException()
-        {
-            var currentPayment = GetExistingPaymentFromDb();
-            var successUpdating = this.paymetController.UpdatePayment(currentPayment, "nonexisting exception", "New Type");
-
         }
 
         [TestMethod]
@@ -197,7 +193,7 @@
             var currentPayment = GetExistingPaymentFromDb();
             currentPayment.Id = 0;
 
-            var successUpdating = this.paymetController.UpdatePayment(currentPayment, "nonexisting exception", "New Type");
+            var successUpdating = this.paymetController.UpdatePayment(currentPayment);
 
         }
 
@@ -208,7 +204,7 @@
             var currentPayment = GetExistingPaymentFromDb();
             currentPayment.Id = -5;
 
-            var successUpdating = this.paymetController.UpdatePayment(currentPayment, "nonexisting exception", "New Type");
+            var successUpdating = this.paymetController.UpdatePayment(currentPayment);
 
         }
 
@@ -217,8 +213,9 @@
         {
 
             var currentPayment = GetExistingPaymentFromDb();
+            currentPayment.PaymentTypeCode = "Random paymenttype";
 
-            var successUpdating = this.paymetController.UpdatePayment(currentPayment, "PaymentTypeCode", "Random paymenttype");
+            var successUpdating = this.paymetController.UpdatePayment(currentPayment);
 
             var changedPaymentName = this.db.Object.Payments.FirstOrDefault(p => p.Id == currentPayment.Id).PaymentTypeCode;
 
@@ -232,8 +229,9 @@
         public void UpdatePaymentTypeCodeShouldThrowExceptionIfTypeIsNull()
         {
             var currentPayment = GetExistingPaymentFromDb();
+            currentPayment.PaymentTypeCode = null;
 
-            var successUpdating = this.paymetController.UpdatePayment(currentPayment, "PaymentTypeCode", null);
+            var successUpdating = this.paymetController.UpdatePayment(currentPayment);
         }
 
         [TestMethod]
@@ -241,8 +239,9 @@
         public void UpdatePaymentTypeCodeShouldThrowExceptionIfTypeIsEmpty()
         {
             var currentPayment = GetExistingPaymentFromDb();
+            currentPayment.PaymentTypeCode = "";
 
-            var successUpdating = this.paymetController.UpdatePayment(currentPayment, "PaymentTypeCode", "");
+            var successUpdating = this.paymetController.UpdatePayment(currentPayment);
         }
 
         #endregion
@@ -264,18 +263,18 @@
         {
             return new Payment
             {
-                Id = 22,
+                Id = 212,
                 Type = PaymentType.CreditCard,
                 PaymentTypeCode = "sdf31",
-                User = null,
                 UserId = 1
             };
         }
 
-        private User GetSomeUser()
+        private User GetSomeUserWithPayments()
         {
             return new User
             {
+                Id = 1,
                 Name = "name",
                 Password = "pass",
                 Username = "name name",
@@ -286,8 +285,25 @@
                 Gender = Gender.Female,
                 ZipId = 1,
                 Coins = 10,
-                Payments = this.data,
-                Id = 1
+                Payments = this.data
+            };
+        }
+
+        private User GetSomeUserWithoutPayments()
+        {
+            return new User
+            {
+                Id = 2,
+                Name = "name",
+                Password = "pass",
+                Username = "name name",
+                Address = "address",
+                Email = "email",
+                Phone = "phone",
+                DateOfBirth = DateTime.Now.AddYears(-20),
+                Gender = Gender.Female,
+                ZipId = 1,
+                Coins = 10,
             };
         }
 

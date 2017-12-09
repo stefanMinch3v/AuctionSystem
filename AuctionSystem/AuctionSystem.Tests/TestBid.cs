@@ -72,7 +72,7 @@
         {
             // Act
             var expected = GetExistingBidFromDb();
-            var actual = bidController.GetAllBidsByProductId(GetProduct());
+            var actual = bidController.GetAllBidsByProductId(GetProduct().Id);
 
             // Assert
             Assert.IsTrue(CompareBidLists(expected.ToList(), actual.ToList()));
@@ -83,7 +83,7 @@
         public void GetAllBidsByProductIdwithNegativeIdShouldFail()
         {
             // Act
-            bidController.GetAllBidsByProductId(new Product{Id = -1});
+            bidController.GetAllBidsByProductId(-1);
         }
 
         [TestMethod]
@@ -91,7 +91,7 @@
         public void GetAllBidsByProductIdwithZeroIdShouldFail()
         {
             // Act
-            bidController.GetAllBidsByProductId(new Product{Id = 0});
+            bidController.GetAllBidsByProductId(0);
         }
 
         [TestMethod]
@@ -99,7 +99,7 @@
         public void GetAllBidsByProductIdShouldThrowExceptionForNullObject()
         {
             // Act
-            var bids = this.bidController.GetAllBidsByProductId(new Product{Id = Int32.MaxValue});
+            var bids = this.bidController.GetAllBidsByProductId(Int32.MaxValue);
 
             // Assert
             // Assert.AreEqual(0, bids.Count); // list cannot be null if its already initialized so check only his length
@@ -112,7 +112,7 @@
         {
             // Act
             var expected = new List<Bid> { GetBid() };
-            var actual = bidController.GetAllBidsByUserId(GetUser());
+            var actual = bidController.GetAllBidsByUserId(GetUser().Id);
 
             // Assert
             Assert.IsTrue(CompareBidLists(expected, actual.ToList()));
@@ -123,7 +123,7 @@
         public void GetAllBidsByUserIdwithZeroIdShouldFail()
         {
             // Act
-            bidController.GetAllBidsByUserId(new User{Id = 0});
+            bidController.GetAllBidsByUserId(0);
         }
 
         [TestMethod]
@@ -131,18 +131,15 @@
         public void GetAllBidsByUserIdwithNegativeIdShouldFail()
         {
             // Act
-            bidController.GetAllBidsByUserId(new User{Id = -1});
+            bidController.GetAllBidsByUserId(-1);
         }
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentException))]
-        public void GetAllBidsByUserIdShouldFail()
+        public void GetAllBidsByUserIdShouldThrowException()
         {
             // Act
-            var bids = this.bidController.GetAllBidsByUserId(new User{Id = Int32.MaxValue});
-
-            // Assert
-            Assert.AreEqual(0, bids.Count); // list cannot be null if its already initialized so check only his length
+            var bids = this.bidController.GetAllBidsByUserId(Int32.MaxValue);
         }
         #endregion
 
@@ -256,9 +253,9 @@
             // Act
             var coins = GetUser().Coins;
 
-            bidController.MakeBid(GetUser(), GetProduct(), coins);
+            bidController.MakeBid(GetUser().Id, GetProduct().Id, coins);
             var expectedId = 0;
-            var actualBid = bidController.GetAllBidsByUserId(GetUser()).Last();
+            var actualBid = bidController.GetAllBidsByUserId(GetUser().Id).Last();
             var actualId = actualBid.Id;
 
             // Assert
@@ -277,9 +274,9 @@
             var coins = 50;
             var coinsBefore = GetUser().Coins;
 
-            bidController.MakeBid(GetUser(), product, coins);
+            bidController.MakeBid(GetUser().Id, product.Id, coins);
 
-            var actualBid = bidController.GetAllBidsByUserId(GetUser()).Last();
+            var actualBid = bidController.GetAllBidsByUserId(GetUser().Id).Last();
             var coinsAfter = userController.GetUserById(actualBid.UserId).Coins;
 
             // Assert
@@ -287,17 +284,17 @@
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ArgumentNullException))]
+        [ExpectedException(typeof(ArgumentException))]
         public void MakeBidWithZeroUserIdShouldFail()
         {
             //Arrange further
             productController.CreateProduct(GetProduct());
-            var product = productController.GetProductByName(GetProduct().Name + "Test");
+            var product = productController.GetProductByName(GetProduct().Name);
 
             // Act
             var coins = 550;
 
-            bidController.MakeBid(new User{Id = 0}, product, coins);
+            bidController.MakeBid(0, product.Id, coins);
         }
 
         [TestMethod]
@@ -305,7 +302,7 @@
         {
             var product = GetProduct();
             var lastBid = bidController
-                        .GetAllBidsByProductId(product)
+                        .GetAllBidsByProductId(product.Id)
                         .OrderBy(p => p.Id)
                         .Last();
             var oldUser = userController.GetUserById(lastBid.UserId);
@@ -315,7 +312,7 @@
             var coins = 550;
             var userCoinsBefore = GetUser2().Coins; 
 
-            bidController.MakeBid(GetUser(), product, coins);
+            bidController.MakeBid(GetUser().Id, product.Id, coins);
             var userCoinsAfter = userController.GetUserById(oldUser.Id).Coins;
 
             //Assert
@@ -331,7 +328,7 @@
             // Act
             var coins = GetUser().Coins+1;
 
-            bidController.MakeBid(GetUser(), product, coins);
+            bidController.MakeBid(GetUser().Id, product.Id, coins);
         }
 
         [TestMethod]
@@ -343,7 +340,7 @@
             // Act
             var coins = 10; //current bid is 25
 
-            bidController.MakeBid(GetUser(), product, coins);
+            bidController.MakeBid(GetUser().Id, product.Id, coins);
         }
 
         [TestMethod]
@@ -355,7 +352,7 @@
             // Act
             var coins = 550; 
 
-            bidController.MakeBid(new User{Id = Int32.MaxValue}, product, coins);
+            bidController.MakeBid(Int32.MaxValue, product.Id, coins);
         }
 
         [TestMethod]
@@ -367,7 +364,7 @@
             // Act
             var coins = 550; 
 
-            bidController.MakeBid(new User{ Id = -1}, product, coins);
+            bidController.MakeBid(-1, product.Id, coins);
         }
 
         [TestMethod]
@@ -379,7 +376,7 @@
             // Act
             var coins = 550;
 
-            bidController.MakeBid(GetUser(), new Product{Id = 0},coins);
+            bidController.MakeBid(GetUser().Id, 0,coins);
         }
 
         [TestMethod]
@@ -388,7 +385,7 @@
         {
             var coins = 550; 
 
-            bidController.MakeBid(GetUser(), new Product{Id = -1}, coins);
+            bidController.MakeBid(GetUser().Id, -1, coins);
         }
 
         [TestMethod]
@@ -397,7 +394,7 @@
         {
             var coins = 550; 
 
-            bidController.MakeBid(GetUser(), new Product{Id = Int32.MaxValue}, coins);
+            bidController.MakeBid(GetUser().Id, Int32.MaxValue, coins);
         }
         #endregion
 
@@ -457,7 +454,7 @@
         };
         private Zip GetZip() => new Zip
         {
-            ZipId = 1,
+            Id = 1,
             City = "Aalborg",
             Country = "Denmark",
             ZipCode = "9000"

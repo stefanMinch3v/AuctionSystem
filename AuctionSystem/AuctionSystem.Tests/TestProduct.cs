@@ -30,11 +30,15 @@
             var availableProduct = GetFakeAvailableProduct(); // get some random product
             var unavailableProduct = GetFakeUnavailableProduct(); // get some random product
 
-            this.data = new List<Product>() { availableProduct, unavailableProduct }; // insert in collection
+            this.data = new List<Product>() {availableProduct, unavailableProduct}; // insert in collection
 
-            this.mockSet = new Mock<DbSet<Product>>().SetupData(this.data); // creates fake table mockSet of Products and insert the data
+            this.mockSet =
+                new Mock<DbSet<Product>>()
+                    .SetupData(this.data); // creates fake table mockSet of Products and insert the data
 
-            this.db.Setup(m => m.Products).Returns(mockSet.Object); // attach the table into the database and returns it as an object ready to be used 
+            this.db.Setup(m => m.Products)
+                .Returns(mockSet
+                    .Object); // attach the table into the database and returns it as an object ready to be used 
         }
 
         // Get product
@@ -261,7 +265,7 @@
             // Act
             var product = GetFakeAvailableProduct();
 
-            var isProductExists = this.productController.IsProductExisting(product);
+            var isProductExists = this.productController.IsProductExisting(product.Name);
 
             // Assert
 
@@ -274,7 +278,7 @@
             // Act
             var product = GetProductNotFromDb();
 
-            var isProductExists = this.productController.IsProductExisting(product);
+            var isProductExists = this.productController.IsProductExisting(product.Name);
 
             // Assert
 
@@ -288,7 +292,7 @@
             var product = GetProductNotFromDb();
             product.Name = null;
 
-            var isProductExists = this.productController.IsProductExisting(product);
+            var isProductExists = this.productController.IsProductExisting(product.Name);
         }
 
         [TestMethod]
@@ -298,7 +302,7 @@
             var product = GetProductNotFromDb();
             product.Name = "";
 
-            var isProductExists = this.productController.IsProductExisting(product);
+            var isProductExists = this.productController.IsProductExisting(product.Name);
         }
 
         // Update product
@@ -310,7 +314,7 @@
             var product = GetFakeAvailableProduct();
             product.Id = -1;
 
-            var successUpdate = this.productController.UpdateProduct(product, "Description", "test description");
+            var successUpdate = this.productController.UpdateProduct(product);
         }
 
         [TestMethod]
@@ -320,16 +324,7 @@
             var product = GetFakeAvailableProduct();
             product.Id = 0;
 
-            var successUpdate = this.productController.UpdateProduct(product, "Description", "test description");
-        }
-
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentException))]
-        public void UpdateProductWithUnexistingPropertyShouldThrowException()
-        {
-            var product = GetFakeAvailableProduct();
-
-            var successUpdate = this.productController.UpdateProduct(product, "unexisting", "test description");
+            var successUpdate = this.productController.UpdateProduct(product);
         }
 
         [TestMethod]
@@ -338,8 +333,9 @@
             // Act
 
             var currentProduct = GetExistingProductFromDb();
+            currentProduct.Name = "Random name";
 
-            var successUpdating = this.productController.UpdateProduct(currentProduct, "Name", "Random name");
+            var successUpdating = this.productController.UpdateProduct(currentProduct);
 
             // Assert
 
@@ -352,8 +348,9 @@
             // Act
 
             var currentProduct = GetExistingProductFromDb();
+            currentProduct.Name = "Random name";
 
-            var successUpdating = this.productController.UpdateProduct(currentProduct, "Name", "Random name");
+            var successUpdating = this.productController.UpdateProduct(currentProduct);
 
             var changedProductName = this.db.Object.Products.FirstOrDefault(p => p.Id == currentProduct.Id).Name;
 
@@ -367,8 +364,9 @@
         public void UpdateProductNameShouldThrowExceptionIfNameIsNull()
         {
             var currentProduct = GetExistingProductFromDb();
+            currentProduct.Name = null;
 
-            var successUpdating = this.productController.UpdateProduct(currentProduct, "Name", null);
+            var successUpdating = this.productController.UpdateProduct(currentProduct);
         }
 
         [TestMethod]
@@ -376,8 +374,8 @@
         public void UpdateProductNameShouldThrowExceptionIfNameEmpty()
         {
             var currentProduct = GetExistingProductFromDb();
-
-            var successUpdating = this.productController.UpdateProduct(currentProduct, "Name", "");
+            currentProduct.Name = "";
+            var successUpdating = this.productController.UpdateProduct(currentProduct);
         }
 
         //
@@ -387,8 +385,9 @@
             // Act
 
             var currentProduct = GetExistingProductFromDb();
+            currentProduct.Price = 5000;
 
-            var successUpdating = this.productController.UpdateProduct(currentProduct, "Price", "5000");
+            var successUpdating = this.productController.UpdateProduct(currentProduct);
 
             // Assert
 
@@ -401,8 +400,8 @@
             // Act
 
             var currentProduct = GetExistingProductFromDb();
-
-            var successUpdating = this.productController.UpdateProduct(currentProduct, "Price", "10");
+            currentProduct.Price = 10;
+            var successUpdating = this.productController.UpdateProduct(currentProduct);
 
             var changedProductName = this.db.Object.Products.FirstOrDefault(p => p.Id == currentProduct.Id).Price;
 
@@ -416,8 +415,8 @@
         public void UpdateProductPriceShouldThrowExceptionIfPriceIsZero()
         {
             var currentProduct = GetExistingProductFromDb();
-
-            var successUpdating = this.productController.UpdateProduct(currentProduct, "Price", "0");
+            currentProduct.Price = 0;
+            var successUpdating = this.productController.UpdateProduct(currentProduct);
         }
 
         [TestMethod]
@@ -425,26 +424,8 @@
         public void UpdateProductPriceShouldThrowExceptionIfPriceIsNegative()
         {
             var currentProduct = GetExistingProductFromDb();
-
-            var successUpdating = this.productController.UpdateProduct(currentProduct, "Price", "-1");
-        }
-
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentException))]
-        public void UpdateProductPriceShouldThrowExceptionIfPriceIsNonDigit()
-        {
-            var currentProduct = GetExistingProductFromDb();
-
-            var successUpdating = this.productController.UpdateProduct(currentProduct, "Price", "price");
-        }
-
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentException))]
-        public void UpdateProductPriceShouldThrowExceptionIfPriceIsNull()
-        {
-            var currentProduct = GetExistingProductFromDb();
-
-            var successUpdating = this.productController.UpdateProduct(currentProduct, "Price", null);
+            currentProduct.Price = -1;
+            var successUpdating = this.productController.UpdateProduct(currentProduct);
         }
 
         [TestMethod]
@@ -453,8 +434,8 @@
             // Act
 
             var currentProduct = GetExistingProductFromDb();
-
-            var successUpdating = this.productController.UpdateProduct(currentProduct, "Description", "new description");
+            currentProduct.Description = "new description";
+            var successUpdating = this.productController.UpdateProduct(currentProduct);
 
             // Assert
 
@@ -467,8 +448,8 @@
             // Act
 
             var currentProduct = GetExistingProductFromDb();
-
-            var successUpdating = this.productController.UpdateProduct(currentProduct, "Description", "new description");
+            currentProduct.Description = "new description";
+            var successUpdating = this.productController.UpdateProduct(currentProduct);
 
             var changedDescription = this.db.Object.Products.FirstOrDefault(p => p.Id == currentProduct.Id).Description;
 
@@ -482,8 +463,9 @@
         public void UpdateProductPriceShouldThrowExceptionIfDescriptionIsNull()
         {
             var currentProduct = GetExistingProductFromDb();
+            currentProduct.Description = null;
 
-            var successUpdating = this.productController.UpdateProduct(currentProduct, "Description", null);
+            var successUpdating = this.productController.UpdateProduct(currentProduct);
         }
 
         [TestMethod]
@@ -491,8 +473,8 @@
         public void UpdateProductPriceShouldThrowExceptionIfDescriptionIsEmpty()
         {
             var currentProduct = GetExistingProductFromDb();
-
-            var successUpdating = this.productController.UpdateProduct(currentProduct, "Description", "");
+            currentProduct.Description = "";
+            var successUpdating = this.productController.UpdateProduct(currentProduct);
         }
 
         [TestMethod]
@@ -501,8 +483,8 @@
             // Act
 
             var currentProduct = GetExistingProductFromDb();
-
-            var successUpdating = this.productController.UpdateProduct(currentProduct, "StartDate", DateTime.Now.AddDays(1).ToString());
+            currentProduct.StartDate = DateTime.Now.AddDays(1);
+            var successUpdating = this.productController.UpdateProduct(currentProduct);
 
             // Assert
 
@@ -516,12 +498,12 @@
             // Act
 
             var currentProduct = GetExistingProductFromDb();
-            string startDate = DateTime.Now.AddDays(1).ToString();
-            var successUpdating = this.productController.UpdateProduct(currentProduct, "StartDate", startDate);
+            currentProduct.StartDate = DateTime.Now.AddDays(1);
+            var successUpdating = this.productController.UpdateProduct(currentProduct);
 
             // Assert
 
-            Assert.AreEqual(DateTime.Parse(startDate), GetExistingProductFromDb().StartDate);
+            Assert.AreEqual(currentProduct.StartDate, GetExistingProductFromDb().StartDate);
         }
 
         [TestMethod]
@@ -529,44 +511,16 @@
         public void UpdateProductShouldThrowExceptionIfStartDateIsLessThanTodaysDate()
         {
             var currentProduct = GetExistingProductFromDb();
-
-            var successUpdating = this.productController.UpdateProduct(currentProduct, "StartDate", "08-08-2016");
-        }
-
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentException))]
-        public void UpdateProductShouldThrowExceptionIfStartDateIsEmpty()
-        {
-            var currentProduct = GetExistingProductFromDb();
-
-            var successUpdating = this.productController.UpdateProduct(currentProduct, "StartDate", "");
-        }
-
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentException))]
-        public void UpdateProductShouldThrowExceptionIfStartDateIsNull()
-        {
-            var currentProduct = GetExistingProductFromDb();
-
-            var successUpdating = this.productController.UpdateProduct(currentProduct, "StartDate", null);
-        }
-
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentException))]
-        public void UpdateProductShouldThrowExceptionIfStartDateIsLetters()
-        {
-            var currentProduct = GetExistingProductFromDb();
-
-            var successUpdating = this.productController.UpdateProduct(currentProduct, "StartDate", "give me the date");
-        }
-
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentException))]
-        public void UpdateProductShouldThrowExceptionIfStartDateIsRandomNumbers()
-        {
-            var currentProduct = GetExistingProductFromDb();
-
-            var successUpdating = this.productController.UpdateProduct(currentProduct, "StartDate", "11248576456453453");
+            var product = new Product
+            {
+                Name = currentProduct.Name,
+                StartDate = DateTime.Parse("08-08-2016"),
+                Description = currentProduct.Description,
+                EndDate = currentProduct.EndDate,
+                Id = currentProduct.Id,
+                Price = currentProduct.Price
+            };
+            var successUpdating = this.productController.UpdateProduct(product);
         }
 
         [TestMethod]
@@ -575,8 +529,8 @@
             // Act
 
             var currentProduct = GetExistingProductFromDb();
-
-            var successUpdating = this.productController.UpdateProduct(currentProduct, "EndDate", DateTime.Now.AddDays(5).ToString());
+            currentProduct.EndDate = DateTime.Now.AddDays(5);
+            var successUpdating = this.productController.UpdateProduct(currentProduct);
 
             // Assert
 
@@ -590,13 +544,12 @@
             // Act
 
             var currentProduct = GetExistingProductFromDb();
-            string endDate = DateTime.Now.AddDays(10).ToString();
-
-            var successUpdating = this.productController.UpdateProduct(currentProduct, "EndDate", endDate);
+            currentProduct.EndDate = DateTime.Now.AddDays(10);
+            var successUpdating = this.productController.UpdateProduct(currentProduct);
 
             // Assert
 
-            Assert.AreEqual(DateTime.Parse(endDate), GetExistingProductFromDb().EndDate);
+            Assert.AreEqual(currentProduct.EndDate, GetExistingProductFromDb().EndDate);
         }
 
         [TestMethod]
@@ -604,51 +557,15 @@
         public void UpdateProductShouldThrowExceptionIfEndDateIsLessThanTodaysDate()
         {
             var currentProduct = GetExistingProductFromDb();
-
-            var successUpdating = this.productController.UpdateProduct(currentProduct, "EndDate", "08-08-2016");
+            currentProduct.EndDate = DateTime.Parse("08-08-2016");
+            var successUpdating = this.productController.UpdateProduct(currentProduct);
         }
-
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentException))]
-        public void UpdateProductShouldThrowExceptionIfEndDateIsEmpty()
-        {
-            var currentProduct = GetExistingProductFromDb();
-
-            var successUpdating = this.productController.UpdateProduct(currentProduct, "EndDate", "");
-        }
-
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentException))]
-        public void UpdateProductShouldThrowExceptionIfEndDateIsNull()
-        {
-            var currentProduct = GetExistingProductFromDb();
-
-            var successUpdating = this.productController.UpdateProduct(currentProduct, "EndDate", null);
-        }
-
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentException))]
-        public void UpdateProductShouldThrowExceptionIfEndDateIsLetters()
-        {
-            var currentProduct = GetExistingProductFromDb();
-
-            var successUpdating = this.productController.UpdateProduct(currentProduct, "EndDate", "give me the date");
-        }
-
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentException))]
-        public void UpdateProductShouldThrowExceptionIfEndDateIsRandomNumbers()
-        {
-            var currentProduct = GetExistingProductFromDb();
-
-            var successUpdating = this.productController.UpdateProduct(currentProduct, "EndDate", "11248576456453453");
-        }
-
 
         // TODO
         // Test List<User>GetProductUsers when user controller is ready!
 
         #region Test purpose methods
+
         private Product GetExistingProductFromDb()
         {
             return this.db.Object.Products.First(p => p.Name == "Available FakeProduct");

@@ -1,9 +1,10 @@
 ﻿namespace AuctionSystem.WcfService
 {
-    using Controllers;
-    using Controllers.Contracts;
+    using AutoMapper;
     using Contracts;
+    using Controllers;
     using Models;
+    using Models.DTOs;
     using System;
     using System.Collections.Generic;
 
@@ -14,9 +15,17 @@
             ProductController.Instance().CreateProduct(product);
         }
 
-        public bool UpdateProduct(Product product, string property, string value)
+        public bool UpdateProduct(ProductDto productDto)
         {
-            return ProductController.Instance().UpdateProduct(product, property, value);
+            try
+            {
+                var productToUpdate = MapProductDtoToProduct(productDto);
+                return ProductController.Instance().UpdateProduct(productToUpdate);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
         public bool DeleteProduct(Product product)
@@ -24,19 +33,23 @@
             return ProductController.Instance().DeleteProduct(product);
         }
 
-        public Product GetProductByName(string name)
+        public ProductDto GetProductByName(string name)
         {
-            return ProductController.Instance().GetProductByName(name);
+            var dbProduct = ProductController.Instance().GetProductByName(name);
+
+            return MapDbProductToProductDto(dbProduct);
         }
 
-        public Product GetProductById(int id)
+        public ProductDto GetProductById(int id)
         {
-            return ProductController.Instance().GetProductById(id);
+            var dbProduct = ProductController.Instance().GetProductByIdWithBidsAndUser(id);
+
+            return MapDbProductToProductDto(dbProduct);
         }
 
-        public bool IsProductExisting(Product product)
+        public bool IsProductExisting(string name)
         {
-            return ProductController.Instance().IsProductExisting(product);
+            return ProductController.Instance().IsProductExisting(name);
         }
 
         public int CountUserBidsForProduct(int id)
@@ -47,6 +60,53 @@
         public IList<User> GetProductUsers(Product product)
         {
             return ProductController.Instance().GetProductUsers(product);
+        }
+
+        public bool MakeProductUnavailable(int productId)
+        {
+            return ProductController.Instance().MakeProductUnavailable(productId);
+        }
+
+        public IList<ProductDto> GetAllProducts()
+        {
+            var products = ProductController.Instance().GetAllProducts();
+            var products2 = new List<ProductDto>();
+
+            foreach (var product in products)
+            {
+                var productToAdd = Mapper.Map<ProductDto>(product);
+                products2.Add(productToAdd);
+            }
+            return products2;
+        }
+
+        private ProductDto MapDbProductToProductDto(Product product)
+        {
+            return new ProductDto
+            {
+                Id = product.Id,
+                Description = product.Description,
+                StartDate = product.StartDate,
+                EndDate = product.EndDate,
+                Price = product.Price,
+                IsAvailable = product.IsAvailable,
+                Name = product.Name,
+                RowVersion = product.RowVersion
+            };
+        }
+        private Product MapProductDtoToProduct(ProductDto productDto)
+        {
+            return new Product
+            {
+                Id = productDto.Id,
+                Description = productDto.Description,
+                StartDate = productDto.StartDate,
+                EndDate = productDto.EndDate,
+                Price = productDto.Price,
+                IsAvailable = productDto.IsAvailable,
+                Name = productDto.Name,
+                RowVersion = productDto.RowVersion
+            };
         }
     }
 }

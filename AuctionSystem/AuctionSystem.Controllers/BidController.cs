@@ -26,12 +26,11 @@
             return instance;
         }
 
-        public IList<Bid> GetAllBidsByProductId(Product product)
+        public IList<Bid> GetAllBidsByProductId(int productId)
         {
-            CoreValidator.ThrowIfNull(product, nameof(product));
-            CoreValidator.ThrowIfNegativeOrZero(product.Id, nameof(product.Id));
+            CoreValidator.ThrowIfNegativeOrZero(productId, nameof(productId));
 
-            var isProductExists = ProductController.Instance().IsProductExistingById(product.Id);
+            var isProductExists = ProductController.Instance().IsProductExistingById(productId);
 
             if (!isProductExists)
             {
@@ -40,16 +39,21 @@
 
             using (var db = new AuctionContext())
             {
-                return db.Bids.Where(b => b.ProductId == product.Id).ToList();
+                return db.Bids
+                            .Include("User")
+                            .Include("Product")
+                            .Where(b => b.ProductId == productId)
+                            .OrderByDescending(b => b.DateOfCreated)
+                            .ThenByDescending(b => b.Coins)
+                            .ToList();
             }
         }
 
-        public IList<Bid> GetAllBidsByUserId(User user)
+        public IList<Bid> GetAllBidsByUserId(int userId)
         {
-            CoreValidator.ThrowIfNull(user, nameof(user));
-            CoreValidator.ThrowIfNegativeOrZero(user.Id, nameof(user.Id));
+            CoreValidator.ThrowIfNegativeOrZero(userId, nameof(userId));
 
-            var isUserExists = UserController.Instance().IsUserExistingById(user.Id);
+            var isUserExists = UserController.Instance().IsUserExistingById(userId);
 
             if (!isUserExists)
             {
@@ -58,7 +62,13 @@
 
             using (var db = new AuctionContext())
             {
-                return db.Bids.Where(b => b.UserId == user.Id).ToList();
+                return db.Bids
+                            .Include("User")
+                            .Include("Product")
+                            .Where(b => b.UserId == userId)
+                            .OrderByDescending(b => b.DateOfCreated)
+                            .ThenByDescending(b => b.Coins)
+                            .ToList();
             }
         }
 
@@ -66,7 +76,12 @@
         {
             using (var db = new AuctionContext())
             {
-                return db.Bids.Where(b => b.IsWon == true).ToList();
+                return db.Bids
+                            .Include("User")
+                            .Include("Product")
+                            .Where(b => b.IsWon == true)
+                            .OrderByDescending(b => b.DateOfCreated)
+                            .ToList();
             }
         }
 
@@ -98,98 +113,119 @@
             }
         }
 
-        public void MakeBid(User user, Product product, int coins)
+        public void MakeBid(int userId, int productId, int coins)
         {
-            CoreValidator.ThrowIfNull(user, nameof(user));
-            CoreValidator.ThrowIfNull(product, nameof(product));
-            CoreValidator.ThrowIfNegativeOrZero(user.Id, nameof(user.Id));
-            CoreValidator.ThrowIfNegativeOrZero(product.Id, nameof(product.Id));
+            CoreValidator.ThrowIfNegativeOrZero(userId, nameof(userId));
+            CoreValidator.ThrowIfNegativeOrZero(productId, nameof(productId));
             CoreValidator.ThrowIfNegativeOrZero(coins, nameof(coins));
 
             using (var db = new AuctionContext())
             {
-                #region CHECK FOR EXISTING USER, PRODUCT AND FOR VALID COINS
-                var userController = UserController.Instance();
-                var productController = ProductController.Instance();
-
-                var isUserExisting = userController.IsUserExistingById(user.Id);
-                var isProductExisting = productController.IsProductExistingById(product.Id);
-
-                if (!isUserExisting || !isProductExisting)
+                using (var transaction = db.Database.BeginTransaction())
                 {
-                    throw new ArgumentException("The product or the user is not existing in the system.");
-                }
-
-                var currentUser = userController.GetUserById(user.Id);
-
-                db.Users.Attach(currentUser);
-
-                if (coins > currentUser.Coins)
-                {
-                    throw new ArgumentException($"Your coins are {currentUser.Coins}, you've tried to spent {coins}.");
-                }
-                #endregion
-
-                #region LOGIC FOR OVERBIDDING 
-                var isThereAnyBid = db.Bids.Any(b => b.ProductId == product.Id && b.IsWon == false);
-
-                if (isThereAnyBid)
-                {
-                    var lastBidEntry = db.Bids
-                                            .Where(b => b.ProductId == product.Id)
-                                            .OrderByDescending(b => b.DateOfCreated)
-                                            .Take(1)
-                                            .FirstOrDefault();
-
-                    if (coins <= lastBidEntry.Coins)
+                    try
                     {
-                        throw new ArgumentException($"You cannot overbid with less than or equal to the last bidders coins: {lastBidEntry.Coins}");
+                        #region CHECK FOR EXISTING USER, PRODUCT AND FOR VALID COINS
+
+                        var userController = UserController.Instance();
+                        var productController = ProductController.Instance();
+
+                        ValidateUserAndProduct(userId, productId, userController, productController);
+                        ValidateProductForBidding(productId, productController);
+
+                        var currentUser = userController.GetUserById(userId);
+
+                        db.Users.Attach(currentUser);
+
+                        ValidateCoins(productId, coins, productController, currentUser);
+
+                        #endregion
+
+                        #region LOGIC FOR OVERBIDDING 
+                        var isThereAnyBid = db.Bids.Any(b => b.ProductId == productId && b.IsWon == false);
+
+                        if (isThereAnyBid)
+                        {
+                            var lastBidEntry = db.Bids
+                                                    .Where(b => b.ProductId == productId)
+                                                    .OrderByDescending(b => b.DateOfCreated)
+                                                    .Take(1)
+                                                    .FirstOrDefault();
+
+                            if (coins <= lastBidEntry.Coins)
+                            {
+                                throw new ArgumentException($"You cannot overbid with less than or equal to the last bidders coins: {lastBidEntry.Coins}");
+                            }
+
+                            if (lastBidEntry.UserId == currentUser.Id)
+                            {
+                                throw new ArgumentException($"You cannot overbid yourself.");
+                            }
+
+                            var newBid = GetNewBid(userId, productId, coins);
+
+                            currentUser.Coins -= coins;
+
+                            var lastBidUserId = lastBidEntry.UserId;
+
+                            var lastUser = userController.GetUserById(lastBidUserId);
+
+                            db.Users.Attach(lastUser);
+
+                            lastUser.Coins += lastBidEntry.Coins;
+
+                            db.Entry(lastUser).State = System.Data.Entity.EntityState.Modified;
+
+                            db.Bids.Add(newBid);
+                            db.SaveChanges();
+
+                            transaction.Commit();
+
+                            return;
+                        }
+
+                        #endregion
+
+                        #region LOGIC FOR CREATE BID FOR FIRST TIME
+
+                        var bid = GetNewBid(userId, productId, coins);
+
+                        currentUser.Coins -= coins;
+
+                        db.Entry(currentUser).State = System.Data.Entity.EntityState.Modified;
+
+                        db.Bids.Add(bid);
+                        db.SaveChanges();
+
+                        transaction.Commit();
+
+                        #endregion
                     }
-
-                    var newBid = GetNewBid(user.Id, product.Id, coins);
-
-                    currentUser.Coins -= coins;
-
-                    var lastBidUserId = lastBidEntry.UserId;
-
-                    var lastUser = userController.GetUserById(lastBidUserId);
-
-                    db.Users.Attach(lastUser);
-
-                    lastUser.Coins += lastBidEntry.Coins;
-
-                    db.Entry(lastUser).State = System.Data.Entity.EntityState.Modified;
-
-                    db.Bids.Add(newBid);
-                    db.SaveChanges();
-
-                    return;
+                    catch (Exception)
+                    {
+                        transaction.Rollback();
+                        throw;
+                    }
                 }
-                #endregion
-
-                #region LOGIC FOR CREATE BID FOR FIRST TIME
-                var bid = GetNewBid(user.Id, product.Id, coins);
-
-                currentUser.Coins -= coins;
-
-                db.Entry(currentUser).State = System.Data.Entity.EntityState.Modified;
-
-                db.Bids.Add(bid);
-                db.SaveChanges();
-                #endregion
             }
         }
 
-        private Bid GetNewBid(int userId, int productId, int coins)
+        public bool CheckCoinsValid(int productId, double coins)
         {
-            return new Bid
+            using (var db = new AuctionContext())
             {
-                UserId = userId,
-                ProductId = productId,
-                Coins = coins,
-                DateOfCreated = DateTime.Now,
-                IsWon = false
-            };
+                var lastBidEntry = db.Bids
+                                                    .Where(b => b.ProductId == productId)
+                                                    .OrderByDescending(b => b.DateOfCreated)
+                                                    .Take(1)
+                                                    .FirstOrDefault();
+
+                if (coins <= lastBidEntry.Coins)
+                {
+                    return false;
+                }
+                return true;
+            }
         }
 
         public Bid GetBidByIdWithAllObjects(int bidId)
@@ -206,6 +242,116 @@
                 CoreValidator.ThrowIfNull(resultBid, nameof(resultBid));
 
                 return resultBid;
+            }
+        }
+
+        public IList<Bid> GetAllBidsByProductName(string productName)
+        {
+            CoreValidator.ThrowIfNullOrEmpty(productName, nameof(productName));
+
+            using (var db = new AuctionContext())
+            {
+                var isExisting = ProductController.Instance().IsProductExisting(productName);
+
+                if (!isExisting)
+                {
+                    throw new ArgumentException("The product doesn't exist in the system.");
+                }
+
+                var resultBids = db.Bids
+                                    .Include("Product")
+                                    .Include("User")
+                                    .Where(b => b.Product.Name == productName)
+                                    .OrderByDescending(b => b.DateOfCreated)
+                                    .ThenByDescending(b => b.Coins)
+                                    .ToList();
+
+                CoreValidator.ThrowIfNull(resultBids, nameof(resultBids));
+
+                return resultBids;
+            }
+        }
+
+        public bool SetWinnersForProducts()
+        {
+            var expiredProducts = ProductController.Instance().GetExpiredProductsIds();
+
+            using (var db = new AuctionContext())
+            {
+                var bids = db.Bids
+                                .Where(b => expiredProducts.Contains(b.ProductId))
+                                .ToList();
+
+                if (bids.Count == 0)
+                {
+                    return false;
+                }
+
+                foreach (var productId in expiredProducts)
+                {
+                    var currentBids = bids
+                                        .Where(b => b.ProductId == productId)
+                                        .ToList(); // remove this and include the where in first or default below
+
+                    var lastBidder = currentBids
+                                            .OrderByDescending(r => r.DateOfCreated) // or coins doesn't matter
+                                            .Take(1)
+                                            .FirstOrDefault();
+
+                    lastBidder.IsWon = true;
+                }
+
+                db.SaveChanges();
+            }
+
+            return true;
+        }
+
+        private Bid GetNewBid(int userId, int productId, int coins)
+        {
+            return new Bid
+            {
+                UserId = userId,
+                ProductId = productId,
+                Coins = coins,
+                DateOfCreated = DateTime.UtcNow,
+                IsWon = false
+            };
+        }
+
+        private static void ValidateCoins(int productId, int coins, ProductController productController, User currentUser)
+        {
+            if (coins > currentUser.Coins)
+            {
+                throw new ArgumentException($"Your coins are {currentUser.Coins}, you've tried to spent {coins}.");
+            }
+
+            var productPrice = productController.GetProductById(productId).Price;
+
+            if (productPrice > coins)
+            {
+                throw new ArgumentException($"Cannot bid less than the product price.({productPrice})");
+            }
+        }
+
+        private static void ValidateProductForBidding(int productId, ProductController productController)
+        {
+            var isProductAvailableForBidding = productController.IsProductAvailableForBidding(productId);
+
+            if (!isProductAvailableForBidding)
+            {
+                throw new ArgumentException("This product is no longer available for bidding.");
+            }
+        }
+
+        private static void ValidateUserAndProduct(int userId, int productId, UserController userController, ProductController productController)
+        {
+            var isUserExisting = userController.IsUserExistingById(userId);
+            var isProductExisting = productController.IsProductExistingById(productId);
+
+            if (!isUserExisting || !isProductExisting)
+            {
+                throw new ArgumentException("The product or the user is not existing in the system.");
             }
         }
     }

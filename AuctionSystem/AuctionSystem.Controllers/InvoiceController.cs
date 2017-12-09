@@ -55,25 +55,57 @@
             }
         }
 
-        public Invoice GetInvoiceByProductId(Product product)
+        public Invoice GetInvoiceByProductId(int productId)
         {
-            CoreValidator.ThrowIfNull(product, nameof(product));
-            CoreValidator.ThrowIfNegativeOrZero(product.Id, nameof(product.Id));
+            CoreValidator.ThrowIfNegativeOrZero(productId, nameof(productId));
 
             using (var db = new AuctionContext())
             {
-                return db.Invoices.FirstOrDefault(p => p.ProductId == product.Id);
+                return db.Invoices.FirstOrDefault(p => p.ProductId == productId);
             }
         }
 
-        public Invoice GetInvoiceByUserId(User user)
+        public Invoice GetInvoiceByUserId(int userId)
         {
-            CoreValidator.ThrowIfNull(user, nameof(user));
-            CoreValidator.ThrowIfNegativeOrZero(user.Id, nameof(user.Id));
+            CoreValidator.ThrowIfNegativeOrZero(userId, nameof(userId));
 
             using (var db = new AuctionContext())
             {
-                return db.Invoices.FirstOrDefault(u => u.UserId == user.Id);
+                return db.Invoices.FirstOrDefault(u => u.UserId == userId);
+            }
+        }
+
+        public Invoice GetInvoiceInlcudeCollectionByUserId(int userId)
+        {
+            CoreValidator.ThrowIfNegativeOrZero(userId, nameof(userId));
+
+            using (var db = new AuctionContext())
+            {
+                var invoice = db.Invoices
+                                    .Include("User")
+                                    .Include("Product")
+                                    .FirstOrDefault(i => i.UserId == userId);
+
+                CoreValidator.ThrowIfNull(invoice, nameof(invoice));
+
+                return invoice;
+            }
+        }
+
+        public Invoice GetInvoiceInlcudeCollectionByProductId(int productId)
+        {
+            CoreValidator.ThrowIfNegativeOrZero(productId, nameof(productId));
+
+            using (var db = new AuctionContext())
+            {
+                var invoice = db.Invoices
+                                    .Include("User")
+                                    .Include("Product")
+                                    .FirstOrDefault(i => i.ProductId == productId);
+
+                CoreValidator.ThrowIfNull(invoice, nameof(invoice));
+
+                return invoice;
             }
         }
     }

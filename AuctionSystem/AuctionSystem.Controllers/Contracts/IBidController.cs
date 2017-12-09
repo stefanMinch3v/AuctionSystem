@@ -5,16 +5,20 @@
 
     public interface IBidController
     {
-        void MakeBid(User user, Product product, int coins);
+        void MakeBid(int userId, int productId, int coins);
 
         bool IsBidWon(Bid bid);
 
         Bid GetBidById(int bidId);
 
-        IList<Bid> GetAllBidsByUserId(User user);
+        IList<Bid> GetAllBidsByUserId(int userId);
 
-        IList<Bid> GetAllBidsByProductId(Product product);
+        IList<Bid> GetAllBidsByProductId(int productId);
 
         IList<Bid> GetAllEarnedBids();
+
+        IList<Bid> GetAllBidsByProductName(string name);
+
+        bool CheckCoinsValid(int productId, double coins);
     }
 }

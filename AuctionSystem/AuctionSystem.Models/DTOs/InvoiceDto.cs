@@ -1,13 +1,15 @@
 ﻿namespace AuctionSystem.Models.DTOs
 {
+    using System;
+
     public class InvoiceDto
     {
-        public int UserId { get; set; }
+        public string User { get; set; }
 
-        public User User { get; set; }
+        public ProductDto Product { get; set; }
 
-        public int ProductId { get; set; }
+        public decimal Price { get; set; }
 
-        public virtual Product Product { get; set; }
+        public DateTime DateOfIssued { get; set; }
     }
 }

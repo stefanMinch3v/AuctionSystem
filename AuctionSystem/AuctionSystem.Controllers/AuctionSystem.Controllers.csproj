@@ -53,6 +53,7 @@
   <ItemGroup>
     <Compile Include="BidController.cs" />
     <Compile Include="Common\CoreValidator.cs" />
+    <Compile Include="Common\HashingSHA256.cs" />
     <Compile Include="Contracts\IBidController.cs" />
     <Compile Include="Contracts\IInvoiceController.cs" />
     <Compile Include="Contracts\ILoginController.cs" />

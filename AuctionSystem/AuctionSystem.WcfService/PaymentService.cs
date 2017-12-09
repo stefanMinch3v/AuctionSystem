@@ -1,38 +1,61 @@
 ﻿namespace AuctionSystem.WcfService
 {
-    using Controllers;
+    using AutoMapper;
     using Contracts;
+    using Controllers;
     using Models;
-    using Models.Enums;
+    using Models.DTOs;
     using System.Collections.Generic;
 
     public class PaymentService : IPaymentService
     {
-        // TODO in each method return the controller that supposed to handle its operation
-
-        public void AddPayment(Payment payment, User user)
+        public void AddPayment(Payment payment, int userId)
         {
-            PaymentController.Instance().AddPayment(payment, user);
+            PaymentController.Instance().AddPayment(payment, userId);
         }
 
-        public Payment GetPayment(int paymentId)
+        public PaymentDto GetPayment(int paymentId)
         {
-            return PaymentController.Instance().GetPayment(paymentId);
+            var dbPayment = PaymentController.Instance().GetPayment(paymentId);
+
+            return MapDbPaymentToPaymentDto(dbPayment);
         }
 
-        public bool DeletePayment(Payment payment)
+        public PaymentDto MapDbPaymentToPaymentDto(Payment payment)
         {
-            return PaymentController.Instance().DeletePayment(payment);
+            return Mapper.Map<PaymentDto>(payment);
         }
 
-        public bool UpdatePayment(Payment payment, string property, string value)
+        private Payment MapPaymentDtoToDbPayment(PaymentDto paymentDto)
         {
-            return PaymentController.Instance().UpdatePayment(payment, property, value);
+            return new Payment
+            {
+                Id = paymentDto.Id,
+                UserId = paymentDto.UserId,
+                Type = paymentDto.Type,
+                PaymentTypeCode = paymentDto.PaymentTypeCode
+            };
+
+            //  return Mapper.Map<Payment>(paymentDto);
+
         }
 
-        public IList<Payment> GetPaymentsByUser(User user)
+        public bool DeletePayment(int paymentId)
         {
-            return PaymentController.Instance().GetPaymentsByUser(user);
+            return PaymentController.Instance().DeletePayment(paymentId);
         }
+
+        public bool UpdatePayment(PaymentDto paymentDto)
+        {
+
+            var paymentToUpdate = MapPaymentDtoToDbPayment(paymentDto);
+
+            return PaymentController.Instance().UpdatePayment(paymentToUpdate);
+        }
+
+        //public IList<Payment> GetPaymentsByUser(User user)
+        //{
+        //    return PaymentController.Instance().GetPaymentsByUser(user);
+        //}
     }
 }
