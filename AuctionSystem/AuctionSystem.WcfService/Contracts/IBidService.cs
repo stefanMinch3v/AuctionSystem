@@ -25,6 +25,12 @@
         [FaultContract(typeof(ArgumentException))]
         [FaultContract(typeof(FaultException))]
         [FaultContract(typeof(ArgumentNullException))]
+        bool BidExpired(int productId);
+
+        [OperationContract]
+        [FaultContract(typeof(ArgumentException))]
+        [FaultContract(typeof(FaultException))]
+        [FaultContract(typeof(ArgumentNullException))]
         BidDto GetBidById(int bidId);
 
         [OperationContract]

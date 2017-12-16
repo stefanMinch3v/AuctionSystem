@@ -20,5 +20,7 @@
         IList<Bid> GetAllBidsByProductName(string name);
 
         bool CheckCoinsValid(int productId, double coins);
+
+        bool BidExpired(int productId);
     }
 }

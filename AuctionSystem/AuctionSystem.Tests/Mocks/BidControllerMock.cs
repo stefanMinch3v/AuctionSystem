@@ -16,6 +16,40 @@
         {
             this.dbContext = dbContext;
         }
+        public bool BidExpired(int productId)
+        {
+            CoreValidator.ThrowIfNegativeOrZero(productId, nameof(productId));
+            using (var db = dbContext)
+            {
+                using (var transaction = db.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        var product = new ProductControllerMock(dbContext).GetProductById(productId);
+                        db.Products.Attach(product);
+                        if (!(DateTime.Now >= product.EndDate))
+                        {
+                            throw new ArgumentException($"The product date for finish is not yet reached: {product.EndDate}");
+                        }
+                        var bid = db.Bids.Where(b => b.ProductId == productId).OrderByDescending(b => b.Id).First();
+                        db.Bids.Attach(bid);
+                        bid.IsWon = true;
+                        db.Entry(bid).State = System.Data.Entity.EntityState.Modified;
+                        product.IsAvailable = false;
+                        db.Entry(product).State = System.Data.Entity.EntityState.Modified;
+                        db.SaveChanges();
+                        transaction.Commit();
+                        return true;
+                    }
+                    catch (Exception)
+                    {
+                        transaction.Rollback();
+                        throw;
+                    }
+
+                }
+            }
+        }
 
         public IList<Bid> GetAllBidsByProductId(int productId)
         {

@@ -25,6 +25,18 @@
             }
         }
 
+        public bool BidExpired(int productId)
+        {
+            try
+            {
+                return BidController.Instance().BidExpired(productId);
+            }
+            catch (Exception ex)
+            {
+                throw new FaultException(ex.Message);
+            }
+        }
+
         public bool IsBidWon(Bid bid)
         {
             try
@@ -49,7 +61,7 @@
             {
                 throw new FaultException(ex.Message);
             }
-            
+
         }
 
         public IList<BidDto> GetAllBidsByUserId(int userId)
@@ -64,7 +76,7 @@
             {
                 throw new FaultException(ex.Message);
             }
-           
+
         }
 
         public IList<BidDto> GetAllBidsByProductId(int productId)
