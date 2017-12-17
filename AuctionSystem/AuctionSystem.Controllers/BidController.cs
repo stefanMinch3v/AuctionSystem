@@ -225,14 +225,25 @@
                         {
                             throw new ArgumentException($"The product date for finish is not yet reached: {product.EndDate}");
                         }
-                        var bid = db.Bids.Where(b => b.ProductId == productId).OrderByDescending(b => b.Id).First();
-                        db.Bids.Attach(bid);
-                        bid.IsWon = true;
-                        db.Entry(bid).State = System.Data.Entity.EntityState.Modified;
-                        product.IsAvailable = false;
-                        db.Entry(product).State = System.Data.Entity.EntityState.Modified;
-                        db.SaveChanges();
-                        transaction.Commit();
+                        var bids = db.Bids.Where(b => b.ProductId == productId);
+                        if (bids.Count() == 0)
+                        {
+                            product.IsAvailable = false;
+                            db.Entry(product).State = System.Data.Entity.EntityState.Modified;
+                            db.SaveChanges();
+                            transaction.Commit();
+                        }
+                        else
+                        {
+                            var bid = bids.OrderByDescending(b => b.Id).FirstOrDefault();
+                            db.Bids.Attach(bid);
+                            bid.IsWon = true;
+                            db.Entry(bid).State = System.Data.Entity.EntityState.Modified;
+                            product.IsAvailable = false;
+                            db.Entry(product).State = System.Data.Entity.EntityState.Modified;
+                            db.SaveChanges();
+                            transaction.Commit();
+                        }
                         return true;
                     }catch(Exception)
                     {
