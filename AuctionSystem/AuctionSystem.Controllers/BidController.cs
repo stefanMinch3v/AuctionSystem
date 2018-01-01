@@ -121,7 +121,7 @@
 
             using (var db = new AuctionContext())
             {
-                using (var transaction = db.Database.BeginTransaction())
+                using (var transaction = db.Database.BeginTransaction(System.Data.IsolationLevel.ReadCommitted))
                 {
                     try
                     {
@@ -215,10 +215,10 @@
             using (var db = new AuctionContext())
             {
                 var lastBidEntry = db.Bids
-                                                    .Where(b => b.ProductId == productId)
-                                                    .OrderByDescending(b => b.DateOfCreated)
-                                                    .Take(1)
-                                                    .FirstOrDefault();
+                                        .Where(b => b.ProductId == productId)
+                                        .OrderByDescending(b => b.DateOfCreated)
+                                        .Take(1)
+                                        .FirstOrDefault();
 
                 if (coins <= lastBidEntry.Coins)
                 {

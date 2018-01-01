@@ -102,7 +102,8 @@
             }
             catch (DbUpdateConcurrencyException)
             {
-                throw new DbUpdateConcurrencyException("Someone has already modified this product, please refresh the page.");
+                // throw new DbUpdateConcurrencyException("Someone has already modified this product, please refresh the page.");
+                return false;
             } 
         }
 
