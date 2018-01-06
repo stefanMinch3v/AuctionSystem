@@ -59,5 +59,8 @@
 
         [OperationContract]
         bool CheckCoinsValid(int productId, double coins);
+
+        [OperationContract]
+        bool BidExpired(int productId);
     }
 }

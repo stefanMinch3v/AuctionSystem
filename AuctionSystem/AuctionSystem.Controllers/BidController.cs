@@ -219,7 +219,11 @@
                                         .OrderByDescending(b => b.DateOfCreated)
                                         .Take(1)
                                         .FirstOrDefault();
-
+                if (lastBidEntry == null)
+                {
+                    var productPrice = ProductController.Instance().GetProductById(productId).Price;
+                    return decimal.Parse(coins.ToString()) >= productPrice;
+                }
                 if (coins <= lastBidEntry.Coins)
                 {
                     return false;
@@ -331,6 +335,52 @@
             if (productPrice > coins)
             {
                 throw new ArgumentException($"Cannot bid less than the product price.({productPrice})");
+            }
+        }
+
+        public bool BidExpired(int productId)
+        {
+            CoreValidator.ThrowIfNegativeOrZero(productId, nameof(productId));
+            using (var db = new AuctionContext())
+            {
+                using (var transaction = db.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        var product = ProductController.Instance().GetProductById(productId);
+                        db.Products.Attach(product);
+                        if (!(DateTime.Now >= product.EndDate))
+                        {
+                            throw new ArgumentException($"The product date for finish is not yet reached: {product.EndDate}");
+                        }
+                        var bids = db.Bids.Where(b => b.ProductId == productId);
+                        if (bids.Count() == 0)
+                        {
+                            product.IsAvailable = false;
+                            db.Entry(product).State = System.Data.Entity.EntityState.Modified;
+                            db.SaveChanges();
+                            transaction.Commit();
+                        }
+                        else
+                        {
+                            var bid = bids.OrderByDescending(b => b.Id).FirstOrDefault();
+                            db.Bids.Attach(bid);
+                            bid.IsWon = true;
+                            db.Entry(bid).State = System.Data.Entity.EntityState.Modified;
+                            product.IsAvailable = false;
+                            db.Entry(product).State = System.Data.Entity.EntityState.Modified;
+                            db.SaveChanges();
+                            transaction.Commit();
+                        }
+                        return true;
+                    }
+                    catch (Exception)
+                    {
+                        transaction.Rollback();
+                        throw;
+                    }
+
+                }
             }
         }
 

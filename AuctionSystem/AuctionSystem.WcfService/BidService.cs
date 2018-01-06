@@ -25,6 +25,18 @@
             }
         }
 
+        public bool BidExpired(int productId)
+        {
+            try
+            {
+                return BidController.Instance().BidExpired(productId);
+            }
+            catch (Exception ex)
+            {
+                throw new FaultException(ex.Message);
+            }
+        }
+
         public bool IsBidWon(Bid bid)
         {
             try
